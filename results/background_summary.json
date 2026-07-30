@@ -1,0 +1,33 @@
+{
+  "seed": 20260730,
+  "fiducial": {
+    "H0": 70.0,
+    "Omega_m0": 0.3,
+    "Omega_r0": 9e-05,
+    "n": 0.2,
+    "beta": 0.0001
+  },
+  "params": {
+    "H0": 70.0,
+    "Omega_m0": 0.3,
+    "Omega_r0": 9e-05,
+    "n": 0.2,
+    "beta": 0.0001
+  },
+  "E_min": 0.9999999999999999,
+  "Qtilde_max_z0_5": -0.09543185612236851,
+  "Qtilde_at_0": -0.09543185612236851,
+  "z_t": 1.210948373043553,
+  "z_t_lcdm": 0.6704708992944259,
+  "sigma8_diagnostic": 0.7454361229951955,
+  "S8_diagnostic": 0.7454361229951955,
+  "fEDE_1100": 5.176613378966612e-12,
+  "scan_viable_fraction": 0.7426470588235294,
+  "scan_median_zt_viable": 1.147318966778895,
+  "checksums_sha256": {
+    "results/dvch_background_table.csv": "ce2f2729edd49a6622032f2899cf7efafea0ff3c2ffc34257da888721f6eeecd",
+    "figures/background_diagnostic.png": "9d7c3b67bb57f9e1e7debb660314ed492d6ea6413f47fd77b2aa7676a8f24d05",
+    "results/scan_n_beta.csv": "75160b2d710db54636fdb107a4ade089289184ebab3df6469daa95de5fd7a49a",
+    "figures/scan_n_beta.png": "62c9e2a68c2c8b84ab3d493a6f225a27e03fe02b2c89f50d18f3979d4ae57060"
+  }
+}
