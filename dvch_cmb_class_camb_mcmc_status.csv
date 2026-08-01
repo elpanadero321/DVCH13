@@ -1,0 +1,9 @@
+name,available,type
+Cobaya,False,sampler
+CLASS/CAMB backend,False,boltzmann
+Planck clik,False,likelihood
+DVCH source module,True,theory
+Planck YAML target,True,config
+Pantheon+ likelihood,True,sn
+DESI BAO block,True,bao
+CC chronometer block,True,cc

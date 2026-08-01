@@ -1,0 +1,8 @@
+metric,value
+grid_size,272
+viable_points,150
+viable_fraction,0.551
+n_range,0.05-0.45
+beta_range,1e-6 to 1e-1
+median_zt,1.251
+largest_Qtilde,-3.12e-02

@@ -1,0 +1,12 @@
+metric,value
+max_R_hat,1.104
+min_N_eff,57
+n_chains,4
+n_steps,3000
+burn_in,500
+mean_Om,0.1842
+mean_H0,50.665
+mean_n,0.8380
+std_Om,0.1218
+std_H0,0.865
+std_n,0.0383

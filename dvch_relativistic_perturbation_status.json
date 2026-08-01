@@ -1,0 +1,10 @@
+{
+  "Patched CLASS/CAMB backend": "Protocol target",
+  "Photon-baryon hierarchy": "Protocol target",
+  "Einstein-Boltzmann metric sources": "Protocol target",
+  "CMB $C_\\ell$ spectra": "Protocol target",
+  "CMB lensing spectra": "Protocol target",
+  "Planck likelihood stack": "Protocol target",
+  "DVCH source-table module": "Available",
+  "Planck YAML target": "Available"
+}
