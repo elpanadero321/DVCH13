@@ -1,0 +1,73 @@
+{
+  "bundle_status": "prepared_not_run",
+  "prepared_at_utc": "2026-08-03T03:05:52.114661+00:00",
+  "bundle_root": "C:\\Users\\danie\\.copilot\\repos\\copilot-worktrees\\dvch13\\elpanadero321-congenial-fishstick\\dvch_full_pipeline",
+  "repo_root": "C:\\Users\\danie\\.copilot\\repos\\copilot-worktrees\\dvch13\\elpanadero321-congenial-fishstick",
+  "paths": {
+    "packages_path": "<set-cobaya-packages-path>",
+    "classy_path": "<set-patched-classy-path>",
+    "output_root": "C:\\Users\\danie\\.copilot\\repos\\copilot-worktrees\\dvch13\\elpanadero321-congenial-fishstick\\dvch_full_pipeline\\chains\\dvch_full",
+    "yaml_path": "C:\\Users\\danie\\.copilot\\repos\\copilot-worktrees\\dvch13\\elpanadero321-congenial-fishstick\\dvch_full_pipeline\\dvch_full_cobaya.yaml",
+    "status_csv": "C:\\Users\\danie\\.copilot\\repos\\copilot-worktrees\\dvch13\\elpanadero321-congenial-fishstick\\dvch_full_pipeline\\status\\dvch_full_pipeline_status.csv",
+    "status_png": "C:\\Users\\danie\\.copilot\\repos\\copilot-worktrees\\dvch13\\elpanadero321-congenial-fishstick\\dvch_full_pipeline\\status\\dvch_full_pipeline_status.png",
+    "example_launcher": "C:\\Users\\danie\\.copilot\\repos\\copilot-worktrees\\dvch13\\elpanadero321-congenial-fishstick\\dvch_full_pipeline\\run_full_pipeline_example.ps1"
+  },
+  "required_python_packages": [
+    "cobaya",
+    "getdist",
+    "classy"
+  ],
+  "required_external_runtime": [
+    "Patched CLASS/classy backend that accepts dvch_n, dvch_beta, dvch_model, and dvch_use_exact_q.",
+    "Cobaya packages path containing Planck 2018 clik data, Pantheon+, and BAO likelihood files."
+  ],
+  "core_likelihoods": [
+    "planck_2018_highl_plik.TTTEEE",
+    "planck_2018_lowl.TT_clik",
+    "planck_2018_lowl.EE_clik",
+    "planck_2018_lensing.clik",
+    "sn.pantheonplus",
+    "bao.sixdf_2011_bao",
+    "bao.sdss_dr7_mgs",
+    "bao.sdss_dr12_consensus_bao",
+    "bao.desi_2024_bao_all"
+  ],
+  "optional_follow_up_likelihoods": [
+    "custom cosmic chronometers likelihood",
+    "custom local H0 Gaussian prior",
+    "custom compressed fsigma8 / RSD likelihood"
+  ],
+  "convergence_targets": {
+    "Rminus1_stop": 0.02,
+    "Rminus1_cl_stop": 0.02,
+    "max_samples": 120000
+  },
+  "dvch_bridge_extra_args": {
+    "output": "tCl,pCl,lCl,mPk",
+    "lensing": "yes",
+    "non linear": "hmcode",
+    "l_max_scalars": 3500,
+    "P_k_max_h/Mpc": 5.0,
+    "z_pk": "0 0.5 1 2",
+    "N_ncdm": 1,
+    "m_ncdm": 0.06,
+    "N_ur": 2.0328,
+    "dvch_model": "tracking_curvature_suppressed_vacuum",
+    "dvch_use_exact_q": "yes"
+  },
+  "fiducial_decay_check": {
+    "z_max": 5.0,
+    "min_E2": 1.0,
+    "max_Qtilde": -0.08871027010268205,
+    "min_Qtilde": -1.8745294554960492,
+    "max_dOmegaLambda_dln_a": -0.26613081030804614,
+    "min_dOmegaLambda_dln_a": -0.8788456705997783,
+    "vacuum_decays_monotonically": true,
+    "positive_energy_densities": true
+  },
+  "notes": [
+    "This folder is prepared for a future heavy run but is not executed automatically.",
+    "Planck/CMB validation remains pending until the patched classy backend and the Cobaya likelihood data are installed.",
+    "Root-level lightweight and intermediate scripts remain untouched and separate from this bundle."
+  ]
+}

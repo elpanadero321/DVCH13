@@ -1,9 +1,10 @@
-name,available,type
-Cobaya,False,sampler
-CLASS/CAMB backend,False,boltzmann
-Planck clik,False,likelihood
-DVCH source module,True,theory
-Planck YAML target,True,config
-Pantheon+ likelihood,True,sn
-DESI BAO block,True,bao
-CC chronometer block,True,cc
+name,available,type,detail
+Cobaya Python package,True,sampler,Local Cobaya import available.
+GetDist post-processing,True,post,Needed for Gelman-Rubin post-checks.
+classy backend import,False,boltzmann,Required locally unless a patched CLASS path is supplied.
+Patched DVCH CLASS bridge,True,theory,"Configured through dvch_n, dvch_beta, dvch_model, and dvch_use_exact_q."
+Likelihood data path,False,data,"Cobaya packages path for Planck, Pantheon+, and BAO datasets."
+Selected likelihood modules,True,likelihood,"planck_2018_highl_plik.TTTEEE, planck_2018_lowl.TT_clik, planck_2018_lowl.EE_clik, planck_2018_lensing.clik, sn.pantheonplus, bao.sixdf_2011_bao, bao.sdss_dr7_mgs, bao.sdss_dr12_consensus_bao, bao.desi_2024_bao_all"
+DVCH fiducial decay check,True,physics,"Monotonic decay=True, max dOmegaLambda/dln a=-2.661e-01"
+Cobaya YAML export,True,config,Written to dvch_cobaya.yaml.
+Convergence criterion,True,mcmc,Require Gelman-Rubin R-1 < 0.02.

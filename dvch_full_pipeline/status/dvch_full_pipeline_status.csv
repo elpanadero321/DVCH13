@@ -1,0 +1,12 @@
+name,available,type,detail
+Dedicated bundle folder,True,layout,Prepared under dvch_full_pipeline.
+Cobaya YAML export,True,config,Written to dvch_full_cobaya.yaml.
+Runtime manifest,True,config,Written to dvch_full_runtime_manifest.json.
+PowerShell launch template,True,launcher,Stored as run_full_pipeline_example.ps1.
+Cobaya Python package,True,sampler,Needed to execute the production MCMC run.
+GetDist post-processing,True,post,Used to verify Gelman-Rubin convergence after the run.
+Patched classy backend,False,boltzmann,"Supply --classy-path to a patched CLASS build, or install a patched classy module."
+Cobaya packages data path,False,data,"Planck 2018, Pantheon+, and BAO data packages."
+Selected likelihood modules,True,likelihood,"planck_2018_highl_plik.TTTEEE, planck_2018_lowl.TT_clik, planck_2018_lowl.EE_clik, planck_2018_lensing.clik, sn.pantheonplus, bao.sixdf_2011_bao, bao.sdss_dr7_mgs, bao.sdss_dr12_consensus_bao, bao.desi_2024_bao_all"
+DVCH fiducial decay check,True,physics,"Monotonic decay=True, max dOmegaLambda/dln a=-2.661e-01"
+Execution mode,True,mode,Prepared only; no heavy Planck/CMB chain executed by this step.

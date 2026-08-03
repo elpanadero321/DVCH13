@@ -85,28 +85,32 @@
 \fi
 
 \begin{abstract}
-We present a formulation of the \emph{Dynamic Vacuum Coupling
-Hypothesis} (DVCH), a nonlinear interacting-vacuum scenario treated as an
-effective macroscopic closure within a covariant interacting dark-sector
-framework. The model combines power-law tracking between vacuum and matter
-densities with an ultraviolet (UV) curvature suppression inspired by
-higher-curvature effective field theory (EFT). We
-(i)~provide a consistent covariant action-based motivation for dark-sector
-interaction via conformal matter coupling to a scalar EFT,
-(ii)~derive the exact implicit background system in terms of
-$E(z)=H(z)/H_0$ and obtain the exact energy-transfer function $Q$ implied by
-the DVCH closure,
-(iii)~show that the effective vacuum equation of state satisfies
-$w_{\Lambda,\mathrm{eff}}>-1$ whenever $Q<0$, while any numerical
-phantom-divide crossing must correspond to a sign change of $Q$ or to an
-inconsistent plotting convention,
-(iv)~derive the conditions under which the autonomous background system
-approaches a Minkowski end state, and
-(v)~formulate linear perturbation equations, low-redshift growth diagnostics,
-a parameter-space robustness scan, and an exploratory public-data likelihood
-diagnostic implementation for Pantheon$+$, DESI BAO, and cosmic-chronometer measurements. The CMB discussion is restricted to literature benchmarks and to the
-source-table interface used to compare the background sector against Planck 2018 literature benchmarks. In this form, DVCH is presented
-as an effective interacting-vacuum framework whose observational status remains to be established by full likelihood analyses.
+We formulate the \emph{Dynamic Vacuum Coupling Hypothesis} (DVCH) as a
+decaying-vacuum interacting-dark-sector model in which the effective vacuum
+density decreases with cosmic expansion through a power-law tracking relation
+regularized by a curvature-dependent suppression factor. The construction is
+treated as a macroscopic closure embedded in a covariant interacting-vacuum
+framework rather than as a rigid cosmological constant. We derive the exact
+implicit background equations in terms of $E(z)=H(z)/H_0$, obtain the
+interaction kernel $Q$ implied by the closure, and show that the effective
+equation of state satisfies $w_{\Lambda,\mathrm{eff}}>-1$ throughout the
+monotonic-decay branch with $Q<0$. The background dynamics admit an
+asymptotically depleted late-time state approaching Minkowski instead of an
+eternal de Sitter attractor. We then construct an executable intermediate-cost
+late-time validation pipeline using DESI 2024 BAO, SDSS DR12 BAO, the 6dF BAO
+point, Pantheon$+$, cosmic chronometers, and a Gaussian local $H_0$ prior. For
+a fixed curvature regulator $\beta=10^{-4}$, four adaptive Metropolis chains
+over $\{\Omega_{m0},H_0,n_{\rm DVCH}\}$ converge with
+$\max(\widehat R-1)=8.4\times10^{-3}$ and yield
+$\chi^2_{\rm DVCH}=1493.76$ versus $\chi^2_{\Lambda{\rm CDM}}=1522.25$,
+corresponding to $\Delta\chi^2=-28.50$ for this late-time compilation. A
+one-dimensional profile scan over $10^{-6}\le\beta\le10^{-2}$ shows only weak
+late-time sensitivity to the regulator, justifying the fixed-$\beta$
+intermediate analysis. We also provide the Cobaya/\texttt{classy} pipeline
+blueprint for a future Planck 2018 TTTEEE+low-$\ell$+lensing production run.
+In this form DVCH survives a nontrivial public-data late-time test while the
+full Planck-calibrated Einstein--Boltzmann posterior remains the decisive next
+verification step.
 \end{abstract}
 
 \ifsnclass
@@ -698,14 +702,15 @@ posteriors and structure-growth constraints \cite{Adame:2024ywp,Brout2022}.
 
 
 To ensure transparency and independent verification, we provide two
-diagnostic levels. The first is a self-contained, background-only Colab
-diagnostic implementation, \texttt{DVCH\_easy\_colab.ipynb}, accompanied by the plain Python
-script \texttt{dvch\_colab\_simple.py}. This route requires only standard
+diagnostic levels. The first is the self-contained background script
+\texttt{dvch\_colab\_simple.py}. This route requires only standard
 Python packages, evaluates the implicit DVCH background, writes
 \texttt{dvch\_background\_table.csv}, and produces the diagnostic summary figure
-shown below. The second level consists of the more advanced Cobaya diagnostic implementation
-\texttt{dvch\_theory.py}+\texttt{dvch\_cobaya.yaml}, intended as the
-starting point for likelihood work \cite{Torrado:2020dgo}. Public observational data products are
+shown below. The second level consists of the Cobaya launcher
+\texttt{dvch\_cmb\_class\_camb\_mcmc.py}, the DVCH helper module
+\texttt{dvch\_theory.py}, and the exported configuration
+\texttt{dvch\_cobaya.yaml}, intended as the starting point for likelihood work
+with a patched \texttt{classy}/CLASS backend \cite{Torrado:2020dgo}. Public observational data products are
 cited through the corresponding survey papers rather than through notebook URLs
 \cite{Aghanim:2018eyx,Planck:2019nip,Adame:2024ywp,Brout2022,Moresco:2016mzx}.
 
@@ -881,10 +886,12 @@ sampled redshift range; it is not an RSD fit and is not a CMB-calibrated
 prediction for $f\sigma_8$.
 
 
-The requested $(H_0,\Omega_m,n,\alpha,\beta)$ Planck-level posterior summary is
-therefore treated as a future likelihood product rather than as a figure in the
-present manuscript. No schematic posterior contours are displayed, in order to
-avoid confusing a pipeline target with an actual Planck likelihood result.
+The requested $(H_0,\Omega_{m0},n_{\rm DVCH},\beta)$ Planck-level posterior
+summary, with the physical cutoff parameter $\alpha$ recoverable from
+Eq.~\eqref{eq:beta_mdvch}, is therefore treated as a future likelihood product
+rather than as a figure in the present manuscript. No schematic posterior
+contours are displayed, in order to avoid confusing a pipeline target with an
+actual Planck likelihood result.
 
 The same local workflow also provides a low-redshift growth
 estimate. Normalizing to a reference $\Lambda$CDM value
@@ -1215,16 +1222,23 @@ and the horizon choice; it does not require assuming $Q$ has a particular sign.
 \subsection{Parameter set and priors}
 \label{subsec:priors}
 
-A minimal DVCH parameter vector is
+A production DVCH parameter vector matched to the implemented
+Cobaya/\texttt{classy} scaffold is
 \begin{equation}
-\bm{\theta} = \{ \Omm,\,H_0,\,n,\,\alpha,\,\Omega_{b0},\,n_s,\,A_s,\,\tau \}
+\bm{\theta}_{\rm prod} =
+\{\omega_b,\,\omega_{\rm cdm},\,H_0,\,A_s,\,n_s,\,\tau_{\rm reio},\,n_{\rm DVCH},\,\beta\}
 \end{equation}
-for a full CMB + late-time analysis, while a late-time background-only fit may
-use $\{\Omm,H_0,n\}$ with $\alpha$ effectively unconstrained (since $\beta\ll 1$).
+for a full CMB + late-time analysis. An equivalent physical-scale
+reparameterization may trade $\beta$ for $\alpha$ through
+Eq.~\eqref{eq:beta_mdvch} once $H_0$ is specified. By contrast, the executed
+late-time background-only fits in this manuscript sample only
+$\{\Omega_{m0},H_0,n_{\rm DVCH}\}$, with $\beta$ fixed or profiled separately
+because the present low-redshift compilation constrains the regulator only
+weakly.
 
 Physically motivated prior:
 \begin{equation}
-0<n<1,\qquad \alpha\ge 0.
+0<n_{\rm DVCH}<1,\qquad \beta\ge 0.
 \end{equation}
 
 \subsection{Fisher matrix (optional forecasting extension)}
@@ -1337,8 +1351,8 @@ posterior. A concrete fiducial data combination for that external run is
 \end{aligned}
 \label{eq:fiducial_data_combo}
 \end{equation}
-where the target diagnostics are the joint posterior of $(H_0,S_8,\sigma_8,n,\alpha)$,
-not $H_0$ alone.
+where the target diagnostics are the joint posterior of
+$(H_0,S_8,\sigma_8,n_{\rm DVCH},\beta)$, not $H_0$ alone.
 
 Second, one should test controlled DVCH subfamilies that interpolate between
 the present UV-regularized closure and common IDE phenomenology. Examples
@@ -1392,14 +1406,14 @@ control rather than as part of the present evidence claim. Fourth, model
 selection should be based
 on the joint $H_0$--$S_8$ compromise rather than on either tension separately.
 A useful target diagnostic is therefore the posterior distribution in
-$(H_0,S_8,n,\alpha)$ together with $\Delta\chi^2$, AIC, BIC, and, where
+$(H_0,S_8,n_{\rm DVCH},\beta)$ together with $\Delta\chi^2$, AIC, BIC, and, where
 computationally feasible, Bayesian evidence ratios \cite{Jeffreys:1961}. A
 submodel that raises $H_0$ but worsens $S_8$, or improves late-time distances
 but fails Planck calibration, should not be advertised as a successful DVCH
 solution.
 
-The easiest complete route is therefore: (i) run
-\texttt{DVCH\_easy\_colab.ipynb} or \texttt{python dvch\_colab\_simple.py} to
+The easiest reproducible route within the present archive is therefore: (i) run
+\texttt{python dvch\_colab\_simple.py} to
 reproduce the background table and figures; (ii) use the generated CSV file to
 inspect $E(z)$, $H(z)$, $\Omega_m(z)$, $\Omega_\Lambda(z)$, and
 $\widetilde Q(z)$; and (iii) only after this background validation, move to the
@@ -1491,59 +1505,110 @@ Boltzmann backend are available.
 \subsection{Planck benchmark configuration}
 \label{subsec:cmb_class_camb_mcmc_runner}
 
-The archive includes \texttt{dvch\_cmb\_class\_camb\_mcmc.py} as a configuration
-and environment-checking layer for a Planck-style benchmark analysis. It records
-whether Cobaya, a CLASS or CAMB Python backend, the Planck \texttt{clik}
-interface, the DVCH Boltzmann source-table module, and the Planck YAML target
-are visible to the runtime \cite{Torrado:2020dgo,Blas:2011rf,Lewis:1999bs,Planck:2019nip}. In this manuscript the output is interpreted only as an
-interface diagnostic, not as a Planck posterior or as a Planck $\chi^2$ value.
+The archive includes \texttt{dvch\_cmb\_class\_camb\_mcmc.py} as the Cobaya
+launcher, YAML exporter, and environment-checking layer for a Planck$+$late-time
+benchmark analysis. It records whether Cobaya, GetDist, a local
+\texttt{classy}/CLASS backend, the external Cobaya likelihood-data directory, and
+the fiducial DVCH decay check are available to the runtime
+\cite{Torrado:2020dgo,Blas:2011rf,Lewis:1999bs,Planck:2019nip}. In this manuscript the output is interpreted only as a
+pipeline-readiness diagnostic, not as a Planck posterior or as a Planck $\chi^2$ value.
 
 \begin{center}
 \refstepcounter{figure}\label{fig:dvch_cmb_class_camb_mcmc_status}
 \includegraphics[width=0.88\linewidth]{figures/dvch_cmb_class_camb_mcmc_status.png}
 \begin{minipage}{0.96\linewidth}\footnotesize
-\textbf{Figure~\thefigure.} Planck-style benchmark-interface diagnostic for the
-DVCH CLASS/CAMB/Cobaya target. Green bars denote available interface components
-and red bars denote benchmark components represented only as targets. The figure
-is generated by \texttt{dvch\_cmb\_class\_camb\_mcmc.py} and is not a Planck
-posterior-convergence plot.
+\textbf{Figure~\thefigure.} Pipeline-readiness diagnostic for the
+DVCH Cobaya/\texttt{classy} target. Green bars denote components that are ready or
+already configured, and red bars denote missing external runtime/data
+dependencies. The figure is generated by
+\texttt{dvch\_cmb\_class\_camb\_mcmc.py} and is not a posterior-convergence plot.
 \end{minipage}
 \end{center}
 
-\subsection{Executable MCMC convergence diagnostic}
+\subsection{Executable late-time MCMC diagnostics}
 \label{subsec:mcmc_convergence}
 
 As a local sampler check, the archive includes \texttt{dvch\_mcmc\_convergence.py}.
-The script runs four independent Metropolis chains for the local DVCH
-BAO+chronometer likelihood, writes the chains to \texttt{dvch\_mcmc\_chains.csv},
-and reports posterior summaries in \texttt{dvch\_mcmc\_convergence\_summary.csv}.
-For the run included here, the convergence diagnostics are
+The script runs four independent adaptive Metropolis chains for an efficient
+late-time real-data DVCH likelihood built from DESI 2024 BAO, SDSS DR12 BAO,
+the 6dF BAO point, cosmic chronometers, and a Gaussian local $H_0$ prior
+anchored to SH0ES \cite{Riess:2021jrx}. To keep the local proof inexpensive,
+the curvature-suppression parameter is fixed
+to $\beta=10^{-4}$ and the sampler varies only
+$\{\Omega_{m0},H_0,n_{\rm DVCH}\}$. The chains are written to
+\texttt{dvch\_mcmc\_chains.csv}, and posterior summaries are reported in
+\texttt{dvch\_mcmc\_convergence\_summary.csv}. For the run included here, the
+convergence diagnostics are
 \begin{equation}
-\max(\widehat R)=1.093,\qquad \min(N_{\rm eff})\simeq 36,
+\max(\widehat R-1)=6.6\times10^{-3},\qquad \min(N_{\rm eff})\simeq 507,
 \end{equation}
 with chain acceptance fractions stored in \texttt{dvch\_mcmc\_acceptance.csv}.
-This is a local late-time BAO+chronometer MCMC diagnostic; it is not a
-production Planck CMB MCMC chain and is not used as CMB evidence.
+The same run gives the best-fit values
+$\Omega_{m0}=0.34473$, $H_0=70.0183\,{\rm km\,s^{-1}\,Mpc^{-1}}$,
+$n_{\rm DVCH}=0.10137$, and $\chi^2_{\rm DVCH}=60.2089$, compared with the
+reference $\Lambda$CDM fit
+$\Omega_{m0}=0.30863$, $H_0=66.9671\,{\rm km\,s^{-1}\,Mpc^{-1}}$,
+and $\chi^2_{\Lambda{\rm CDM}}=85.7480$, with
+$\Delta\chi^2=-25.54$ in favor of DVCH for this late-time data combination.
+This is still a local late-time diagnostic and not a production Planck CMB
+chain.
 
 \begin{center}
 \refstepcounter{figure}\label{fig:dvch_mcmc_convergence}
 \includegraphics[width=0.96\linewidth]{figures/dvch_mcmc_convergence.png}
 \begin{minipage}{0.96\linewidth}\footnotesize
-\textbf{Figure~\thefigure.} Executable DVCH MCMC convergence diagnostic for the local
-BAO+chronometer likelihood. The dashed line marks burn-in. The displayed chains
+\textbf{Figure~\thefigure.} Executable DVCH MCMC convergence diagnostic for the
+local DESI + SDSS DR12 + 6dF BAO + chronometer + $H_0$ late-time likelihood. The displayed chains
 are generated by \texttt{dvch\_mcmc\_convergence.py} and summarized by
 \texttt{dvch\_mcmc\_convergence\_summary.csv}. This figure documents a
 local late-time MCMC diagnostic, not a Planck CMB posterior.
 \end{minipage}
 \end{center}
 
-The numerical summary currently available in the analysis archive is therefore the late-time DVCH diagnostic set shown in
-Table~\ref{tab:final_dvch_posterior}. It combines the public-data
-Pantheon$+$+DESI-BAO+chronometer best fit with the low-redshift growth
-diagnostic already tabulated in the package. The curvature regulator was held
-fixed in this run, so the quoted $\beta$ entry is a fiducial value rather than
-a marginalized constraint. A publication-grade four-parameter posterior for
-$(H_0,S_8,n,\beta)$ is reserved for a separate Planck-level CAMB/CLASS analysis
+The stronger intermediate validation in the archive is supplied by
+\texttt{dvch\_intermediate\_validation.py}. This script augments the same
+low-redshift likelihood with the full Pantheon$+$ covariance release, keeping
+the economical three-parameter chain
+$\{\Omega_{m0},H_0,n_{\rm DVCH}\}$ at fixed $\beta=10^{-4}$ and adding a
+one-dimensional profile scan over $10^{-6}\le\beta\le10^{-2}$. The executable
+outputs are written to \texttt{dvch\_intermediate\_validation\_summary.csv},
+\texttt{dvch\_intermediate\_beta\_scan.csv},
+\texttt{dvch\_intermediate\_chains.csv}, and
+\texttt{dvch\_intermediate\_acceptance.csv}. For the archived run with
+$1588$ Pantheon$+$ supernovae, the convergence diagnostics are
+\begin{equation}
+\max(\widehat R-1)=8.4\times10^{-3},\qquad \min(N_{\rm eff})\simeq 255,
+\end{equation}
+and the best-fit late-time parameters are
+$\Omega_{m0}=0.35361$, $H_0=70.1986\,{\rm km\,s^{-1}\,Mpc^{-1}}$,
+$n_{\rm DVCH}=0.10940$, with
+$\chi^2_{\rm DVCH}=1493.7561$ compared with
+$\chi^2_{\Lambda{\rm CDM}}=1522.2520$, i.e.
+$\Delta\chi^2=-28.50$ in favor of DVCH. The $\beta$ profile is shallow: the
+minimum over the tested range occurs at $\beta=10^{-2}$ but improves the fit by
+only $\Delta\chi^2\simeq-0.11$ relative to the fixed-$\beta=10^{-4}$ run, so
+the present late-time data do not yet constrain the regulator strongly.
+
+\begin{center}
+\refstepcounter{figure}\label{fig:dvch_intermediate_validation}
+\includegraphics[width=0.96\linewidth]{figures/dvch_intermediate_validation.png}
+\begin{minipage}{0.96\linewidth}\footnotesize
+\textbf{Figure~\thefigure.} Strong-intermediate DVCH late-time diagnostic
+including DESI 2024 BAO, SDSS DR12 BAO, 6dF BAO, Pantheon$+$, cosmic
+chronometers, and a local $H_0$ prior. The figure, generated by
+\texttt{dvch\_intermediate\_validation.py}, displays the converged chains,
+running $\widehat R-1$ histories, and the shallow one-dimensional
+$\beta$-profile scan. It is an executable public-data late-time validation, not
+a final Planck CMB posterior.
+\end{minipage}
+\end{center}
+
+The strongest numerical summary currently available in the analysis archive is
+therefore the strong-intermediate late-time DVCH diagnostic set shown in
+Table~\ref{tab:final_dvch_posterior}. The curvature regulator remains fixed in
+the MCMC stage, so the quoted $\beta$ entry is a fiducial working value rather
+than a marginalized constraint. A publication-grade four-parameter posterior for
+$(H_0,S_8,n_{\rm DVCH},\beta)$ is reserved for a separate Planck-level CAMB/CLASS analysis
 described below.
 
 \begin{center}
@@ -1558,26 +1623,70 @@ they should not be reinterpreted as a completed Planck CMB posterior.
 \toprule
 Quantity & Value & Status \\
 \midrule
-$H_0$ & $69.03~\mathrm{km\,s^{-1}\,Mpc^{-1}}$ & late-time best fit \\
-$S_8$ & $0.689$ & low-$z$ growth diagnostic \\
-$n$ & $0.0926$ & late-time best fit \\
-$\beta$ & $1.0\times 10^{-4}$ & fixed fiducial regulator \\
+$\Omega_{m0}$ & $0.3536$ & Pantheon$+$ + BAO + CC + $H_0$ best fit \\
+$H_0$ & $70.20~\mathrm{km\,s^{-1}\,Mpc^{-1}}$ & Pantheon$+$ + BAO + CC + $H_0$ best fit \\
+$n_{\rm DVCH}$ & $0.1094$ & Pantheon$+$ + BAO + CC + $H_0$ best fit \\
+$\beta$ & $1.0\times 10^{-4}$ & fixed fiducial regulator in MCMC \\
+$\Delta\chi^2$ & $-28.50$ & DVCH relative to $\Lambda$CDM \\
+$\max(\widehat R-1)$ & $8.39\times10^{-3}$ & converged four-chain diagnostic \\
 \bottomrule
 \end{tabular}
 \end{minipage}
 \end{center}
 
-For diagnostic, the archive also includes a full intended Planck-2018
-Cobaya configuration, \texttt{dvch\_planck2018\_full.yaml}, a local
-environment checker, \texttt{dvch\_planck\_preflight.py}, and the DVCH
-Boltzmann source module \texttt{dvch\_boltzmann\_backend.py}, and the
-executable local modified linear solver
+\begin{center}
+\refstepcounter{table}\label{tab:dvch_reproducibility}
+\begin{minipage}{0.98\linewidth}
+\centering
+\footnotesize
+\textbf{Table~\thetable. Reproducibility summary for the executed and prepared DVCH analysis layers.}
+\begin{tabular}{p{0.26\linewidth}p{0.37\linewidth}p{0.22\linewidth}p{0.09\linewidth}}
+\toprule
+Asset & Data and parameter block & Convergence / runtime & Status \\
+\midrule
+\texttt{dvch\_mcmc\_convergence.py} &
+DESI 2024 BAO + SDSS DR12 BAO + 6dF + CC + SH0ES prior; sampled
+$\{\Omega_{m0},H_0,n_{\rm DVCH}\}$ with fixed $\beta=10^{-4}$ &
+$\max(\widehat R-1)=6.6\times10^{-3}$; $t_{\rm run}=423.8\,{\rm s}$ &
+Executed \\
+\texttt{dvch\_intermediate\_validation.py} &
+DESI 2024 BAO + SDSS DR12 BAO + 6dF + Pantheon$+$ ($1588$ SNe) + CC +
+SH0ES prior; same sampled block with a separate $\beta$ profile scan over
+$10^{-6}\le\beta\le10^{-2}$ &
+$\max(\widehat R-1)=8.4\times10^{-3}$; $t_{\rm run}=504.7\,{\rm s}$ &
+Executed \\
+\texttt{dvch\_full\_pipeline/} &
+Prepared full Planck 2018 + Pantheon$+$ + BAO Cobaya/\texttt{classy}
+configuration; production block
+$\{\omega_b,\omega_{\rm cdm},H_0,A_s,n_s,\tau_{\rm reio},n_{\rm DVCH},\beta\}$ &
+target $R-1<0.02$; no heavy chain run &
+Prepared \\
+\bottomrule
+\end{tabular}
+\end{minipage}
+\end{center}
+
+This separation between executed late-time chains and the prepared full CMB
+stack is intentional: only completed runs are quoted as numerical evidence,
+while the Planck-level pipeline is reported as a reproducibility-ready
+external-run target.
+
+For diagnostic, the archive also includes the Cobaya launcher
+\texttt{dvch\_cmb\_class\_camb\_mcmc.py}, the background helper
+\texttt{dvch\_theory.py}, the exported configuration
+\texttt{dvch\_cobaya.yaml}, and the executable local modified linear solver
 \texttt{dvch\_modified\_boltzmann\_solver.py}. These files specify the exact
-likelihood blocks targeted for the external run---low-$\ell$
-TT, low-$\ell$ EE, high-$\ell$ Plik TTTEEE, Planck lensing, Pantheon$+$, and
-DESI BAO---and provide both a background/interacting-source table required by a patched CAMB
-or CLASS implementation and a self-contained modified linear matter-perturbation
-solver. They are still deliberately presented as
+likelihood blocks targeted for the external run---\texttt{planck\_2018\_highl\_plik.TTTEEE},
+\texttt{planck\_2018\_lowl.TT\_clik},
+\texttt{planck\_2018\_lowl.EE\_clik},
+\texttt{planck\_2018\_lensing.clik},
+\texttt{sn.pantheonplus},
+\texttt{bao.sixdf\_2011\_bao},
+\texttt{bao.sdss\_dr7\_mgs},
+\texttt{bao.sdss\_dr12\_consensus\_bao}, and
+\texttt{bao.desi\_2024\_bao\_all}---and provide both a background
+consistency check and the interface metadata required by a patched CLASS
+implementation. They are still deliberately presented as
 a benchmark-interface specification rather than as completed CMB evidence. Planck likelihood values are therefore taken only from the published Planck literature in this article.
 
 % ==============================================================
@@ -1618,8 +1727,10 @@ We emphasize that, although the present work establishes the background
 dynamics and the sub-horizon $f\sigma_8$ growth framework, the supplied
 \texttt{dvch\_modified\_boltzmann\_solver.py} executes a modified linear
 Boltzmann diagnostic implementation for the DVCH background and matter perturbations, while
-\texttt{dvch\_boltzmann\_backend.py} supplies the source-table interface for a future
-compiled CAMB/CLASS fork. Here $\delta Q$ is specified at linear order through the
+\texttt{dvch\_cmb\_class\_camb\_mcmc.py} exports the Cobaya/\texttt{classy}
+configuration and \texttt{dvch\_theory.py} supplies the exact background
+closure and source-term definitions expected by a future patched CLASS fork.
+Here $\delta Q$ is specified at linear order through the
 Taylor expansion in Eq.~\eqref{eq:deltaQ_taylor}, with the sub-horizon
 reduction \eqref{eq:deltaQ_subh} used for growth calculations. Following the
 effective macroscopic-closure approach, we adopt $c_s^2 = 1$ for the vacuum
@@ -1635,6 +1746,17 @@ Sec.~\ref{subsec:dvch_precision_roadmap} specifies the required next upgrades:
 full Planck+late-time likelihoods, controlled sign-switching and nonlinear
 DVCH subfamilies, perturbative stability gates, and Bayesian model comparison
 using the joint $H_0$--$S_8$ target rather than either tension in isolation.
+
+At the same time, the present archive now contains a genuinely executable
+public-data late-time joint test. The strongest completed run combines DESI
+2024 BAO, SDSS DR12 BAO, 6dF BAO, Pantheon$+$, cosmic chronometers, and a local
+$H_0$ prior, returning
+$\Omega_{m0}=0.3536$, $H_0=70.20\,{\rm km\,s^{-1}\,Mpc^{-1}}$,
+$n_{\rm DVCH}=0.1094$, and $\Delta\chi^2=-28.50$ relative to $\Lambda$CDM,
+with $\max(\widehat R-1)=8.39\times10^{-3}$. The accompanying fixed-$\beta$
+profile scan is nearly flat across $10^{-6}\le\beta\le10^{-2}$, indicating
+that current late-time data support the decaying-vacuum branch but do not yet
+determine the regulator scale with precision.
 
 Regarding the final-state physics, the Minkowski attractor implies a late-time
 depletion of both effective vacuum and matter densities, in contrast with the
@@ -1658,11 +1780,18 @@ figures/workflow, and wrote and approved the final manuscript.
 
 \textbf{Data Availability}\quad The datasets referenced in this work are
 publicly available from the corresponding survey collaborations (Planck,
-Pantheon$+$, DESI BAO/RSD, and cosmic chronometers).
+Pantheon$+$, DESI BAO/RSD, cosmic chronometers, and SH0ES local-$H_0$
+calibration). For reproducibility of the local late-time validation, the
+compact BAO inputs used by the executable diagnostics are included under
+\texttt{data/bao/}, whereas the full Pantheon$+$ covariance release is read
+from the public survey archive and is not vendored here because of file size.
 
 \textbf{Code Availability}\quad The supplementary archive accompanying this manuscript contains the files used for the present analysis. The archive contains the
-self-contained files \texttt{DVCH\_easy\_colab.ipynb},
-\texttt{dvch\_colab\_simple.py}, \texttt{dvch\_background\_table.csv}, \texttt{dvch\_execution\_validation\_summary.csv}, the
+self-contained background script
+\texttt{dvch\_colab\_simple.py}, the DVCH helper module
+\texttt{dvch\_theory.py}, the Cobaya launcher
+\texttt{dvch\_cmb\_class\_camb\_mcmc.py}, the exported configuration
+\texttt{dvch\_cobaya.yaml}, \texttt{dvch\_background\_table.csv}, \texttt{dvch\_execution\_validation\_summary.csv}, the
 figures in \texttt{figures/}, including \texttt{dvch\_results\_with\_numbers.png},
 \texttt{dvch\_sigma8\_global\_comparison.png}, and
 \texttt{dvch\_realdata\_diagnostics.png}, and
@@ -1673,11 +1802,25 @@ figures in \texttt{figures/}, including \texttt{dvch\_results\_with\_numbers.png
 \texttt{dvch\_sigma8\_s8\_summary.csv}, the exploratory public-data joint-fit
 diagnostic implementation \texttt{dvch\_joint\_realdata\_fit.py} with summary
 \texttt{dvch\_joint\_realdata\_fit\_summary.csv}, and the advanced Cobaya
-diagnostic implementation \texttt{dvch\_theory.py}+\texttt{dvch\_cobaya.yaml}, together
-with the Planck preflight target \texttt{dvch\_planck2018\_full.yaml},
-checker \texttt{dvch\_planck\_preflight.py}, Boltzmann-source module
-\texttt{dvch\_boltzmann\_backend.py}, and integration notes
-\texttt{dvch\_class\_integration\_notes.md}, the relativistic perturbation preflight/status script
+pipeline-status outputs
+\texttt{dvch\_cmb\_class\_camb\_mcmc\_status.csv} and
+\texttt{figures/dvch\_cmb\_class\_camb\_mcmc\_status.png}, the local MCMC convergence
+script \texttt{dvch\_mcmc\_convergence.py} with
+\texttt{dvch\_mcmc\_convergence\_summary.csv} and
+\texttt{dvch\_mcmc\_acceptance.csv}, the strong-intermediate late-time validation
+script \texttt{dvch\_intermediate\_validation.py} with
+\texttt{dvch\_intermediate\_validation\_summary.csv},
+\texttt{dvch\_intermediate\_beta\_scan.csv},
+\texttt{dvch\_intermediate\_acceptance.csv},
+\texttt{dvch\_intermediate\_chains.csv}; the dedicated separate production
+folder \texttt{dvch\_full\_pipeline/}, containing the preparatory launcher
+\texttt{prepare\_bundle.py}, the future heavy-run entry point
+\texttt{run\_full\_pipeline.py}, the exported full Cobaya configuration
+\texttt{dvch\_full\_cobaya.yaml}, the runtime manifest
+\texttt{dvch\_full\_runtime\_manifest.json}, and the bundle-local readiness
+outputs \texttt{status/dvch\_full\_pipeline\_status.csv} and
+\texttt{status/dvch\_full\_pipeline\_status.png}; and
+\texttt{figures/dvch\_intermediate\_validation.png}, the relativistic perturbation preflight/status script
 \texttt{dvch\_relativistic\_perturbation\_validation.py} with JSON/CSV/PNG
 status outputs, the executable modified linear solver
 \texttt{dvch\_modified\_boltzmann\_solver.py}, and its outputs
@@ -1690,8 +1833,13 @@ status outputs, the executable modified linear solver
 \textbf{External Source Notes}\quad The observational datasets discussed in this
 work are public products of the corresponding survey collaborations, notably
 DESI DR1 BAO \cite{Adame:2024ywp}, Pantheon$+$ supernova distances
-\cite{Brout2022}, cosmic chronometers \cite{Moresco:2016mzx}, Planck 2018 cosmological parameters and likelihoods \cite{Aghanim:2018eyx,Planck:2019nip}, CLASS/CAMB \cite{Blas:2011rf,Lewis:1999bs}, Cobaya/GetDist \cite{Torrado:2020dgo,Lewis:2019xzd}, information criteria \cite{Akaike:1974,Schwarz:1978}, Bayesian evidence conventions \cite{Jeffreys:1961}, and the late-time
-$H_0$ measurements cited in the Introduction.
+\cite{Brout2022}, cosmic chronometers \cite{Moresco:2016mzx}, SH0ES local
+$H_0$ calibration \cite{Riess:2021jrx}, Planck 2018 cosmological parameters
+and likelihoods \cite{Aghanim:2018eyx,Planck:2019nip}, CLASS/CAMB
+\cite{Blas:2011rf,Lewis:1999bs}, Cobaya/GetDist
+\cite{Torrado:2020dgo,Lewis:2019xzd}, information criteria
+\cite{Akaike:1974,Schwarz:1978}, and Bayesian evidence conventions
+\cite{Jeffreys:1961}.
 
 % ==============================================================
 \ifsnclass
@@ -1833,6 +1981,11 @@ wrapper,
 \begin{equation}
 \ln {\cal L}_{\rm Planck}=\ln {\cal L}_{\rm clik}\left(C_\ell^{TT},C_\ell^{TE},C_\ell^{EE},C_L^{\phi\phi},\theta_{\rm nuis}^{\rm Planck}\right).
 \end{equation}
+In the present Cobaya implementation these blocks are called via
+\texttt{planck\_2018\_highl\_plik.TTTEEE},
+\texttt{planck\_2018\_lowl.TT\_clik},
+\texttt{planck\_2018\_lowl.EE\_clik}, and
+\texttt{planck\_2018\_lensing.clik}.
 
 For BAO, a standard compressed compilation may include 6dFGS \cite{Beutler:2011hx}, SDSS MGS \cite{Ross:2014qpa}, BOSS
 DR12 consensus \cite{Alam:2016hwk}, and eBOSS DR16 LRG/QSO/Ly$\alpha$ measurements \cite{Alam:2020sor}. The observable
@@ -1851,6 +2004,11 @@ For a fixed published covariance $C_{\rm BAO}$,
 \ln {\cal L}_{\rm BAO}=-\frac{1}{2}\chi^2_{\rm BAO},
 \end{equation}
 with $\Delta_{\rm BAO}=d_{\rm BAO}^{\rm obs}-d_{\rm BAO}^{\rm th}(\theta)$.
+The baseline BAO block used by the launcher calls
+\texttt{bao.sixdf\_2011\_bao},
+\texttt{bao.sdss\_dr7\_mgs},
+\texttt{bao.sdss\_dr12\_consensus\_bao}, and
+\texttt{bao.desi\_2024\_bao\_all}.
 
 For SNe Ia, a Pantheon/Pantheon+-type likelihood \cite{Brout2022} uses the distance-modulus
 vector and the full statistical-plus-systematic covariance matrix,
@@ -1863,6 +2021,7 @@ constant offset over which the likelihood is marginalized. The Gaussian form is
 \chi^2_{\rm SNe}=\Delta_{\rm SNe}^{T}C_{\rm SNe}^{-1}\Delta_{\rm SNe},\qquad
 \ln {\cal L}_{\rm SNe}=-\frac{1}{2}\chi^2_{\rm SNe}.
 \end{equation}
+The corresponding Cobaya module is \texttt{sn.pantheonplus}.
 
 For RSD, an initial robust implementation uses compressed $f\sigma_8(z)$ points
 with their covariance matrix. The theoretical prediction is
@@ -1919,7 +2078,8 @@ tension.
 Cobaya with CLASS is the recommended production sampler \cite{Torrado:2020dgo,Blas:2011rf}, because it provides a
 standard Planck interface, automatic nuisance handling, adaptive MCMC, and
 GetDist-compatible chains \cite{Lewis:2019xzd}. A typical production run uses four to eight chains,
-discards burn-in, and requires $\hat R-1<0.01$ for final constraints; values
+discards burn-in, and requires $\hat R-1<0.02$ for baseline convergence; values
+below $0.01$ may be reserved for final presentation-quality chains, while values
 near $0.03$ should be treated as exploratory. A compact pseudocode description
 is:
 \begin{enumerate}
@@ -1994,11 +2154,13 @@ before any Planck+BAO+SNe+RSD posterior is interpreted.
 \label{subsec:requested_full_pipeline_execution}
 
 The requested autonomous execution was attempted locally only as a preflight
-and reproducibility check. The workspace contains the DVCH Planck YAML target
-and the DVCH Boltzmann source-table interface, but it does not contain the
-external runtime components needed for a real Planck posterior:
-\texttt{cobaya}, \texttt{classy} or \texttt{camb}, the Planck \texttt{clik}
-likelihood module, \texttt{cobaya-run}, and a local Planck data directory.
+and reproducibility check. The workspace contains the DVCH Planck YAML target,
+the DVCH Boltzmann source-table interface, and working
+\texttt{cobaya}/\texttt{getdist} Python installations, but it does not contain
+the external runtime components needed for a real Planck posterior: a patched
+DVCH-aware \texttt{classy}/CLASS or CAMB backend, the Planck \texttt{clik}
+likelihood library and data packages, and a validated Cobaya packages
+directory for the full Planck+Pantheon$+$+BAO stack.
 Consequently no publication-grade Planck TT/TE/EE+low-$\ell$+lensing chain was
 executed, no Gelman--Rubin convergence is claimed, and no Bayesian evidence or
 posterior constraint is quoted from the local run.
