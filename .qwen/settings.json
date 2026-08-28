@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Agent(Explore)",
+      "Bash(python *)",
+      "Bash(pip install *)",
+      "Bash(dir *)",
+      "Bash(xelatex *)",
+      "Bash(bibtex *)"
+    ]
+  },
+  "$version": 4
+}

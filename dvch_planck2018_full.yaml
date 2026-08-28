@@ -1,0 +1,123 @@
+# DVCH Planck 2018 full Cobaya configuration
+# This file is a benchmark-interface specification for an external Cobaya run.
+# It does NOT replace a completed Planck CMB posterior; it defines the
+# likelihood blocks, parameter space, and sampler settings that a production
+# run would need once the full CLASS/CAMB--Planck stack is available.
+#
+# Usage:
+#   cobaya-run dvch_planck2018_full.yaml
+#
+# Required external components:
+#   - cobaya (with mpi4py for parallel chains)
+#   - classy or camb (patched with DVCH source-table module)
+#   - Planck 2018 likelihood (clik + low-ell + lensing)
+#   - Planck 2018 data directory (local path)
+#
+# For the scope of the present diagnostic archive, this file serves as the
+# protocol target described in DVCH.tex Sec. 6.4.2.
+
+# --- Theory block ---
+theory:
+  classy:
+    extra_args:
+      DVCH_flag: true       # enables DVCH source-table interface
+      DVCH_n: 0.09          # fiducial n
+      DVCH_beta: 1.0e-4     # fiducial beta
+
+# --- Likelihood blocks ---
+likelihood:
+  planck_2018_lowl.TT:
+  planck_2018_lowl.EE:
+  planck_2018_highl_plik.TTTEEE:
+  planck_2018_lensing.clik:
+
+  pantheon:
+    dataset_file: Pantheon+SH0ES.dat
+
+  bao.desi_2024:
+    observables:
+      - DM_over_rd
+      - DH_over_rd
+      - DV_over_rd
+
+  # Optional: cosmic chronometers
+  # cosmic_chronometers:
+  #   dataset_file: CC_Moresco2016.dat
+
+  # Optional: RSD f*sigma8
+  # rsd:
+  #   dataset_file: fsigma8_compilation.dat
+
+# --- Parameter space ---
+params:
+  # Cosmological
+  cosmomc_theta:
+    prior: {min: 0.5, max: 10}
+    ref: {dist: norm, loc: 1.041, scale: 0.001}
+    latex: 100\theta_\mathrm{MC}
+  Omega_b_h2:
+    prior: {min: 0.005, max: 0.1}
+    ref: {dist: norm, loc: 0.0223, scale: 0.0005}
+    latex: \Omega_b h^2
+  Omega_cdm_h2:
+    prior: {min: 0.05, max: 0.99}
+    ref: {dist: norm, loc: 0.12, scale: 0.01}
+    latex: \Omega_c h^2
+  tau_reio:
+    prior: {min: 0.01, max: 0.8}
+    ref: {dist: norm, loc: 0.054, scale: 0.01}
+    latex: \tau_\mathrm{reio}
+  n_s:
+    prior: {min: 0.8, max: 1.2}
+    ref: {dist: norm, loc: 0.965, scale: 0.01}
+    latex: n_s
+  ln10_10_A_s:
+    prior: {min: 2.0, max: 4.0}
+    ref: {dist: norm, loc: 3.044, scale: 0.02}
+    latex: \ln(10^{10} A_s)
+
+  # DVCH interacting-vacuum parameters
+  DVCH_n:
+    prior: {min: 0.0, max: 1.0}
+    ref: {dist: norm, loc: 0.09, scale: 0.05}
+    latex: n
+  DVCH_alpha:
+    prior: {min: 0.0, max: 1.0}
+    ref: {dist: norm, loc: 0.01, scale: 0.01}
+    latex: \alpha
+    # alpha = (M_pl / M_DVCH)^2, beta = alpha * (H0/M_pl)^2
+
+  # Nuisance parameters
+  A_planck:
+    prior: {min: 0, max: 10}
+    ref: 1
+    latex: A_\mathrm{Planck}
+  M:
+    prior: {min: -30, max: -10}
+    ref: -19.4
+    latex: M
+
+# --- Sampler ---
+sampler:
+  mcmc:
+    max_samples: 1e6
+    Rminus1_stop: 0.01
+    Rminus1_cl_stop: 0.01
+    learn_proposal: true
+    learn_proposal_Rminus1_max: 30.0
+    drag: true
+    oversampling_power: 0.4
+    blocking:
+      - -1
+      - -1
+      - -1
+      - -1
+      - -1
+      - -1
+      - -1
+      - -1
+      - -1
+      - -1
+
+# --- Output ---
+output: dvch_planck2018_chains

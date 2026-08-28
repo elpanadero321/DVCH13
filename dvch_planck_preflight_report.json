@@ -1,0 +1,22 @@
+{
+  "status": {
+    "numpy": "OK",
+    "scipy": "OK",
+    "matplotlib": "OK",
+    "pandas": "OK",
+    "emcee": "OK",
+    "corner": "OK",
+    "getdist": "OK",
+    "cobaya": "OK",
+    "classy (CLASS)": "MISSING",
+    "camb (CAMB)": "MISSING",
+    "clik": "MISSING",
+    "plancklens": "MISSING",
+    "mpi4py": "OK",
+    "dvch_planck2018_full.yaml": "OK",
+    "dvch_boltzmann_backend.py": "OK",
+    "dvch_mcmc_chains_full.csv": "MISSING",
+    "dvch_full_mcmc_pipeline.py": "OK"
+  },
+  "timestamp": "2026-08-27T11:56:06.291682"
+}

@@ -1,0 +1,27 @@
+{
+  "setup": {
+    "wavelength_m": 6.328e-07,
+    "slit_separation_m": 0.00025,
+    "slit_width_m": 5e-05,
+    "screen_distance_m": 1.0,
+    "wave_number_k_1_per_m": 9929180.321080256,
+    "peak_counts_I0": 10000.0,
+    "rng_seed": 20260827,
+    "n_screen_points": 401
+  },
+  "fit": {
+    "beta_eff_best_m2": 9.999338930386483e-19,
+    "suppression_amplitude_S": 0.999901427613019,
+    "chi2_QM": 425.7617362057978,
+    "chi2_DVCH": 424.8474238474579,
+    "chi2_red_QM": 1.0644043405144945,
+    "chi2_red_DVCH": 1.0621185596186447,
+    "delta_chi2": -0.9143123583398847,
+    "dof": 400,
+    "sqrt_2dof": 28.284271247461902
+  },
+  "conclusion": {
+    "congruent": true,
+    "verdict": "DVCH is statistically indistinguishable from standard QM at the double-slit laboratory scale. For a monochromatic source S(k) is a single constant across the screen, so beta_eff is degenerate with the overall flux normalization and is not constrained by the pattern shape; the profile chi^2 is flat over the explored range (best fit at the search boundary). This confirms the required laboratory correspondence limit of the cosmological DVCH closure."
+  }
+}
