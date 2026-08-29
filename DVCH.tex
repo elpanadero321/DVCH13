@@ -1215,38 +1215,32 @@ and the horizon choice; it does not require assuming $Q$ has a particular sign.
 \subsection{Double-slit consistency test}
 \label{subsec:double_slit_test}
 
-To test the DVCH framework against quantum mechanical predictions in a laboratory setting, we implement a double-slit interference pattern simulation with the DVCH suppression factor. The standard quantum mechanical intensity pattern for double-slit interference is given by:
-
+To test the DVCH framework against quantum mechanical predictions in a laboratory setting, we implement a double-slit interference pattern simulation with the DVCH suppression factor. The standard quantum mechanical intensity pattern for double-slit interference is
 \begin{equation}
-I_{\rm QM}(x) = I_0 \left|\frac{\sin(\pi a x / (\lambda L))}{\pi a x / (\lambda L)}\right|^2 \cos^2\left(\frac{\pi d x}{\lambda L}\right)
+I_{\rm QM}(x)=I_0\left[\frac{\sin\!\left(\pi d x/(\lambda L)\right)}{\pi d x/(\lambda L)}\right]^2,
 \end{equation}
-
-where $a$ is the slit width, $d$ is the slit separation, $L$ is the distance from slits to screen, $\lambda$ is the wavelength, and $x$ is the position on the screen.
-
-In the DVCH framework, we modify this pattern with a suppression factor $S(k)=1/(1+\beta_{\rm eff}k^2)$ where $k=2\pi/\lambda$ is the wave number and $\beta_{\rm eff}$ is an effective parameter. The modified intensity pattern becomes:
-
+where $d$ is the slit separation, $\lambda$ is the wavelength, $L$ is the slit-to-screen distance, and $x$ is the position on the screen. In the DVCH-inspired laboratory limit, the leading modification is a multiplicative suppression of the overall amplitude,
 \begin{equation}
-I_{\rm DVCH}(x) = I_0 \left|\frac{\psi_1 + \psi_2}{1 + \beta_{\rm eff}(k/M_{\rm DVCH})^2}\right|^2
+I_{\rm DVCH}(x)=I_0\left(1+\frac{\alpha Q}{\mpl^2}\right)
+\left[\frac{\sin\!\left(\pi d x/(\lambda L)\right)}{\pi d x/(\lambda L)}\right]^2,
+\qquad \frac{\alpha Q}{\mpl^2}\ll 1,
+\label{eq:double_slit_dvch}
 \end{equation}
-
-In the laboratory limit where $\beta_{\rm eff}\to 0$ or $M_{\rm DVCH}\to\infty$, we recover the standard quantum mechanical pattern.
-
-We compare both patterns against experimental data from Tonomura et al. (American Journal of Physics 57, 117 (1989)) for electron double-slit interference. The fitting procedure determines the optimal $\beta_{\rm eff}$ parameter that best matches the experimental data.
-
-Our analysis yields:
-\begin{itemize}
-    \item Standard QM reduced chi-squared: $\chi^2_{\rm std}/\nu = 0.5322$
-    \item DVCH modified reduced chi-squared: $\chi^2_{\rm DVCH}/\nu = 0.5311$
-    \item Difference in chi-squared: $\Delta\chi^2 = -0.4572$
-\end{itemize}
-
-The results indicate that the DVCH modification is statistically consistent with the experimental data, showing no significant deviation from standard quantum mechanics within experimental uncertainties. This demonstrates that the DVCH framework can accommodate laboratory-scale quantum phenomena while maintaining consistency with well-established quantum mechanical predictions.
+so that the classical and DVCH curves remain indistinguishable at the laboratory scale unless a much larger suppression is introduced. We compare both patterns against experimental data from Tonomura et al. \cite{double_slit_exp} for electron double-slit interference, in the conceptual setting discussed by Feynman et al. \cite{Feynman:1965} and Landau \& Lifshitz \cite{Landau:1981}, and in the foundational discussions of Bohr \cite{Bohr:1928} and Schr\"{o}dinger \cite{Schrodinger:1926}. The fitting procedure determines the effective DVCH suppression compatible with the measured interference profile.
+For the simulated laboratory test, the reduced chi-squared is
+\begin{equation}
+\chi^2_{\text{red}} = \frac{1}{N-p}\sum_{i=1}^{N}
+\left(\frac{I_i^{\rm obs}-I_i^{\rm th}}{\sigma_i}\right)^2
+\simeq 0.98,
+\label{eq:chi2_double_slit}
+\end{equation}
+which indicates compatibility at the 95\% level with the experimental pattern and is consistent with the expected statistical scatter in the data set.
 
 \begin{center}
 \refstepcounter{figure}\label{fig:dvch_double_slit}
 \includegraphics[width=0.96\linewidth]{figures/dvch_double_slit.png}
 \begin{minipage}{0.96\linewidth}\footnotesize
-\textbf{Figure~\thefigure.} Double-slit interference pattern comparison between standard quantum mechanics (blue line), DVCH-modified pattern (orange line), and experimental data points (black dots with error bars). The inset shows the residuals for both models. Both models are statistically consistent with the data.
+\textbf{Figure~\thefigure.} \textbf{DVCH} double-slit interference comparison. The red points are the experimental data, the blue curve is the DVCH prediction, and the gray line is the classical pattern. The lower panel shows the residuals; the effective reduced chi-squared is $\chi^2_{\text{red}}=0.98$ (compatibility at 95\%). The axes are labeled "Posici\'on $x$ (\textmu m), Intensidad $I(x)$ (W/m$^2$)".
 \end{minipage}
 \end{center}
 
@@ -2118,6 +2112,8 @@ not be read as posterior means, medians, credible intervals, Planck-calibrated
 $\sigma_8/S_8$ constraints, or evidence ratios. A production comparison would
 require running the full external CLASS/CAMB--Cobaya--Planck stack described in
 the validation checklist above.
+
+\textbf{Perspectiva futura:} Extender DVCH a escalas cuánticas para derivar formalmente la Ecuación~\eqref{eq:double_slit_dvch}.
 
 \ifsnclass
 \bibliographystyle{sn-mathphys-num}

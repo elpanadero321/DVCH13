@@ -1,6 +1,6 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (MiKTeX 25.12) (preloaded format=xelatex 2026.8.27)  28 AUG 2026 00:43
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.8.27)  29 AUG 2026 12:54
 entering extended mode
- \write18 enabled.
+ restricted \write18 enabled.
  %&-line parsing enabled.
 **./DVCH.tex
 (DVCH.tex
@@ -23,18 +23,18 @@ LaTeX Info: Redefining \@centercr on input line 356.
 Class revtex4-2 Info: Repairing hyperref-unfriendly LaTeX definition of \mpfoot
 note on input line 492.
 Class revtex4-2 Info: Repairing broken LateX \@sect on input line 814.
-\intertabularlinepenalty=\count271
-\@tbpen=\count272
+\intertabularlinepenalty=\count275
+\@tbpen=\count276
 \@arstrutbox@hline=\box53
 Class revtex4-2 Info: Repairing broken LaTeX \@xbitor on input line 1845.
 Class revtex4-2 Info: Making \typeout \long on input line 2110.
 ltxfront[2022/06/05 4.2f frontmatter package (AO,DPC,MD)]
-\c@affil=\count273
-\c@collab=\count274
+\c@affil=\count277
+\c@collab=\count278
 \absbox=\box54
 ltxgrid[2022/06/05 4.2f page grid package (portions licensed from W. E. Baxter 
 web at superscript.com)]
-\c@linecount=\count275
+\c@linecount=\count279
 \output@latex=\toks17
 \box@size@1=\box55
 \box@size@2=\box56
@@ -45,22 +45,22 @@ web at superscript.com)]
 \column@recovered=\box60
 \pagesofar=\box61
 \footsofar=\box62
-\pagegrid@col=\count276
+\pagegrid@col=\count280
 Class revtex4-2 Info: Overriding \@vspace, \@vspacer, \@no@pgbk, \@newline, and
  \\  on input line 5676.
-\c@part=\count277
-\c@section=\count278
-\c@subsection=\count279
-\c@subsubsection=\count280
-\c@paragraph=\count281
-\c@subparagraph=\count282
+\c@part=\count281
+\c@section=\count282
+\c@subsection=\count283
+\c@subsubsection=\count284
+\c@paragraph=\count285
+\c@subparagraph=\count286
 \abovecaptionskip=\skip49
 \belowcaptionskip=\skip50
-\c@figure=\count283
+\c@figure=\count287
 \fbox@1=\box63
-\c@table=\count284
+\c@table=\count288
 \fbox@2=\box64
-\c@video=\count285
+\c@video=\count289
 \fbox@4=\box65
 \@bibdataout=\write3
 \widetext@top=\box66
@@ -91,7 +91,7 @@ Package: natbib 2010/09/13 8.31b (PWD, AO)
 \bibhang=\skip51
 \bibsep=\skip52
 LaTeX Info: Redefining \cite on input line 694.
-\c@NAT@ctr=\count286
+\c@NAT@ctr=\count290
 )
 Class revtex4-2 Info: Repairing natbib's \BibitemShut on input line 7676.
 
@@ -104,17 +104,9 @@ LaTeX Info: Redefining \REV@mathfrak on input line 128.
 Package: inputenc 2024/02/08 v1.3d Input encoding file
 \inpenc@prehook=\toks19
 \inpenc@posthook=\toks20
-
-
-Package inputenc Warning: inputenc package ignored with utf8 based engines.
-
 ) (D:\miktex\tex/latex/base\fontenc.sty
 Package: fontenc 2025/07/18 v2.1d Standard LaTeX package
-LaTeX Font Info:    Trying to load font information for T1+lmr on input line 11
-6.
- (D:\miktex\tex/latex/lm\t1lmr.fd
-File: t1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-))
+)
 (D:\miktex\tex/latex/lm\lmodern.sty
 Package: lmodern 2015/05/01 v1.6.1 Latin Modern Fonts
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
@@ -171,14 +163,14 @@ Package: amsbsy 1999/11/29 v1.2d Bold Symbols
 (D:\miktex\tex/latex/amsmath\amsopn.sty
 Package: amsopn 2022/04/08 v2.04 operator names
 )
-\inf@bad=\count287
+\inf@bad=\count291
 LaTeX Info: Redefining \frac on input line 233.
-\uproot@=\count288
-\leftroot@=\count289
+\uproot@=\count292
+\leftroot@=\count293
 LaTeX Info: Redefining \overline on input line 398.
 LaTeX Info: Redefining \colon on input line 409.
-\classnum@=\count290
-\DOTSCASE@=\count291
+\classnum@=\count294
+\DOTSCASE@=\count295
 LaTeX Info: Redefining \ldots on input line 495.
 LaTeX Info: Redefining \dots on input line 498.
 LaTeX Info: Redefining \cdots on input line 619.
@@ -191,20 +183,20 @@ LaTeX Info: Redefining \Bigg on input line 724.
 \big@size=\dimen150
 LaTeX Font Info:    Redeclaring font encoding OML on input line 742.
 LaTeX Font Info:    Redeclaring font encoding OMS on input line 743.
-\macc@depth=\count292
+\macc@depth=\count296
 LaTeX Info: Redefining \bmod on input line 904.
 LaTeX Info: Redefining \pmod on input line 909.
 LaTeX Info: Redefining \smash on input line 939.
 LaTeX Info: Redefining \relbar on input line 969.
 LaTeX Info: Redefining \Relbar on input line 970.
-\c@MaxMatrixCols=\count293
+\c@MaxMatrixCols=\count297
 \dotsspace@=\muskip18
-\c@parentequation=\count294
-\dspbrk@lvl=\count295
+\c@parentequation=\count298
+\dspbrk@lvl=\count299
 \tag@help=\toks22
-\row@=\count296
-\column@=\count297
-\maxfields@=\count298
+\row@=\count300
+\column@=\count301
+\maxfields@=\count302
 \andhelp@=\toks23
 \eqnshift@=\dimen151
 \alignsep@=\dimen152
@@ -240,21 +232,21 @@ Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
 \KV@toks@=\toks26
 ) (D:\miktex\tex/latex/tools\calc.sty
 Package: calc 2025/03/01 v4.3b Infix arithmetic (KKT,FJ)
-\calc@Acount=\count299
-\calc@Bcount=\count300
+\calc@Acount=\count303
+\calc@Bcount=\count304
 \calc@Adimen=\dimen157
 \calc@Bdimen=\dimen158
 \calc@Askip=\skip56
 \calc@Bskip=\skip57
 LaTeX Info: Redefining \setlength on input line 86.
 LaTeX Info: Redefining \addtolength on input line 87.
-\calc@Ccount=\count301
+\calc@Ccount=\count305
 \calc@Cskip=\skip58
 )
 (D:\miktex\tex/latex/mathtools\mhsetup.sty
 Package: mhsetup 2021/03/18 v1.4 programming setup (MH)
 )
-\g_MT_multlinerow_int=\count302
+\g_MT_multlinerow_int=\count306
 \l_MT_multwidth_dim=\dimen159
 \origjot=\skip59
 \l_MT_shortvdotswithinadjustabove_dim=\dimen160
@@ -287,10 +279,10 @@ Package: trig 2023/12/02 v1.11 sin cos tan (DPC)
 (D:\miktex\tex/latex/graphics-cfg\graphics.cfg
 File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
-Package graphics Info: Driver file: xetex.def on input line 106.
+Package graphics Info: Driver file: pdftex.def on input line 106.
 
-(D:\miktex\tex/latex/graphics-def\xetex.def
-File: xetex.def 2025/11/01 v5.0p Graphics/color driver for xetex
+(D:\miktex\tex/latex/graphics-def\pdftex.def
+File: pdftex.def 2025/09/29 v1.2d Graphics/color driver for pdftex
 ))
 \Gin@req@height=\dimen167
 \Gin@req@width=\dimen168
@@ -336,35 +328,30 @@ Package: pgfsys 2025-08-29 v3.1.11a (3.1.11a)
 \pgf@yd=\dimen180
 \w@pgf@writea=\write4
 \r@pgf@reada=\read2
-\c@pgf@counta=\count303
-\c@pgf@countb=\count304
-\c@pgf@countc=\count305
-\c@pgf@countd=\count306
+\c@pgf@counta=\count307
+\c@pgf@countb=\count308
+\c@pgf@countc=\count309
+\c@pgf@countd=\count310
 \t@pgf@toka=\toks31
 \t@pgf@tokb=\toks32
 \t@pgf@tokc=\toks33
-\pgf@sys@id@count=\count307
+\pgf@sys@id@count=\count311
 
 (D:\miktex\tex/generic/pgf/systemlayer\pgf.cfg
 File: pgf.cfg 2025-08-29 v3.1.11a (3.1.11a)
 )
-Driver file for pgf: pgfsys-xetex.def
+Driver file for pgf: pgfsys-pdftex.def
 
-(D:\miktex\tex/generic/pgf/systemlayer\pgfsys-xetex.def
-File: pgfsys-xetex.def 2025-08-29 v3.1.11a (3.1.11a)
-
-(D:\miktex\tex/generic/pgf/systemlayer\pgfsys-dvipdfmx.def
-File: pgfsys-dvipdfmx.def 2025-08-29 v3.1.11a (3.1.11a)
+(D:\miktex\tex/generic/pgf/systemlayer\pgfsys-pdftex.def
+File: pgfsys-pdftex.def 2025-08-29 v3.1.11a (3.1.11a)
 
 (D:\miktex\tex/generic/pgf/systemlayer\pgfsys-common-pdf.def
 File: pgfsys-common-pdf.def 2025-08-29 v3.1.11a (3.1.11a)
-)
-\pgfsys@objnum=\count308
 )))
 (D:\miktex\tex/generic/pgf/systemlayer\pgfsyssoftpath.code.tex
 File: pgfsyssoftpath.code.tex 2025-08-29 v3.1.11a (3.1.11a)
-\pgfsyssoftpath@smallbuffer@items=\count309
-\pgfsyssoftpath@bigbuffer@items=\count310
+\pgfsyssoftpath@smallbuffer@items=\count312
+\pgfsyssoftpath@bigbuffer@items=\count313
 )
 (D:\miktex\tex/generic/pgf/systemlayer\pgfsysprotocol.code.tex
 File: pgfsysprotocol.code.tex 2025-08-29 v3.1.11a (3.1.11a)
@@ -375,10 +362,11 @@ Package: xcolor 2024/09/29 v3.02 LaTeX color extensions (UK)
 (D:\miktex\tex/latex/graphics-cfg\color.cfg
 File: color.cfg 2016/01/02 v1.6 sample color configuration
 )
-Package xcolor Info: Driver file: xetex.def on input line 274.
+Package xcolor Info: Driver file: pdftex.def on input line 274.
 
 (D:\miktex\tex/latex/graphics\mathcolor.ltx)
 Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1349.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1353.
 Package xcolor Info: Model `RGB' extended on input line 1365.
 Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1367.
 Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1368.
@@ -394,7 +382,7 @@ Package: pgfcore 2025-08-29 v3.1.11a (3.1.11a)
 (D:\miktex\tex/generic/pgf/math\pgfmathutil.code.tex)
 (D:\miktex\tex/generic/pgf/math\pgfmathparser.code.tex
 \pgfmath@dimen=\dimen181
-\pgfmath@count=\count311
+\pgfmath@count=\count314
 \pgfmath@box=\box72
 \pgfmath@toks=\toks34
 \pgfmath@stack@operand=\toks35
@@ -411,7 +399,7 @@ Package: pgfcore 2025-08-29 v3.1.11a (3.1.11a)
 (D:\miktex\tex/generic/pgf/math\pgfmathfunctions.integerarithmetics.code.tex)
 (D:\miktex\tex/generic/pgf/math\pgfmathcalc.code.tex)
 (D:\miktex\tex/generic/pgf/math\pgfmathfloat.code.tex
-\c@pgfmathroundto@lastzeros=\count312
+\c@pgfmathroundto@lastzeros=\count315
 ))
 (D:\miktex\tex/generic/pgf/math\pgfint.code.tex)
 (D:\miktex\tex/generic/pgf/basiclayer\pgfcorepoints.code.tex
@@ -446,7 +434,7 @@ File: pgfcorescopes.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 \pgfpic=\box73
 \pgf@hbox=\box74
 \pgf@layerbox@main=\box75
-\pgf@picture@serial@count=\count313
+\pgf@picture@serial@count=\count316
 )
 (D:\miktex\tex/generic/pgf/basiclayer\pgfcoregraphicstate.code.tex
 File: pgfcoregraphicstate.code.tex 2025-08-29 v3.1.11a (3.1.11a)
@@ -474,8 +462,8 @@ File: pgfcorearrows.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 (D:\miktex\tex/generic/pgf/basiclayer\pgfcoreshade.code.tex
 File: pgfcoreshade.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 \pgf@max=\dimen261
-\pgf@sys@shading@range@num=\count314
-\pgf@shadingcount=\count315
+\pgf@sys@shading@range@num=\count317
+\pgf@shadingcount=\count318
 )
 (D:\miktex\tex/generic/pgf/basiclayer\pgfcoreimage.code.tex
 File: pgfcoreimage.code.tex 2025-08-29 v3.1.11a (3.1.11a)
@@ -528,7 +516,7 @@ Package: tikz 2025-08-29 v3.1.11a (3.1.11a)
 
 (D:\miktex\tex/generic/pgf/libraries\pgflibraryplothandlers.code.tex
 File: pgflibraryplothandlers.code.tex 2025-08-29 v3.1.11a (3.1.11a)
-\pgf@plot@mark@count=\count316
+\pgf@plot@mark@count=\count319
 \pgfplotmarksize=\dimen266
 )
 \tikz@lastx=\dimen267
@@ -543,18 +531,18 @@ File: pgflibraryplothandlers.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 \tikz@figbox@bg=\box79
 \tikz@tempbox=\box80
 \tikz@tempbox@bg=\box81
-\tikztreelevel=\count317
-\tikznumberofchildren=\count318
-\tikznumberofcurrentchild=\count319
-\tikz@fig@count=\count320
+\tikztreelevel=\count320
+\tikznumberofchildren=\count321
+\tikznumberofcurrentchild=\count322
+\tikz@fig@count=\count323
 
 (D:\miktex\tex/generic/pgf/modules\pgfmodulematrix.code.tex
 File: pgfmodulematrix.code.tex 2025-08-29 v3.1.11a (3.1.11a)
-\pgfmatrixcurrentrow=\count321
-\pgfmatrixcurrentcolumn=\count322
-\pgf@matrix@numberofcolumns=\count323
+\pgfmatrixcurrentrow=\count324
+\pgfmatrixcurrentcolumn=\count325
+\pgf@matrix@numberofcolumns=\count326
 )
-\tikz@expandcount=\count324
+\tikz@expandcount=\count327
 
 (D:\miktex\tex/generic/pgf/frontendlayer/tikz/libraries\tikzlibrarytopaths.code
 .tex
@@ -569,8 +557,8 @@ Package: pgfplots 2021/05/15 v1.18.1 Data Visualization (1.18.1)
 \t@pgfplots@tokb=\toks40
 \t@pgfplots@tokc=\toks41
 \pgfplots@tmpa=\dimen275
-\c@pgfplots@coordindex=\count325
-\c@pgfplots@scanlineindex=\count326
+\c@pgfplots@coordindex=\count328
+\c@pgfplots@scanlineindex=\count329
 
 (D:\miktex\tex/generic/pgfplots/sys\pgfplotssysgeneric.code.tex))
 (D:\miktex\tex/generic/pgfplots/libs\pgfplotslibrary.code.tex)
@@ -586,11 +574,11 @@ n-lists.tex)) (D:\miktex\tex/generic/pgfplots/util\pgfplotsutil.code.tex
 (D:\miktex\tex/generic/pgfplots/liststructure\pgfplotsliststructure.code.tex)
 (D:\miktex\tex/generic/pgfplots/liststructure\pgfplotsliststructureext.code.tex
 ) (D:\miktex\tex/generic/pgfplots/liststructure\pgfplotsarray.code.tex
-\c@pgfplotsarray@tmp=\count327
+\c@pgfplotsarray@tmp=\count330
 )
 (D:\miktex\tex/generic/pgfplots/liststructure\pgfplotsmatrix.code.tex)
 (D:\miktex\tex/generic/pgfplots/numtable\pgfplotstableshared.code.tex
-\c@pgfplotstable@counta=\count328
+\c@pgfplotstable@counta=\count331
 \t@pgfplotstable@a=\toks45
 )
 (D:\miktex\tex/generic/pgfplots/liststructure\pgfplotsdeque.code.tex)
@@ -598,14 +586,10 @@ n-lists.tex)) (D:\miktex\tex/generic/pgfplots/util\pgfplotsutil.code.tex
 (D:\miktex\tex/generic/pgfplots/util\pgfplotsbinary.data.code.tex))
 (D:\miktex\tex/generic/pgfplots/util\pgfplotsutil.verb.code.tex)
 (D:\miktex\tex/generic/pgfplots/libs\pgflibrarypgfplots.surfshading.code.tex
-\c@pgfplotslibrarysurf@no=\count329
+\c@pgfplotslibrarysurf@no=\count332
 
-(D:\miktex\tex/generic/pgfplots/sys\pgflibrarypgfplots.surfshading.pgfsys-xetex
-.def
-(D:\miktex\tex/generic/pgfplots/sys\pgflibrarypgfplots.surfshading.pgfsys-dvipd
-fmx.def
-\c@pgfplotslibrarysurf@streamlen=\count330
-)))) (D:\miktex\tex/generic/pgfplots/util\pgfplotscolormap.code.tex
+(D:\miktex\tex/generic/pgfplots/sys\pgflibrarypgfplots.surfshading.pgfsys-pdfte
+x.def))) (D:\miktex\tex/generic/pgfplots/util\pgfplotscolormap.code.tex
 (D:\miktex\tex/generic/pgfplots/util\pgfplotscolor.code.tex))
 (D:\miktex\tex/generic/pgfplots\pgfplotsstackedplots.code.tex)
 (D:\miktex\tex/generic/pgfplots\pgfplotsplothandlers.code.tex
@@ -624,7 +608,7 @@ code.tex (D:\miktex\tex/generic/pgf/modules\pgfmoduledecorations.code.tex
 \pgfdecoratedinputsegmentcompleteddistance=\dimen278
 \pgfdecoratedinputsegmentremainingdistance=\dimen279
 \pgf@decorate@distancetomove=\dimen280
-\pgf@decorate@repeatstate=\count331
+\pgf@decorate@repeatstate=\count333
 \pgfdecorationsegmentamplitude=\dimen281
 \pgfdecorationsegmentlength=\dimen282
 )
@@ -639,7 +623,7 @@ pathreplacing.code.tex
 (D:\miktex\tex/generic/pgf/libraries/decorations\pgflibrarydecorations.pathrepl
 acing.code.tex))
 (D:\miktex\tex/generic/pgfplots/libs\tikzlibrarypgfplots.contourlua.code.tex)
-\pgfplots@numplots=\count332
+\pgfplots@numplots=\count334
 \pgfplots@xmin@reg=\dimen283
 \pgfplots@xmax@reg=\dimen284
 \pgfplots@ymin@reg=\dimen285
@@ -665,34 +649,34 @@ Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
 \cmidrulesep=\dimen296
 \cmidrulekern=\dimen297
 \defaultaddspace=\dimen298
-\@cmidla=\count333
-\@cmidlb=\count334
+\@cmidla=\count335
+\@cmidlb=\count336
 \@aboverulesep=\dimen299
 \@belowrulesep=\dimen300
-\@thisruleclass=\count335
-\@lastruleclass=\count336
+\@thisruleclass=\count337
+\@lastruleclass=\count338
 \@thisrulewidth=\dimen301
 )
 (D:\miktex\tex/latex/silence\silence.sty
 Package: silence 2012/07/02 v1.5b Selective filtering of warnings and error mes
 sages
-\sl@Save=\count337
-\sl@StateNumber=\count338
-\sl@MessageCount=\count339
-\sl@Casualties=\count340
+\sl@Save=\count339
+\sl@StateNumber=\count340
+\sl@MessageCount=\count341
+\sl@Casualties=\count342
 \sl@Filter=\toks46
 \sl@Message=\toks47
 \sl@UnexpandedMessage=\toks48
 \sl@Mess@ge=\toks49
-\sl@WarningCount=\count341
-\sl@WarningNumber=\count342
-\sl@WarningCasualties=\count343
+\sl@WarningCount=\count343
+\sl@WarningNumber=\count344
+\sl@WarningCasualties=\count345
 \sl@TempBOW=\toks50
 \sl@BankOfWarnings=\toks51
 LaTeX Info: Redefining \GenericWarning on input line 433.
-\sl@ErrorCount=\count344
-\sl@ErrorNumber=\count345
-\sl@ErrorCasualties=\count346
+\sl@ErrorCount=\count346
+\sl@ErrorNumber=\count347
+\sl@ErrorCasualties=\count348
 \sl@TempBOE=\toks52
 \sl@BankOfErrors=\toks53
 LaTeX Info: Redefining \GenericError on input line 601.
@@ -724,7 +708,7 @@ Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
 )
 Package pdftexcmds Info: \pdf@primitive is available.
 Package pdftexcmds Info: \pdf@ifprimitive is available.
-Package pdftexcmds Info: \pdfdraftmode not found.
+Package pdftexcmds Info: \pdfdraftmode found.
 ))
 (D:\miktex\tex/latex/hycolor\hycolor.sty
 Package: hycolor 2020-01-27 v1.10 Color options for hyperref/bookmark (HO)
@@ -741,30 +725,34 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 (C:\Users\danie\AppData\Roaming\MiKTeX\tex/latex/kvoptions\kvoptions.sty
 Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
 ))
-\c@section@level=\count347
+\c@section@level=\count349
 )
 (D:\miktex\tex/latex/etoolbox\etoolbox.sty
 Package: etoolbox 2025/10/02 v2.5m e-TeX tools for LaTeX (JAW)
-\etb@tempcnta=\count348
+\etb@tempcnta=\count350
 )
 (C:\Users\danie\AppData\Roaming\MiKTeX\tex/generic/stringenc\stringenc.sty
 Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO
 )
 )
 \@linkdim=\dimen302
-\Hy@linkcounter=\count349
-\Hy@pagecounter=\count350
+\Hy@linkcounter=\count351
+\Hy@pagecounter=\count352
 
 (D:\miktex\tex/latex/hyperref\pd1enc.def
 File: pd1enc.def 2025-07-12 v7.01o Hyperref: PDFDocEncoding definition (HO)
+Now handling font encoding PD1 ...
+... no UTF-8 mapping file for font encoding PD1
 )
 (C:\Users\danie\AppData\Roaming\MiKTeX\tex/generic/intcalc\intcalc.sty
 Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
 )
-\Hy@SavedSpaceFactor=\count351
+\Hy@SavedSpaceFactor=\count353
 
 (D:\miktex\tex/latex/hyperref\puenc.def
 File: puenc.def 2025-07-12 v7.01o Hyperref: PDF Unicode definition (HO)
+Now handling font encoding PU ...
+... no UTF-8 mapping file for font encoding PU
 )
 Package hyperref Info: Option `colorlinks' set `true' on input line 4066.
 Package hyperref Info: Hyper figures OFF on input line 4195.
@@ -775,7 +763,7 @@ Package hyperref Info: Backreferencing OFF on input line 4215.
 Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
 Package hyperref Info: Bookmarks ON on input line 4462.
 LaTeX Info: Redefining \href on input line 4712.
-\c@Hy@tempcnt=\count352
+\c@Hy@tempcnt=\count354
 LaTeX Info: Redefining \url on input line 4801.
 \XeTeXLinkMargin=\dimen303
 
@@ -786,7 +774,7 @@ Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
 Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
 )
 ))
-\Fld@menulength=\count353
+\Fld@menulength=\count355
 \Field@Width=\dimen304
 \Fld@charsize=\dimen305
 Package hyperref Info: Hyper figures OFF on input line 6078.
@@ -796,16 +784,13 @@ Package hyperref Info: backreferencing OFF on input line 6093.
 Package hyperref Info: Link coloring ON on input line 6096.
 Package hyperref Info: Link coloring with OCG OFF on input line 6103.
 Package hyperref Info: PDF/A mode OFF on input line 6108.
-\Hy@abspage=\count354
-\c@Item=\count355
-\c@Hfootnote=\count356
+\Hy@abspage=\count356
+\c@Item=\count357
+\c@Hfootnote=\count358
 )
-Package hyperref Info: Driver (autodetected): hxetex.
-(D:\miktex\tex/latex/hyperref\hxetex.def
-File: hxetex.def 2025-07-12 v7.01o Hyperref driver for XeTeX
-\pdfm@box=\box83
-\c@Hy@AnnotLevel=\count357
-\HyField@AnnotCount=\count358
+Package hyperref Info: Driver (autodetected): hpdftex.
+(D:\miktex\tex/latex/hyperref\hpdftex.def
+File: hpdftex.def 2025-07-12 v7.01o Hyperref driver for pdfTeX
 \Fld@listcount=\count359
 \c@bookmark@seq@number=\count360
 
@@ -828,12 +813,14 @@ lass! (Proceeding with fingers crossed.) on input line 70.
 Class revtex4-2 Info: cite was not loaded (OK!) on input line 70.
 Class revtex4-2 Info: mcite was not loaded (OK!) on input line 70.
 Class revtex4-2 Info: multicol was not loaded (OK!) on input line 70.
-
-(D:\miktex\tex/latex/l3backend\l3backend-xetex.def
-File: l3backend-xetex.def 2025-10-09 L3 backend support: XeTeX
-\g__graphics_track_int=\count361
-\g__pdfannot_backend_int=\count362
-\g__pdfannot_backend_link_int=\count363
+LaTeX Font Info:    Trying to load font information for T1+lmr on input line 70
+.
+ (D:\miktex\tex/latex/lm\t1lmr.fd
+File: t1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
+(D:\miktex\tex/latex/l3backend\l3backend-pdftex.def
+File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
+\l__color_backend_stack_int=\count361
 ) (DVCH.aux)
 \openout1 = `DVCH.aux'.
 
@@ -847,8 +834,6 @@ LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 70.
 LaTeX Font Info:    ... okay on input line 70.
 LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 70.
 LaTeX Font Info:    ... okay on input line 70.
-LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 70.
-LaTeX Font Info:    ... okay on input line 70.
 LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 70.
 LaTeX Font Info:    ... okay on input line 70.
 LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 70.
@@ -858,6 +843,27 @@ LaTeX Font Info:    ... okay on input line 70.
 LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 70.
 LaTeX Font Info:    ... okay on input line 70.
 
+(D:\miktex\tex/context/base/mkii\supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count362
+\scratchdimen=\dimen306
+\scratchbox=\box83
+\nofMPsegments=\count363
+\nofMParguments=\count364
+\everyMPshowfont=\toks54
+\MPscratchCnt=\count365
+\MPscratchDim=\dimen307
+\MPnumerator=\count366
+\makeMPintoPDFobject=\count367
+\everyMPtoPDFconversion=\toks55
+) (D:\miktex\tex/latex/epstopdf-pkg\epstopdf-base.sty
+Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+85.
+
+(D:\miktex\tex/latex/00miktex\epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
+))
 Package pgfplots notification 'compat/show suggested version=true': document ha
 s been generated with the most recent feature set (\pgfplotsset{compat=1.18}).
 
@@ -919,39 +925,105 @@ LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 1
  (D:\miktex\tex/latex/lm\t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-[1] [2] [3] [4] [5]
-File: figures/dvch_results_with_numbers.png Graphic file (type bmp)
-<figures/dvch_results_with_numbers.png>
-File: figures/dvch_sigma8_global_comparison.png Graphic file (type bmp)
-<figures/dvch_sigma8_global_comparison.png>
-File: figures/dvch_realdata_diagnostics.png Graphic file (type bmp)
-<figures/dvch_realdata_diagnostics.png>
-File: figures/dvch_robustness_scan.png Graphic file (type bmp)
-<figures/dvch_robustness_scan.png>
-File: figures/dvch_late_time_residuals.png Graphic file (type bmp)
-<figures/dvch_late_time_residuals.png>
- [6] [7] [8] [9] [10] [11]
+[1{C:/Users/danie/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{D:/miktex/f
+onts/enc/dvips/lm/lm-ec.enc}{D:/miktex/fonts/enc/dvips/lm/lm-mathsy.enc}{D:/mik
+tex/fonts/enc/dvips/lm/lm-mathit.enc}{D:/miktex/fonts/enc/dvips/lm/lm-rm.enc}]
+[2{D:/miktex/fonts/enc/dvips/lm/lm-mathex.enc}] [3] [4] [5]
+<figures/dvch_results_with_numbers.png, id=381, 950.1096pt x 995.8806pt>
+File: figures/dvch_results_with_numbers.png Graphic file (type png)
+<use figures/dvch_results_with_numbers.png>
+Package pdftex.def Info: figures/dvch_results_with_numbers.png  used on input l
+ine 714.
+(pdftex.def)             Requested size: 499.79782pt x 523.87848pt.
+<figures/dvch_sigma8_global_comparison.png, id=383, 947.2188pt x 787.743pt>
+File: figures/dvch_sigma8_global_comparison.png Graphic file (type png)
+<use figures/dvch_sigma8_global_comparison.png>
+Package pdftex.def Info: figures/dvch_sigma8_global_comparison.png  used on inp
+ut line 728.
+(pdftex.def)             Requested size: 499.79782pt x 415.66273pt.
+<figures/dvch_realdata_diagnostics.png, id=384, 1148.6112pt x 357.4956pt>
+File: figures/dvch_realdata_diagnostics.png Graphic file (type png)
+<use figures/dvch_realdata_diagnostics.png>
+Package pdftex.def Info: figures/dvch_realdata_diagnostics.png  used on input l
+ine 740.
+(pdftex.def)             Requested size: 499.79782pt x 155.55841pt.
+<figures/dvch_robustness_scan.png, id=393, 990.5808pt x 428.3202pt>
+File: figures/dvch_robustness_scan.png Graphic file (type png)
+<use figures/dvch_robustness_scan.png>
+Package pdftex.def Info: figures/dvch_robustness_scan.png  used on input line 7
+72.
+(pdftex.def)             Requested size: 499.79782pt x 216.1072pt.
+<figures/dvch_late_time_residuals.png, id=404, 1148.1294pt x 357.4956pt>
+File: figures/dvch_late_time_residuals.png Graphic file (type png)
+<use figures/dvch_late_time_residuals.png>
+Package pdftex.def Info: figures/dvch_late_time_residuals.png  used on input li
+ne 870.
+(pdftex.def)             Requested size: 499.79782pt x 155.61842pt.
+ [6] [7 <./figures/dvch_results_with_numbers.png>] [8 <./figures/dvch_sigma8_gl
+obal_comparison.png>] [9 <./figures/dvch_realdata_diagnostics.png> <./figures/d
+vch_robustness_scan.png>] [10] [11 <./figures/dvch_late_time_residuals.png>]
+<figures/dvch_relativistic_perturbation_validation_status.png, id=493, 855.195p
+t x 354.123pt>
 File: figures/dvch_relativistic_perturbation_validation_status.png Graphic file
- (type bmp)
-<figures/dvch_relativistic_perturbation_validation_status.png>
- [12]
-File: figures/dvch_double_slit.png Graphic file (type bmp)
-<figures/dvch_double_slit.png>
- [13]
-File: figures/dvch_full_mcmc_corner.png Graphic file (type bmp)
-<figures/dvch_full_mcmc_corner.png>
-File: figures/dvch_full_mcmc_traces.png Graphic file (type bmp)
-<figures/dvch_full_mcmc_traces.png>
- [14] [15]
-File: figures/dvch_modified_boltzmann_solver.png Graphic file (type bmp)
-<figures/dvch_modified_boltzmann_solver.png>
- [16]
-File: figures/dvch_cmb_class_camb_mcmc_status.png Graphic file (type bmp)
-<figures/dvch_cmb_class_camb_mcmc_status.png>
-File: figures/dvch_mcmc_convergence.png Graphic file (type bmp)
-<figures/dvch_mcmc_convergence.png>
- [17]
-[18] [19] [20] [21] (DVCH.bbl [22]) [23] (DVCH.aux)
+ (type png)
+<use figures/dvch_relativistic_perturbation_validation_status.png>
+Package pdftex.def Info: figures/dvch_relativistic_perturbation_validation_stat
+us.png  used on input line 1139.
+(pdftex.def)             Requested size: 236.16165pt x 97.78667pt.
+ [12 <./figures/dvch_relativistic_perturbation_validation_status.png>]
+Overfull \hbox (22.87788pt too wide) detected at line 1228
+[][][]\OML/lmm/m/it/10 I[]\OT1/lmr/m/n/10 (\OML/lmm/m/it/10 x\OT1/lmr/m/n/10 ) 
+= \OML/lmm/m/it/10 I[] [] [][] ;  [] \OMS/lmsy/m/n/10 ^^\ \OT1/lmr/m/n/10 1\OML
+/lmm/m/it/10 ;
+ []
+
+<figures/dvch_double_slit.png, id=514, 867.24pt x 578.16pt>
+File: figures/dvch_double_slit.png Graphic file (type png)
+<use figures/dvch_double_slit.png>
+Package pdftex.def Info: figures/dvch_double_slit.png  used on input line 1241.
+
+(pdftex.def)             Requested size: 236.16165pt x 157.43741pt.
+LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 1
+243.
+(D:\miktex\tex/latex/lm\ts1lmr.fd
+File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+) [13{D:/miktex/fonts/enc/dvips/lm/lm-ts1.enc} <./figures/dvch_double_slit.png>
+]
+<figures/dvch_full_mcmc_corner.png, id=537, 701.019pt x 701.019pt>
+File: figures/dvch_full_mcmc_corner.png Graphic file (type png)
+<use figures/dvch_full_mcmc_corner.png>
+Package pdftex.def Info: figures/dvch_full_mcmc_corner.png  used on input line 
+1295.
+(pdftex.def)             Requested size: 236.16165pt x 236.16118pt.
+<figures/dvch_full_mcmc_traces.png, id=538, 715.0715pt x 586.5915pt>
+File: figures/dvch_full_mcmc_traces.png Graphic file (type png)
+<use figures/dvch_full_mcmc_traces.png>
+Package pdftex.def Info: figures/dvch_full_mcmc_traces.png  used on input line 
+1303.
+(pdftex.def)             Requested size: 236.16165pt x 193.72795pt.
+ [14 <./figures/dvch_full_mcmc_corner.png> <./figures/dvch_full_mcmc_traces.png
+>] [15]
+<figures/dvch_modified_boltzmann_solver.png, id=583, 1004.0712pt x 364.7226pt>
+File: figures/dvch_modified_boltzmann_solver.png Graphic file (type png)
+<use figures/dvch_modified_boltzmann_solver.png>
+Package pdftex.def Info: figures/dvch_modified_boltzmann_solver.png  used on in
+put line 1546.
+(pdftex.def)             Requested size: 236.16165pt x 85.78217pt.
+ [16 <./figures/dvch_modified_boltzmann_solver.png>]
+<figures/dvch_cmb_class_camb_mcmc_status.png, id=596, 713.5458pt x 354.123pt>
+File: figures/dvch_cmb_class_camb_mcmc_status.png Graphic file (type png)
+<use figures/dvch_cmb_class_camb_mcmc_status.png>
+Package pdftex.def Info: figures/dvch_cmb_class_camb_mcmc_status.png  used on i
+nput line 1606.
+(pdftex.def)             Requested size: 216.4812pt x 107.43729pt.
+<figures/dvch_mcmc_convergence.png, id=597, 1147.6476pt x 357.4956pt>
+File: figures/dvch_mcmc_convergence.png Graphic file (type png)
+<use figures/dvch_mcmc_convergence.png>
+Package pdftex.def Info: figures/dvch_mcmc_convergence.png  used on input line 
+1633.
+(pdftex.def)             Requested size: 236.16165pt x 73.56526pt.
+ [17 <./figures/dvch_cmb_class_camb_mcmc_status.png> <./figures/dvch_mcmc_conve
+rgence.png>] [18] [19] [20] [21] (DVCH.bbl [22]) [23] (DVCH.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
@@ -960,12 +1032,33 @@ Package rerunfilecheck Info: File `DVCH.out' has not changed.
 (rerunfilecheck)             Checksum: 936110711A2824985FF42B4FCE472C34;14824.
  ) 
 Here is how much of TeX's memory you used:
- 33307 strings out of 402986
- 746594 string characters out of 5455748
- 1286704 words of memory out of 5000000
- 61502 multiletter control sequences out of 15000+600000
- 716741 words of font info for 108 fonts, out of 8000000 for 9000
- 1348 hyphenation exceptions out of 8191
- 84i,12n,104p,890b,538s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 34081 strings out of 467870
+ 763458 string characters out of 5435190
+ 1293028 words of memory out of 5000000
+ 62145 multiletter control sequences out of 15000+600000
+ 717508 words of font info for 108 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 84i,12n,104p,900b,687s stack positions out of 10000i,1000n,20000p,200000b,200000s
+<D:/miktex/fonts/type1/public/lm/lmbx10.pfb><D:/miktex/fonts/type1/public/lm/
+lmbx12.pfb><D:/miktex/fonts/type1/public/lm/lmbx8.pfb><D:/miktex/fonts/type1/pu
+blic/lm/lmbx9.pfb><D:/miktex/fonts/type1/public/lm/lmex10.pfb><D:/miktex/fonts/
+type1/public/lm/lmmi10.pfb><D:/miktex/fonts/type1/public/lm/lmmi5.pfb><D:/mikte
+x/fonts/type1/public/lm/lmmi6.pfb><D:/miktex/fonts/type1/public/lm/lmmi7.pfb><D
+:/miktex/fonts/type1/public/lm/lmmi8.pfb><D:/miktex/fonts/type1/public/lm/lmmi9
+.pfb><D:/miktex/fonts/type1/public/lm/lmmib10.pfb><D:/miktex/fonts/type1/public
+/lm/lmr10.pfb><D:/miktex/fonts/type1/public/lm/lmr5.pfb><D:/miktex/fonts/type1/
+public/lm/lmr6.pfb><D:/miktex/fonts/type1/public/lm/lmr7.pfb><D:/miktex/fonts/t
+ype1/public/lm/lmr8.pfb><D:/miktex/fonts/type1/public/lm/lmr9.pfb><D:/miktex/fo
+nts/type1/public/lm/lmri10.pfb><D:/miktex/fonts/type1/public/lm/lmri9.pfb><D:/m
+iktex/fonts/type1/public/lm/lmsy10.pfb><D:/miktex/fonts/type1/public/lm/lmsy6.p
+fb><D:/miktex/fonts/type1/public/lm/lmsy7.pfb><D:/miktex/fonts/type1/public/lm/
+lmsy8.pfb><D:/miktex/fonts/type1/public/lm/lmsy9.pfb><D:/miktex/fonts/type1/pub
+lic/lm/lmtt10.pfb><D:/miktex/fonts/type1/public/lm/lmtt8.pfb><D:/miktex/fonts/t
+ype1/public/amsfonts/symbols/msam10.pfb><D:/miktex/fonts/type1/public/amsfonts/
+symbols/msbm10.pfb>
+Output written on DVCH.pdf (23 pages, 4690890 bytes).
+PDF statistics:
+ 986 PDF objects out of 1000 (max. 8388607)
+ 253 named destinations out of 1000 (max. 500000)
+ 497 words of extra memory for PDF output out of 10000 (max. 10000000)
 
-Output written on DVCH.pdf (23 pages).
