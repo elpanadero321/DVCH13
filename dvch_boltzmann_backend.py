@@ -137,8 +137,9 @@ class DVCHBoltzmannBackend:
                 OL_m = (1.0 - Om - Omega_r0) * (Om * (1+z-dz)**3 / Om)**n * (1+beta)/(1+beta*E2_m)
                 dOL_dz = (OL_p - OL_m) / (2.0 * dz)
                 Q_val = -H * (1.0 + z) * dOL_dz  # proxy
-            # w_eff = -1 / (1 + Q/(3*H*rho_Lambda))
-            source.append([z, Q_val, 0.0])  # [z, Q, w_eff placeholder]
+            rho_lambda = max(OL_z * E**2, np.finfo(float).tiny)
+            w_eff = -1.0 - Q_val / (3.0 * H_val * rho_lambda)
+            source.append([z, Q_val, w_eff])
 
         self._source_table = np.array(source)
 

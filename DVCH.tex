@@ -1226,21 +1226,22 @@ I_{\rm DVCH}(x)=I_0\left(1+\frac{\alpha Q}{\mpl^2}\right)
 \qquad \frac{\alpha Q}{\mpl^2}\ll 1,
 \label{eq:double_slit_dvch}
 \end{equation}
-so that the classical and DVCH curves remain indistinguishable at the laboratory scale unless a much larger suppression is introduced. We compare both patterns against experimental data from Tonomura et al. \cite{double_slit_exp} for electron double-slit interference, in the conceptual setting discussed by Feynman et al. \cite{Feynman:1965} and Landau \& Lifshitz \cite{Landau:1981}, and in the foundational discussions of Bohr \cite{Bohr:1928} and Schr\"{o}dinger \cite{Schrodinger:1926}. The fitting procedure determines the effective DVCH suppression compatible with the measured interference profile.
+so that the classical and DVCH curves remain indistinguishable at the laboratory scale unless a much larger suppression is introduced. The repository implements a reproducible synthetic profile inspired by the double-slit setting; it is not a digitized Tonomura data set and does not constitute a laboratory fit. The calculation is therefore a consistency diagnostic only, in the conceptual setting discussed by Feynman et al. \cite{Feynman:1965} and Landau \& Lifshitz \cite{Landau:1981}.
 For the simulated laboratory test, the reduced chi-squared is
 \begin{equation}
 \chi^2_{\text{red}} = \frac{1}{N-p}\sum_{i=1}^{N}
-\left(\frac{I_i^{\rm obs}-I_i^{\rm th}}{\sigma_i}\right)^2
-\simeq 0.98,
+\left(\frac{I_i^{\rm obs}-I_i^{\rm th}}{\sigma_i}\right)^2,
+\qquad \text{computed directly from the synthetic profile},
 \label{eq:chi2_double_slit}
 \end{equation}
-which indicates compatibility at the 95\% level with the experimental pattern and is consistent with the expected statistical scatter in the data set.
+which should be interpreted only as a goodness-of-fit diagnostic for this
+synthetic profile; it is not a confidence statement about Tonomura data.
 
 \begin{center}
 \refstepcounter{figure}\label{fig:dvch_double_slit}
 \includegraphics[width=0.96\linewidth]{figures/dvch_double_slit.png}
 \begin{minipage}{0.96\linewidth}\footnotesize
-\textbf{Figure~\thefigure.} \textbf{DVCH} double-slit interference comparison. The red points are the experimental data, the blue curve is the DVCH prediction, and the gray line is the classical pattern. The lower panel shows the residuals; the effective reduced chi-squared is $\chi^2_{\text{red}}=0.98$ (compatibility at 95\%). The axes are labeled "Posici\'on $x$ (\textmu m), Intensidad $I(x)$ (W/m$^2$)".
+\textbf{Figure~\thefigure.} \textbf{DVCH} double-slit interference comparison. The red points are a reproducible synthetic profile, the blue curve is the DVCH toy prediction, and the gray line is the standard pattern. The lower panel shows residuals in units of the stated pointwise uncertainty; the reduced chi-squared is computed by the script and is not imposed. The axes are labeled "Posici\'on $x$ (\textmu m), Intensidad $I(x)$ (W/m$^2$)".
 \end{minipage}
 \end{center}
 

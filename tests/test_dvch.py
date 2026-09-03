@@ -92,6 +92,7 @@ class DVCHNumericalTests(unittest.TestCase):
         self.assertEqual(result["DVCH_source_table"].shape[1], 3)
         self.assertTrue(np.all(np.isfinite(result["DVCH_background"])))
         self.assertTrue(np.all(np.isfinite(result["DVCH_source_table"])))
+        self.assertFalse(np.all(result["DVCH_source_table"][:, 2] == 0.0))
 
     def test_boltzmann_backend_rejects_incomplete_state(self):
         backend = self.background.DVCHBoltzmannBackend()

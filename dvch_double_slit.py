@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """DVCH double-slit consistency test.
 
-This script reproduces the laboratory-scale double-slit comparison requested in
- the manuscript: a classical interference curve, a DVCH-suppressed version, and a
- residual panel that keeps the DVCH correction below the experimental sensitivity.
+ This script generates a reproducible laboratory-scale toy comparison. It does
+ not replace a digitized Tonomura data set.
 """
 
 import os
@@ -15,64 +14,66 @@ import matplotlib.pyplot as plt
 FIGDIR = "figures"
 os.makedirs(FIGDIR, exist_ok=True)
 
-# Parameters requested in the manuscript (Tonomura-inspired values)
+# Tonomura-inspired illustrative parameters (not the published electron data)
 d = 0.1e-6          # slit separation [m]
 lambda_ = 500e-9    # wavelength [m]
 I0 = 1.2            # intensity amplitude
-H0 = 68.17          # constant used in the fit
-Omega_m0 = 0.291
 Qtilde = -0.0954
-mpl = 1.22e19
-
-# Conversion of Q~ to Q used in the manuscript
-Q = Qtilde * 3 * H0 * (3e5) ** 2 * 3 * (mpl * 1e9) ** 2 / (8 * np.pi)
 alpha = 0.012
 
-# Generate the experimental profile
+# Generate a deterministic synthetic profile with an explicit uncertainty.
+rng = np.random.default_rng(20260827)
 x_exp = np.linspace(-0.5, 0.5, 100)
 x_exp_m = x_exp * 1e-6
 arg = np.pi * d * x_exp_m / lambda_
 # Avoid 0/0 at the center of the profile.
 with np.errstate(divide='ignore', invalid='ignore'):
     sinc = np.sinc(arg / np.pi)
-I_exp = I0 * sinc ** 2 + np.random.normal(0.0, 0.01, len(x_exp))
-I_exp = np.clip(I_exp, 0.0, None)
+I_standard = I0 * sinc ** 2
+err_obs = np.full(len(x_exp), 0.01)
+data_obs = np.clip(I_standard + rng.normal(0.0, err_obs), 0.0, None)
 
-# DVCH correction; for the manuscript it is effectively indistinguishable from the classical curve.
-correction = 1 + alpha * Q / (mpl * 1e9) ** 2
-I_dvch = I_exp * correction
+# Qtilde is used only as a bounded dimensionless toy amplitude here.
+correction = 1.0 + alpha * Qtilde
+I_dvch = I_standard * correction
 
-# Residuals and chi-squared. The manuscript reports a reduced chi-squared compatible with 0.98.
-residuals = (I_dvch - I_exp) / I_exp
-residuals = np.where(np.isfinite(residuals), residuals, 0.0)
-chi2_red = 0.98
+# Calculate, rather than prescribe, the reduced chi-squared values.
+dof = len(data_obs)
+chi2_standard = float(np.sum(((data_obs - I_standard) / err_obs) ** 2))
+chi2_dvch = float(np.sum(((data_obs - I_dvch) / err_obs) ** 2))
+chi2_red_standard = chi2_standard / dof
+chi2_red_dvch = chi2_dvch / dof
 
 np.savetxt(
     "dvch_double_slit_intensities.csv",
-    np.column_stack([x_exp, I_exp, I_dvch]),
-    header="x_exp,I_exp,I_dvch",
-    comments="#",
+    np.column_stack([x_exp, data_obs, err_obs, I_standard, I_dvch]),
+    delimiter=",",
+    header="x_exp,data_obs,err_obs,I_standard,I_DVCH_best",
+    comments="",
 )
 
 # Create figure matching the manuscript request
 fig, axes = plt.subplots(2, 1, figsize=(12, 8), sharex=True)
 
-axes[0].plot(x_exp, I_exp, 'ro', label='Datos experimentales')
+axes[0].errorbar(x_exp, data_obs, yerr=err_obs, fmt='ro', ms=3,
+                 label='Datos sintéticos')
 axes[0].plot(x_exp, I_dvch, 'b-', label='DVCH (alpha=0.012)')
-axes[0].axhline(I0, color='gray', linestyle='--', label='Clásico (alpha=0)')
+axes[0].plot(x_exp, I_standard, color='gray', linestyle='--',
+             label='Patrón estándar (alpha=0)')
 axes[0].set_title('Coincidencia con DVCH')
 axes[0].set_xlabel('Posición x (μm)')
 axes[0].set_ylabel('Intensidad I(x) (W/m²)')
 axes[0].legend()
 
-resid_plot = (I_dvch - I_exp) / I_exp * 100.0
-axes[1].plot(x_exp, resid_plot, 'g-', label='Residuos (%)')
+resid_plot = (I_dvch - data_obs) / err_obs
+axes[1].plot(x_exp, resid_plot, 'g-', label='Residuos DVCH / error')
 axes[1].axhline(0, color='black', linewidth=0.5)
-axes[1].set_ylabel('Residuos (%)')
+axes[1].set_ylabel('Residuos / error')
 axes[1].set_xlabel('Posición x (μm)')
 axes[1].legend()
 
-axes[0].text(0.02, 0.94, r'$\chi^2_{\mathrm{red}} = 0.98$ (compatibilidad al 95\%)',
+axes[0].text(0.02, 0.94,
+             f'$\\chi^2_{{red}}(DVCH) = {chi2_red_dvch:.3f}$',
              transform=axes[0].transAxes, fontsize=10, bbox=dict(facecolor='white', alpha=0.8))
 
 fig.tight_layout()
@@ -83,7 +84,8 @@ print('wavelength =', lambda_)
 print('slit separation =', d)
 print('I0 =', I0)
 print('alpha =', alpha)
-print('Q =', Q)
-print('chi2_red =', chi2_red)
+print('correction =', correction)
+print('chi2_red_standard =', chi2_red_standard)
+print('chi2_red_dvch =', chi2_red_dvch)
 print('output =', os.path.join(FIGDIR, 'dvch_double_slit.png'))
 print('csv = dvch_double_slit_intensities.csv')
