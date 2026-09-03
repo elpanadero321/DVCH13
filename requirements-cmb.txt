@@ -1,0 +1,8 @@
+# Optional dependencies for the external CMB/Planck validation stack.
+# The official Planck clik package and likelihood data must be installed
+# separately from the licensed Planck distribution.
+-r requirements.txt
+camb>=1.5
+cobaya>=3.5
+getdist>=1.4
+mpi4py>=3.1
