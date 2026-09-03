@@ -19,7 +19,6 @@ The CMB-level test requires a compiled CLASS/CAMB with the corresponding
 patch; this file documents the interface and the expected data flow.
 """
 import numpy as np
-import os
 
 # --- Constants ---
 Omega_r0 = 9.0e-5
@@ -44,10 +43,10 @@ class DVCHBoltzmannBackend:
     """
 
     def __init__(self):
-        self.params = None
+        self.params: dict[str, float] | None = None
         self.state = None
-        self._background_table = None
-        self._source_table = None
+        self._background_table: np.ndarray | None = None
+        self._source_table: np.ndarray | None = None
 
     def initialize(self):
         """Validate parameters and set up internal state."""
@@ -68,6 +67,7 @@ class DVCHBoltzmannBackend:
 
     def calculate(self, state, want_derived=True, **kwargs):
         """Compute the DVCH background and source table."""
+        del want_derived, kwargs
         if "params" not in state or not isinstance(state["params"], dict):
             raise ValueError("Backend state must contain a 'params' mapping")
         self.params = state["params"]
@@ -86,6 +86,8 @@ class DVCHBoltzmannBackend:
     # --- Internal methods ---
     def _compute_background(self):
         """Compute DVCH background E(z), H(z), Omega_i(z) for a redshift grid."""
+        if self.params is None:
+            raise RuntimeError("Backend parameters must be initialized before computing")
         n = self.params.get("DVCH_n", 0.09)
         beta = self.params.get("DVCH_beta", 1.0e-4)
         Om = self.params.get("Omega_m", 0.30)
@@ -110,10 +112,14 @@ class DVCHBoltzmannBackend:
 
     def _compute_source_table(self):
         """Compute Q(z) and w_eff(z) from the background closure."""
+        if self.params is None:
+            raise RuntimeError("Backend parameters must be initialized before computing")
         if self._background_table is None:
             self._compute_background()
 
         bg = self._background_table
+        if bg is None:
+            raise RuntimeError("Background table was not computed")
         n = self.params.get("DVCH_n", 0.09)
         beta = self.params.get("DVCH_beta", 1.0e-4)
         Om = self.params.get("Omega_m", 0.30)
@@ -121,10 +127,8 @@ class DVCHBoltzmannBackend:
 
         source = []
         for row in bg:
-            z, E, H, Om_z, OL_z, Or_z = row
-            opz = 1.0 + z
+            z, E, H, _, OL_z, _ = row
             H_val = H0 * E
-            rho_m = 3e4 * H0**2 * Om * opz**3  # in natural units proxy
             # Q = d(rho_Lambda)/dt = rho_Lambda,0 * d/dt ( (Om(z)/Om)^n / (1+beta*E^2) )
             # Implemented as finite difference for robustness
             dz = 1e-6
@@ -183,12 +187,16 @@ if __name__ == "__main__":
 
     # Save background
     bg = backend._background_table
+    if bg is None:
+        raise RuntimeError("Background table was not generated")
     header = "z,E,H,Omega_m,Omega_Lambda,Omega_r"
     np.savetxt("dvch_boltzmann_background.csv", bg, delimiter=",", header=header,
                fmt="%.6e", comments="")
 
     # Save source table
     src = backend._source_table
+    if src is None:
+        raise RuntimeError("Source table was not generated")
     header_src = "z,Q,w_eff"
     np.savetxt("dvch_boltzmann_source_table.csv", src, delimiter=",", header=header_src,
                fmt="%.6e", comments="")
