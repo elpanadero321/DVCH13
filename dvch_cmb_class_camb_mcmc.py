@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """
-DVCH CMB/CLASS/CAMB MCMC status diagnostic.
-Checks which interface components are available for a Planck-style benchmark analysis.
+DVCH CMB/CLASS/CAMB MCMC readiness diagnostic.
+
+Distinguishes local diagnostic code from external components that are required
+for a genuine Planck likelihood run.
 """
 import numpy as np
 import pandas as pd
@@ -14,14 +16,12 @@ FIGDIR = "figures"
 os.makedirs(FIGDIR, exist_ok=True)
 
 components = [
-    {"name": "Cobaya", "available": False, "type": "sampler"},
-    {"name": "CLASS/CAMB backend", "available": False, "type": "boltzmann"},
-    {"name": "Planck clik", "available": False, "type": "likelihood"},
-    {"name": "DVCH source module", "available": True, "type": "theory"},
-    {"name": "Planck YAML target", "available": True, "type": "config"},
-    {"name": "Pantheon+ likelihood", "available": True, "type": "sn"},
-    {"name": "DESI BAO block", "available": True, "type": "bao"},
-    {"name": "CC chronometer block", "available": True, "type": "cc"},
+    {"name": "Cobaya sampler", "available": False, "type": "external"},
+    {"name": "CLASS/CAMB backend", "available": False, "type": "external"},
+    {"name": "Planck clik likelihood", "available": False, "type": "external"},
+    {"name": "DVCH source-table interface", "available": True, "type": "local"},
+    {"name": "Planck YAML configuration target", "available": True, "type": "local"},
+    {"name": "Pantheon+/DESI/CC diagnostic blocks", "available": True, "type": "local"},
 ]
 
 
@@ -52,13 +52,13 @@ def make_figure():
     ax.set_title('DVCH CLASS/CAMB/Cobaya Planck Benchmark Interface', fontsize=13, fontweight='bold')
 
     for i, (c, a) in enumerate(zip(components, available)):
-        label = "Available" if a else "Target"
+        label = "Local diagnostic" if a else "External required"
         ax.text(0.5, i, label, ha='center', va='center', fontsize=9, fontweight='bold')
 
     from matplotlib.patches import Patch
     legend_elements = [
-        Patch(facecolor='#4ECDC4', label='Available'),
-        Patch(facecolor='#FF6B6B', label='Benchmark target (external)'),
+        Patch(facecolor='#4ECDC4', label='Local diagnostic/interface'),
+        Patch(facecolor='#FF6B6B', label='External runtime/data required'),
     ]
     ax.legend(handles=legend_elements, loc='lower right', fontsize=9)
 

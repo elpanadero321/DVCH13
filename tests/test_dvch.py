@@ -93,6 +93,12 @@ class DVCHNumericalTests(unittest.TestCase):
         self.assertTrue(np.all(np.isfinite(result["DVCH_background"])))
         self.assertTrue(np.all(np.isfinite(result["DVCH_source_table"])))
 
+    def test_boltzmann_backend_rejects_incomplete_state(self):
+        backend = self.background.DVCHBoltzmannBackend()
+
+        with self.assertRaises(ValueError):
+            backend.calculate({})
+
     def test_growth_background_is_finite_and_positive(self):
         z = np.linspace(0.0, 2.0, 24)
         _, om, ol, e2, e, q = self.growth.solve_dvch_background_full(z)

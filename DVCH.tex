@@ -144,14 +144,14 @@ perturbative prescriptions, and clear numerical implementability.
 \subsection*{Validation framework for DVCH}
 \label{subsec:scope_revision}
 
-This work records a set of consistency checks for DVCH models, combining the covariant action-based motivation, the macroscopic background closure, the exact interaction kernel, the autonomous-system stability analysis, and the structure-growth diagnostic. The components treated here are the covariant motivation, the background closure, the exact interaction kernel, the global stability analysis, the sub-horizon growth calculation, the $(n,\beta)$ background robustness scan, and an exploratory late-time public-data fit.
+This work records a set of consistency checks for DVCH models, combining the covariant action-based motivation, the macroscopic background closure, the exact interaction kernel, the autonomous-system stability analysis, and the structure-growth diagnostic. The components treated here are the covariant motivation, the background closure, the exact interaction kernel, the global stability analysis, the sub-horizon growth calculation, the $(n,\beta)$ background robustness scan, and an exploratory late-time public-data fit. The repository also includes automated numerical regression tests for these local calculations.
 
 The CMB/Planck requirements are represented explicitly in the diagnostic
 package: a DVCH background/source-table interface for CLASS/CAMB-style backend checks \cite{Blas:2011rf,Lewis:1999bs}, the photon--baryon/CMB
 component checklist, angular-spectrum and lensing targets, a Planck
 \texttt{clik} likelihood configuration target \cite{Planck:2019nip}, and a
 Cobaya-compatible Planck-stack configuration target
-\cite{Torrado:2020dgo}. Consequently, every observational number below is a diagnostic quantity unless explicitly stated otherwise. The aim is to state the assumptions and limitations of the UV-regularized interacting-vacuum closure and to separate local calculations from CMB literature benchmarks.
+\cite{Torrado:2020dgo}. Consequently, every observational number below is a diagnostic quantity unless explicitly stated otherwise. The aim is to state the assumptions and limitations of the UV-regularized interacting-vacuum closure and to separate local calculations from CMB literature benchmarks. A Planck-level result is not claimed until a patched CLASS/CAMB runtime, the official Planck likelihood, and the corresponding data are executed together.
 
 \section{Covariant theoretical basis: an interacting dark sector from an EFT-motivated action}
 \label{sec:action}

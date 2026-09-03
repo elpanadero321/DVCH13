@@ -3,8 +3,9 @@
 DVCH modified Boltzmann source-table backend.
 
 Provides the DVCH interacting-vacuum source functions that a patched
-CLASS or CAMB implementation would call during the background and
-perturbation integration. This module is a benchmark-interface spec:
+CLASS or CAMB implementation could call during the background and
+perturbation integration. This module is an interface specification and
+standalone diagnostic; it is not itself a compiled Boltzmann solver:
 it defines the `initialize`, `get_can_provide`, `must_provide`,
 `calculate`, and `get_result` hooks expected by the standard Cobaya
 theory API, together with the DVCH-specific background and interaction
@@ -50,7 +51,12 @@ class DVCHBoltzmannBackend:
 
     def initialize(self):
         """Validate parameters and set up internal state."""
-        pass
+        if self.params is None:
+            self.params = {}
+        required = ("DVCH_n", "DVCH_beta", "Omega_m", "H0")
+        missing = [name for name in required if name not in self.params]
+        if missing:
+            raise ValueError(f"Missing backend parameters: {', '.join(missing)}")
 
     def get_can_provide(self):
         """Return list of parameters this module can compute."""
@@ -62,7 +68,10 @@ class DVCHBoltzmannBackend:
 
     def calculate(self, state, want_derived=True, **kwargs):
         """Compute the DVCH background and source table."""
+        if "params" not in state or not isinstance(state["params"], dict):
+            raise ValueError("Backend state must contain a 'params' mapping")
         self.params = state["params"]
+        self.initialize()
         self.state = state
         self._compute_background()
         self._compute_source_table()

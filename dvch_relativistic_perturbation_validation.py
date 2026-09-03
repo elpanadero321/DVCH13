@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """
-DVCH relativistic perturbation validation preflight/status gate.
-Checks which components are available for a future full CMB/CLASS/CAMB validation.
+DVCH relativistic perturbation readiness report.
+
+The report explicitly separates local interfaces from the external compiled
+Boltzmann and Planck likelihood stack still needed for full CMB validation.
 """
 import numpy as np
 import pandas as pd
@@ -21,8 +23,8 @@ validation_items = [
     {"item": r"CMB $C_\ell$ spectra", "status": "Protocol target", "requirement": "TT/TE/EE from DVCH perturbations", "available": False},
     {"item": "CMB lensing spectra", "status": "Protocol target", "requirement": "lensing potential/reconstruction", "available": False},
     {"item": "Planck likelihood stack", "status": "Protocol target", "requirement": "Cobaya/clik/native Planck data", "available": False},
-    {"item": "DVCH source-table module", "status": "Available", "requirement": "local interface module present", "available": True},
-    {"item": "Planck YAML target", "status": "Available", "requirement": "local YAML target present", "available": True},
+    {"item": "DVCH source-table interface", "status": "Local interface", "requirement": "local interface module present", "available": True},
+    {"item": "Planck YAML configuration target", "status": "Configuration target", "requirement": "local YAML target present; not executed", "available": True},
 ]
 
 
@@ -66,8 +68,8 @@ def make_figure():
 
     from matplotlib.patches import Patch
     legend_elements = [
-        Patch(facecolor='#4ECDC4', label='Available (local interface)'),
-        Patch(facecolor='#FFD93D', label='Protocol target (external runtime required)'),
+        Patch(facecolor='#4ECDC4', label='Local interface/configuration'),
+        Patch(facecolor='#FFD93D', label='External runtime/data required'),
     ]
     ax.legend(handles=legend_elements, loc='lower right', fontsize=9)
 
