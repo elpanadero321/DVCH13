@@ -8,15 +8,16 @@
     "corner": "OK",
     "getdist": "OK",
     "cobaya": "OK",
-    "classy (CLASS)": "MISSING",
-    "camb (CAMB)": "MISSING",
-    "clik": "MISSING",
-    "plancklens": "MISSING",
+    "classy (CLASS)": "NOT_INCLUDED_LOCALLY",
+    "camb (CAMB)": "OK",
+    "clik": "NOT_INCLUDED_LOCALLY",
+    "plancklens": "NOT_INCLUDED_LOCALLY",
     "mpi4py": "OK",
     "dvch_planck2018_full.yaml": "OK",
     "dvch_boltzmann_backend.py": "OK",
-    "dvch_mcmc_chains_full.csv": "MISSING",
+    "dvch_camb_background.py": "OK",
+    "dvch_mcmc_chains_full.csv": "OK",
     "dvch_full_mcmc_pipeline.py": "OK"
   },
-  "timestamp": "2026-08-27T11:56:06.291682"
+  "timestamp": "2026-09-04T14:51:20.492951"
 }

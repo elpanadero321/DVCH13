@@ -20,6 +20,7 @@ class DVCHNumericalTests(unittest.TestCase):
         cls.robustness = importlib.import_module("dvch_robustness_scan")
         cls.growth = importlib.import_module("dvch_growth_diagnostic")
         cls.joint_fit = importlib.import_module("dvch_joint_realdata_fit")
+        cls.camb_background = importlib.import_module("dvch_camb_background")
 
     def test_fiducial_background_is_normalized_at_zero_redshift(self):
         e2, matter, vacuum = self.colab.E2_dvch(0.0)
@@ -146,6 +147,16 @@ class DVCHNumericalTests(unittest.TestCase):
         )
         for filename in expected:
             self.assertTrue((ROOT / filename).is_file(), filename)
+
+    def test_camb_background_provider_is_normalized_and_finite(self):
+        z = np.linspace(0.0, 2.0, 32)
+        table = self.camb_background.background(z)
+
+        self.assertEqual(table.shape, (32, 7))
+        self.assertAlmostEqual(table[0, 1], 1.0, places=8)
+        self.assertAlmostEqual(table[0, 4], 0.30, places=8)
+        self.assertTrue(np.all(np.isfinite(table)))
+        self.assertTrue(np.all(table[:, 1] > 0.0))
 
 
 if __name__ == "__main__":

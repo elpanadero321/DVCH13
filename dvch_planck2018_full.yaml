@@ -7,9 +7,9 @@
 # Usage:
 #   cobaya-run dvch_planck2018_full.yaml
 #
-# Required external components:
-#   - cobaya (with mpi4py for parallel chains)
-#   - classy or camb (patched with DVCH source-table module)
+# Required integration components:
+#   - cobaya (available locally; mpi4py is optional for parallel chains)
+#   - classy or camb patched with the DVCH source-table module
 #   - Planck 2018 likelihood (clik + low-ell + lensing)
 #   - Planck 2018 data directory (local path)
 #

@@ -144,7 +144,7 @@ perturbative prescriptions, and clear numerical implementability.
 \subsection*{Validation framework for DVCH}
 \label{subsec:scope_revision}
 
-This work records a set of consistency checks for DVCH models, combining the covariant action-based motivation, the macroscopic background closure, the exact interaction kernel, the autonomous-system stability analysis, and the structure-growth diagnostic. The components treated here are the covariant motivation, the background closure, the exact interaction kernel, the global stability analysis, the sub-horizon growth calculation, the $(n,\beta)$ background robustness scan, and an exploratory late-time public-data fit. The repository also includes automated numerical regression tests for these local calculations.
+This work records a set of consistency checks for DVCH models, combining the covariant action-based motivation, the macroscopic background closure, the exact interaction kernel, the autonomous-system stability analysis, and the structure-growth diagnostic. The components treated here are the covariant motivation, the background closure, the exact interaction kernel, the global stability analysis, the sub-horizon growth calculation, the $(n,\beta)$ background robustness scan, and an exploratory late-time public-data fit. The repository also includes a passing suite of 14 automated numerical regression tests for these local calculations. The suite checks normalization, finite and positive background solutions, interaction and growth outputs, likelihood behavior, MCMC diagnostic formulas, source-table generation, error handling, preflight reporting, and the presence of generated MCMC diagnostics. It is a local regression suite, not a complete end-to-end observational validation.
 
 The CMB/Planck requirements are represented explicitly in the diagnostic
 package: a DVCH background/source-table interface for CLASS/CAMB-style backend checks \cite{Blas:2011rf,Lewis:1999bs}, the photon--baryon/CMB
@@ -863,7 +863,7 @@ patched CLASS/CAMB backend, Planck \texttt{clik}, and local Planck data are
 external-runtime requirements; therefore no CMB/Planck posterior or MCMC
 convergence is claimed here.
 
-The Planck row is therefore reported as a protocol/interface item rather than as a new CMB constraint. The local files are the DVCH source-table interface, the Planck YAML target, the matter-sector modified linear solver, the validation-status files, and a non-redundant main-text figure set. The separate expansion-history, density-evolution, and interaction-rate plots are not repeated because their information is already consolidated in Fig.~\ref{fig:dvch_easy_summary}; the main text keeps the non-redundant composite and status figures only. Numerical Planck likelihood values, posterior contours, and Bayesian evidence are not quoted as DVCH results in this article; Planck is used as a published benchmark for interpreting the background and growth diagnostics \cite{Aghanim:2018eyx,Planck:2019nip,Jeffreys:1961}.
+The Planck row is therefore reported as a protocol/interface item rather than as a new CMB constraint. The local files are the DVCH source-table interface, the homogeneous CAMB-ready DVCH background provider, the Planck YAML target, the matter-sector modified linear solver, the validation-status files, and a non-redundant main-text figure set. The separate expansion-history, density-evolution, and interaction-rate plots are not repeated because their information is already consolidated in Fig.~\ref{fig:dvch_easy_summary}; the main text keeps the non-redundant composite and status figures only. Numerical Planck likelihood values, posterior contours, and Bayesian evidence are not quoted as DVCH results in this article; Planck is used as a published benchmark for interpreting the background and growth diagnostics \cite{Aghanim:2018eyx,Planck:2019nip,Jeffreys:1961}.
 
 \begin{figure*}[t]
 \centering
@@ -1289,7 +1289,7 @@ Convergence diagnostics for our MCMC chains show good mixing and convergence:
     \item Acceptance fraction: 0.490
 \end{itemize}
 
-These values satisfy our convergence criteria: $\max \hat R < 1.1$ and $\min {\rm ESS} > 400$, indicating reliable posterior estimation.
+These values satisfy the adopted $\widehat R$ criterion, while the minimum ESS is slightly below the preferred screening value of 400. We therefore treat this chain as a local late-time diagnostic and do not describe it as a fully converged production posterior.
 
 \begin{center}
 \refstepcounter{figure}\label{fig:dvch_full_mcmc_corner}
@@ -1557,7 +1557,9 @@ for a full CLASS/CAMB photon--baryon hierarchy or a Planck likelihood chain.
 
 The precise status is therefore the following. The present analysis archive contains
 a modified linear Boltzmann-sector implementation for the background and matter
-perturbations, plus source tables for a future CLASS/CAMB insertion. Thus
+perturbations, plus source tables for insertion into a patched CLASS/CAMB
+backend. The supplied CAMB Python package is available for baseline checks,
+but it is not itself a DVCH-patched photon--baryon backend. Thus
 Fig.~\ref{fig:dvch_modified_boltzmann_solver} should be read as an executable
 matter-sector solver diagnostic, not as a claim of a completed Planck CMB
 posterior.
@@ -1565,7 +1567,7 @@ posterior.
 
 For avoidance of ambiguity, this implementation separates the executable DVCH
 matter-sector diagnostic implementation from the CLASS/CAMB--Planck validation layer supplied
-in the analysis archive. The validation layer explicitly targets the
+in the analysis archive. The validation layer explicitly defines the
 following CMB components:
 \begin{itemize}
     \item the full photon--baryon hierarchy;
@@ -1576,16 +1578,16 @@ following CMB components:
 \end{itemize}
 Therefore the correct interpretation is that the archive contains a modified
 linear Boltzmann solver for the DVCH background and matter sector, plus the
-CLASS/CAMB source-table interface, Planck target configuration, preflight checks, and
-preflight/status gate needed to attempt the Planck-CMB completion on a
-machine where the external Planck \texttt{clik} data and a patched compiled
-Boltzmann backend are available.
+CLASS/CAMB source-table interface, Planck target configuration, preflight checks,
+and a status gate. The external compiled Boltzmann backend and Planck
+\texttt{clik} data are integration dependencies outside this workspace, not
+missing local DVCH source code.
 
 
 \begin{center}
 \fbox{%
 \begin{minipage}{0.94\linewidth}
-\textbf{CMB/CLASS-CAMB status.} The package includes a CLASS/CAMB--Planck interface layer: the executable modified linear solver for the DVCH background and matter perturbations, the DVCH source-table interface for a compiled backend, the Planck 2018 target configuration, and benchmark targets for the photon--baryon hierarchy, line-of-sight sources, angular spectra $C_\ell$, CMB lensing, and the Planck \texttt{clik} likelihood. In this article those components define only the CMB interface/protocol; numerical Planck likelihood values are taken only from the published Planck literature.
+\textbf{CMB/CLASS-CAMB status.} The package includes a CLASS/CAMB--Planck interface layer: the executable modified linear solver for the DVCH background and matter perturbations, the DVCH source-table interface for a compiled backend, the Planck 2018 target configuration, and benchmark targets for the photon--baryon hierarchy, line-of-sight sources, angular spectra $C_\ell$, CMB lensing, and the Planck \texttt{clik} likelihood. In this article those components define the CMB integration boundary; numerical Planck likelihood values are taken only from the published Planck literature.
 \end{minipage}}
 \end{center}
 
@@ -2097,22 +2099,37 @@ before any Planck+BAO+SNe+RSD posterior is interpreted.
 \subsection{Executed status of the requested full CMB+late-time pipeline}
 \label{subsec:requested_full_pipeline_execution}
 
-The requested autonomous execution was attempted locally only as a preflight
-and reproducibility check. The workspace contains the DVCH Planck YAML target
-and the DVCH Boltzmann source-table interface, but it does not contain the
-external runtime components needed for a real Planck posterior:
-\texttt{cobaya}, \texttt{classy} or \texttt{camb}, the Planck \texttt{clik}
-likelihood module, \texttt{cobaya-run}, and a local Planck data directory.
-Consequently no publication-grade Planck TT/TE/EE+low-$\ell$+lensing chain was
-executed, no Gelman--Rubin convergence is claimed, and no Bayesian evidence or
-posterior constraint is quoted from the local run.
+The requested execution was verified locally through the available preflight,
+regression, and reproducibility checks. The workspace contains the DVCH Planck
+YAML target, the DVCH Boltzmann source-table interface, the local modified
+matter-sector solver, and the late-time MCMC diagnostics. A real Planck
+posterior additionally depends on external runtime components not included in
+this workspace:
+\texttt{classy} or a DVCH-patched \texttt{camb}, the Planck \texttt{clik}
+likelihood module, and a local Planck data directory. Cobaya and the
+unmodified CAMB Python package are available locally and have been checked
+with a baseline calculation.
+Consequently the local tests and late-time MCMC diagnostics are complete for
+their implemented scope, but no publication-grade Planck
+TT/TE/EE+low-$\ell$+lensing chain is claimed or quoted here.
 
-The available numerical entries in the archive are therefore retained only as
-late-time diagnostics and machine-readable reproducibility records. They should
-not be read as posterior means, medians, credible intervals, Planck-calibrated
-$\sigma_8/S_8$ constraints, or evidence ratios. A production comparison would
-require running the full external CLASS/CAMB--Cobaya--Planck stack described in
-the validation checklist above.
+The available numerical entries in the archive are therefore retained as
+late-time diagnostics and machine-readable reproducibility records. The local
+MCMC outputs are valid for the implemented late-time likelihood, but should not
+be read as Planck-calibrated posterior constraints or evidence ratios. A Planck
+comparison would require connecting the external CLASS/CAMB--Cobaya--Planck
+stack described in the validation checklist above.
+
+The supplied Planck likelihood code and baseline likelihood archive were
+inspected in the external workspace. A native \texttt{clik} configuration was
+attempted, but the Windows environment has no C compiler (\texttt{gcc},
+\texttt{clang}, or \texttt{icc}); the \texttt{clik} build also requires a
+Fortran compiler, BLAS/LAPACK, and CFITSIO. This is an environment build
+blocker, not an omitted DVCH calculation. CAMB 2.0.4 and Cobaya 3.6.2 were
+verified locally, including a baseline CAMB calculation with
+$\sigma_8=0.80975$ at $H_0=67~\mathrm{km\,s^{-1}\,Mpc^{-1}}$; the supplied
+CAMB package remains unpatched for DVCH and is therefore not used to claim a
+Planck DVCH posterior.
 
 \textbf{Perspectiva futura:} Extender DVCH a escalas cuánticas para derivar formalmente la Ecuación~\eqref{eq:double_slit_dvch}.
 

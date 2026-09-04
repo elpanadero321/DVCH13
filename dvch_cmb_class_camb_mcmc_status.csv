@@ -1,9 +1,7 @@
 name,available,type
-Cobaya,False,sampler
-CLASS/CAMB backend,False,boltzmann
-Planck clik,False,likelihood
-DVCH source module,True,theory
-Planck YAML target,True,config
-Pantheon+ likelihood,True,sn
-DESI BAO block,True,bao
-CC chronometer block,True,cc
+Cobaya sampler,True,local
+CAMB Python package (unpatched),True,local
+Planck clik likelihood,False,external
+DVCH source-table interface,True,local
+Planck YAML configuration target,True,local
+Pantheon+/DESI/CC diagnostic blocks,True,local

@@ -5,6 +5,6 @@
   "CMB $C_\\ell$ spectra": "Protocol target",
   "CMB lensing spectra": "Protocol target",
   "Planck likelihood stack": "Protocol target",
-  "DVCH source-table module": "Available",
-  "Planck YAML target": "Available"
+  "DVCH source-table interface": "Local interface",
+  "Planck YAML configuration target": "Configuration target"
 }

@@ -7,6 +7,7 @@ for a genuine Planck likelihood run.
 """
 import numpy as np
 import pandas as pd
+import importlib.util
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -15,10 +16,14 @@ import os
 FIGDIR = "figures"
 os.makedirs(FIGDIR, exist_ok=True)
 
+def module_available(name):
+    return importlib.util.find_spec(name) is not None
+
+
 components = [
-    {"name": "Cobaya sampler", "available": False, "type": "external"},
-    {"name": "CLASS/CAMB backend", "available": False, "type": "external"},
-    {"name": "Planck clik likelihood", "available": False, "type": "external"},
+    {"name": "Cobaya sampler", "available": module_available("cobaya"), "type": "local"},
+    {"name": "CAMB Python package (unpatched)", "available": module_available("camb"), "type": "local"},
+    {"name": "Planck clik likelihood", "available": module_available("clik"), "type": "external"},
     {"name": "DVCH source-table interface", "available": True, "type": "local"},
     {"name": "Planck YAML configuration target", "available": True, "type": "local"},
     {"name": "Pantheon+/DESI/CC diagnostic blocks", "available": True, "type": "local"},
@@ -52,13 +57,13 @@ def make_figure():
     ax.set_title('DVCH CLASS/CAMB/Cobaya Planck Benchmark Interface', fontsize=13, fontweight='bold')
 
     for i, (c, a) in enumerate(zip(components, available)):
-        label = "Local diagnostic" if a else "External required"
+        label = "Available locally" if a else "External integration"
         ax.text(0.5, i, label, ha='center', va='center', fontsize=9, fontweight='bold')
 
     from matplotlib.patches import Patch
     legend_elements = [
-        Patch(facecolor='#4ECDC4', label='Local diagnostic/interface'),
-        Patch(facecolor='#FF6B6B', label='External runtime/data required'),
+        Patch(facecolor='#4ECDC4', label='Available locally'),
+        Patch(facecolor='#FF6B6B', label='External integration/data not included'),
     ]
     ax.legend(handles=legend_elements, loc='lower right', fontsize=9)
 

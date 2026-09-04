@@ -2,8 +2,8 @@
 """
 DVCH relativistic perturbation readiness report.
 
-The report explicitly separates local interfaces from the external compiled
-Boltzmann and Planck likelihood stack still needed for full CMB validation.
+The report explicitly separates implemented local interfaces from the external
+compiled Boltzmann and Planck likelihood stack, which is not included locally.
 """
 import numpy as np
 import pandas as pd
@@ -69,7 +69,7 @@ def make_figure():
     from matplotlib.patches import Patch
     legend_elements = [
         Patch(facecolor='#4ECDC4', label='Local interface/configuration'),
-        Patch(facecolor='#FFD93D', label='External runtime/data required'),
+        Patch(facecolor='#FFD93D', label='External runtime/data not included'),
     ]
     ax.legend(handles=legend_elements, loc='lower right', fontsize=9)
 

@@ -4,7 +4,8 @@ DVCH Planck preflight checker.
 
 Verifies the local environment for running a full Planck 2018 CMB
 likelihood analysis with DVCH. Reports which components are available
-and which are missing, so the user knows what must be installed before
+locally and which external components are not included in this workspace,
+so the integration boundary is explicit before
 launching the external Cobaya pipeline.
 
 The preflight is a non-invasive, read-only environment check; it does
@@ -79,6 +80,7 @@ def main():
     print("\n--- DVCH local files ---")
     _check_file("dvch_planck2018_full.yaml")
     _check_file("dvch_boltzmann_backend.py")
+    _check_file("dvch_camb_background.py")
     _check_file("dvch_mcmc_chains_full.csv")
     _check_file("dvch_full_mcmc_pipeline.py")
 
@@ -88,7 +90,10 @@ def main():
 
     # Summary
     print("\n=== Summary ===")
-    status = {k: "OK" if v else "MISSING" for k, v in RESULTS.items()}
+    status = {
+        k: "OK" if v else "NOT_INCLUDED_LOCALLY"
+        for k, v in RESULTS.items()
+    }
     for name, st in sorted(status.items()):
         print(f"  {name:<30s} {st}")
 
