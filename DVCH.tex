@@ -144,7 +144,7 @@ perturbative prescriptions, and clear numerical implementability.
 \subsection*{Validation framework for DVCH}
 \label{subsec:scope_revision}
 
-This work records a set of consistency checks for DVCH models, combining the covariant action-based motivation, the macroscopic background closure, the exact interaction kernel, the autonomous-system stability analysis, and the structure-growth diagnostic. The components treated here are the covariant motivation, the background closure, the exact interaction kernel, the global stability analysis, the sub-horizon growth calculation, the $(n,\beta)$ background robustness scan, and an exploratory late-time public-data fit. The repository also includes a passing suite of 14 automated numerical regression tests for these local calculations. The suite checks normalization, finite and positive background solutions, interaction and growth outputs, likelihood behavior, MCMC diagnostic formulas, source-table generation, error handling, preflight reporting, and the presence of generated MCMC diagnostics. It is a local regression suite, not a complete end-to-end observational validation.
+This work records a set of consistency checks for DVCH models, combining the covariant action-based motivation, the macroscopic background closure, the exact interaction kernel, the autonomous-system stability analysis, and the structure-growth diagnostic. The components treated here are the covariant motivation, the background closure, the exact interaction kernel, the global stability analysis, the sub-horizon growth calculation, the $(n,\beta)$ background robustness scan, and an exploratory late-time public-data fit. The repository also includes a passing suite of 17 automated numerical regression tests for these local calculations. The suite checks normalization, finite and positive background solutions, interaction and growth outputs, likelihood behavior, MCMC diagnostic formulas, source-table generation, error handling, preflight reporting, and the presence of generated MCMC diagnostics. It is a local regression suite, not a complete end-to-end observational validation.
 
 The CMB/Planck requirements are represented explicitly in the diagnostic
 package: a DVCH background/source-table interface for CLASS/CAMB-style backend checks \cite{Blas:2011rf,Lewis:1999bs}, the photon--baryon/CMB
@@ -858,12 +858,16 @@ late-time performance but no BIC preference for DVCH. The modified matter-sector
 Boltzmann diagnostic reports $f\sigma_8(z=0)=0.364139$ and
 $S_8=0.829$, while explicitly flagging
 \texttt{no\_full\_photon\_baryon\_hierarchy}. The full relativistic validation
-gate finds the local DVCH source interface and Planck YAML target, but the
-patched CLASS/CAMB backend, Planck \texttt{clik}, and local Planck data are
-external-runtime requirements; therefore no CMB/Planck posterior or MCMC
-convergence is claimed here.
+gate finds the local DVCH source interface and Planck YAML target. The patched
+CAMB runtime has been compiled and the official Planck high-$\ell$
+\texttt{plik\_rd12\_HM\_v22b\_TTTEEE.clik} data directory has been opened
+successfully by \texttt{clik}; its built-in reference vector reproduces the
+package check value. This validates the likelihood library/data connection
+only. The CAMB-to-Cobaya spectrum vector, nuisance-parameter mapping, and
+posterior sampling remain unexecuted; therefore no CMB/Planck posterior or
+MCMC convergence is claimed here.
 
-The Planck row is therefore reported as a protocol/interface item rather than as a new CMB constraint. The local files are the DVCH source-table interface, the homogeneous CAMB-ready DVCH background provider, the Planck YAML target, the matter-sector modified linear solver, the validation-status files, and a non-redundant main-text figure set. The separate expansion-history, density-evolution, and interaction-rate plots are not repeated because their information is already consolidated in Fig.~\ref{fig:dvch_easy_summary}; the main text keeps the non-redundant composite and status figures only. Numerical Planck likelihood values, posterior contours, and Bayesian evidence are not quoted as DVCH results in this article; Planck is used as a published benchmark for interpreting the background and growth diagnostics \cite{Aghanim:2018eyx,Planck:2019nip,Jeffreys:1961}.
+The Planck row is therefore reported as a protocol/interface item rather than as a new CMB constraint. The local files are the DVCH source-table interface, the homogeneous CAMB-ready DVCH background provider, the linear synchronous-gauge perturbation closure, the CAMB Fortran interaction module, the Planck YAML target, the matter-sector modified linear solver, the validation-status files, and a non-redundant main-text figure set. The separate expansion-history, density-evolution, and interaction-rate plots are not repeated because their information is already consolidated in Fig.~\ref{fig:dvch_easy_summary}; the main text keeps the non-redundant composite and status figures only. Numerical Planck likelihood values, posterior contours, and Bayesian evidence are not quoted as DVCH results in this article; Planck is used as a published benchmark for interpreting the background and growth diagnostics \cite{Aghanim:2018eyx,Planck:2019nip,Jeffreys:1961}.
 
 \begin{figure*}[t]
 \centering
@@ -2102,13 +2106,12 @@ before any Planck+BAO+SNe+RSD posterior is interpreted.
 The requested execution was verified locally through the available preflight,
 regression, and reproducibility checks. The workspace contains the DVCH Planck
 YAML target, the DVCH Boltzmann source-table interface, the local modified
-matter-sector solver, and the late-time MCMC diagnostics. A real Planck
-posterior additionally depends on external runtime components not included in
-this workspace:
-\texttt{classy} or a DVCH-patched \texttt{camb}, the Planck \texttt{clik}
-likelihood module, and a local Planck data directory. Cobaya and the
-unmodified CAMB Python package are available locally and have been checked
-with a baseline calculation.
+matter-sector solver, and the late-time MCMC diagnostics. In WSL2 Ubuntu, the
+DVCH CAMB fork was compiled with \texttt{gfortran}; a smoke test produced
+finite scalar spectra with \texttt{DVCH\_flag=True} and a distinct LCDM
+comparison. The Planck \texttt{clik} source also produced a resolved shared
+library. A real Planck posterior still additionally depends on the extracted
+Planck \texttt{.clik} data files and the Cobaya likelihood wiring.
 Consequently the local tests and late-time MCMC diagnostics are complete for
 their implemented scope, but no publication-grade Planck
 TT/TE/EE+low-$\ell$+lensing chain is claimed or quoted here.
@@ -2121,15 +2124,13 @@ comparison would require connecting the external CLASS/CAMB--Cobaya--Planck
 stack described in the validation checklist above.
 
 The supplied Planck likelihood code and baseline likelihood archive were
-inspected in the external workspace. A native \texttt{clik} configuration was
-attempted, but the Windows environment has no C compiler (\texttt{gcc},
-\texttt{clang}, or \texttt{icc}); the \texttt{clik} build also requires a
-Fortran compiler, BLAS/LAPACK, and CFITSIO. This is an environment build
-blocker, not an omitted DVCH calculation. CAMB 2.0.4 and Cobaya 3.6.2 were
-verified locally, including a baseline CAMB calculation with
-$\sigma_8=0.80975$ at $H_0=67~\mathrm{km\,s^{-1}\,Mpc^{-1}}$; the supplied
-CAMB package remains unpatched for DVCH and is therefore not used to claim a
-Planck DVCH posterior.
+inspected in the external workspace. The WSL2 build now provides the required
+C/Fortran, BLAS/LAPACK, CFITSIO, and MPI toolchain, and produces
+\texttt{libclik.so}. CAMB 2.0.4 and Cobaya 3.6.2 were verified locally,
+including a baseline CAMB calculation with
+$\sigma_8=0.80975$ at $H_0=67~\mathrm{km\,s^{-1}\,Mpc^{-1}}$ and a compiled
+DVCH spectrum smoke test. The Planck posterior is not quoted because the
+external \texttt{.clik} data files have not yet been connected to Cobaya.
 
 \textbf{Perspectiva futura:} Extender DVCH a escalas cuánticas para derivar formalmente la Ecuación~\eqref{eq:double_slit_dvch}.
 

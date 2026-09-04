@@ -16,8 +16,10 @@
     "dvch_planck2018_full.yaml": "OK",
     "dvch_boltzmann_backend.py": "OK",
     "dvch_camb_background.py": "OK",
+    "dvch_perturbations.py": "OK",
+    "camb_dvch_model.f90": "OK",
     "dvch_mcmc_chains_full.csv": "OK",
     "dvch_full_mcmc_pipeline.py": "OK"
   },
-  "timestamp": "2026-09-04T14:51:20.492951"
+  "timestamp": "2026-09-04T15:08:07.846795"
 }

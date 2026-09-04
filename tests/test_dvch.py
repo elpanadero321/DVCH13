@@ -21,6 +21,7 @@ class DVCHNumericalTests(unittest.TestCase):
         cls.growth = importlib.import_module("dvch_growth_diagnostic")
         cls.joint_fit = importlib.import_module("dvch_joint_realdata_fit")
         cls.camb_background = importlib.import_module("dvch_camb_background")
+        cls.perturbations = importlib.import_module("dvch_perturbations")
 
     def test_fiducial_background_is_normalized_at_zero_redshift(self):
         e2, matter, vacuum = self.colab.E2_dvch(0.0)
@@ -157,6 +158,31 @@ class DVCHNumericalTests(unittest.TestCase):
         self.assertAlmostEqual(table[0, 4], 0.30, places=8)
         self.assertTrue(np.all(np.isfinite(table)))
         self.assertTrue(np.all(table[:, 1] > 0.0))
+
+    def test_dvch_perturbation_closure_has_no_cdm_force(self):
+        state = self.perturbations.PerturbationState(1.0e-5, 2.0e-4, 3.0e-5)
+        delta_n, theta_n = self.perturbations.synchronous_cdm_rhs(
+            1.1, 0.30, 0.69991, 9.0e-5, state
+        )
+
+        self.assertTrue(np.isfinite(delta_n))
+        self.assertAlmostEqual(theta_n, -state.theta_m)
+
+    def test_dvch_adiabatic_initial_conditions(self):
+        initial = self.perturbations.adiabatic_initial_conditions(4.0e-5)
+        self.assertAlmostEqual(initial["delta_m"], 3.0e-5)
+        self.assertEqual(initial["theta_m"], 0.0)
+        self.assertEqual(initial["delta_lambda"], 0.0)
+
+    def test_camb_fortran_module_contains_compiled_closure(self):
+        source = (ROOT / "camb_dvch_model.f90").read_text(encoding="utf-8")
+        for marker in (
+            "module DVCHModel",
+            "subroutine DVCHInteraction",
+            "delta_qtilde",
+            "c_lambda*0._dl",
+        ):
+            self.assertIn(marker, source)
 
 
 if __name__ == "__main__":

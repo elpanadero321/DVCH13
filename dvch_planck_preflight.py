@@ -81,6 +81,8 @@ def main():
     _check_file("dvch_planck2018_full.yaml")
     _check_file("dvch_boltzmann_backend.py")
     _check_file("dvch_camb_background.py")
+    _check_file("dvch_perturbations.py")
+    _check_file("camb_dvch_model.f90")
     _check_file("dvch_mcmc_chains_full.csv")
     _check_file("dvch_full_mcmc_pipeline.py")
 
