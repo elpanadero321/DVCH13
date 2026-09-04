@@ -864,8 +864,10 @@ CAMB runtime has been compiled and the official Planck high-$\ell$
 successfully by \texttt{clik}; its built-in reference vector reproduces the
 package check value. This validates the likelihood library/data connection
 only. The CAMB-to-Cobaya spectrum vector, nuisance-parameter mapping, and
-posterior sampling remain unexecuted; therefore no CMB/Planck posterior or
-MCMC convergence is claimed here.
+posterior sampling with the full nuisance sector remains unexecuted. A
+12-accepted-step Cobaya smoke chain with the official fixed check vector has
+been run successfully as an integration test; it is not a converged
+cosmological posterior and is not reported as one.
 
 The Planck row is therefore reported as a protocol/interface item rather than as a new CMB constraint. The local files are the DVCH source-table interface, the homogeneous CAMB-ready DVCH background provider, the linear synchronous-gauge perturbation closure, the CAMB Fortran interaction module, the Planck YAML target, the matter-sector modified linear solver, the validation-status files, and a non-redundant main-text figure set. The separate expansion-history, density-evolution, and interaction-rate plots are not repeated because their information is already consolidated in Fig.~\ref{fig:dvch_easy_summary}; the main text keeps the non-redundant composite and status figures only. Numerical Planck likelihood values, posterior contours, and Bayesian evidence are not quoted as DVCH results in this article; Planck is used as a published benchmark for interpreting the background and growth diagnostics \cite{Aghanim:2018eyx,Planck:2019nip,Jeffreys:1961}.
 
@@ -2110,18 +2112,27 @@ matter-sector solver, and the late-time MCMC diagnostics. In WSL2 Ubuntu, the
 DVCH CAMB fork was compiled with \texttt{gfortran}; a smoke test produced
 finite scalar spectra with \texttt{DVCH\_flag=True} and a distinct LCDM
 comparison. The Planck \texttt{clik} source also produced a resolved shared
-library. A real Planck posterior still additionally depends on the extracted
-Planck \texttt{.clik} data files and the Cobaya likelihood wiring.
+library. The extracted Commander TT and lensing likelihoods are connected to
+the Cobaya adapter; the SimAll EE binary is present but cannot be loaded by
+the compiled clik library because its \texttt{simall} plugin symbol is absent.
 Consequently the local tests and late-time MCMC diagnostics are complete for
-their implemented scope, but no publication-grade Planck
-TT/TE/EE+low-$\ell$+lensing chain is claimed or quoted here.
+their implemented scope. The official high-$\ell$ TTTEEE \texttt{.clik}
+likelihood is now connected to Cobaya, and a reproducible 32-sample
+integration chain completed with Commander TT and lensing active. The chain
+uses the official recommended Gaussian priors for the published dust and
+temperature-calibration nuisance parameters; nuisance fields without a
+published prior remain fixed at the official check point. Two independent
+short chains were also evaluated, but their diagnostics have
+$\hat R>1.2$ and ESS below 12 for several parameters. They are validation
+artifacts, not a converged posterior.
 
 The available numerical entries in the archive are therefore retained as
 late-time diagnostics and machine-readable reproducibility records. The local
 MCMC outputs are valid for the implemented late-time likelihood, but should not
-be read as Planck-calibrated posterior constraints or evidence ratios. A Planck
-comparison would require connecting the external CLASS/CAMB--Cobaya--Planck
-stack described in the validation checklist above.
+be read as Planck-calibrated posterior constraints or evidence ratios. A publication-grade result still requires loading the SimAll EE plugin or
+using the official Cobaya native low-$\ell$ EE implementation, substantially
+longer independent chains, and convergence thresholds such as
+$\hat R-1<0.01$ and adequate ESS.
 
 The supplied Planck likelihood code and baseline likelihood archive were
 inspected in the external workspace. The WSL2 build now provides the required
@@ -2129,8 +2140,8 @@ C/Fortran, BLAS/LAPACK, CFITSIO, and MPI toolchain, and produces
 \texttt{libclik.so}. CAMB 2.0.4 and Cobaya 3.6.2 were verified locally,
 including a baseline CAMB calculation with
 $\sigma_8=0.80975$ at $H_0=67~\mathrm{km\,s^{-1}\,Mpc^{-1}}$ and a compiled
-DVCH spectrum smoke test. The Planck posterior is not quoted because the
-external \texttt{.clik} data files have not yet been connected to Cobaya.
+DVCH spectrum smoke test. The automatically generated broad nuisance ranges are deliberately not used:
+they caused a zero-acceptance chain and are not official Planck priors.
 
 \textbf{Perspectiva futura:} Extender DVCH a escalas cuánticas para derivar formalmente la Ecuación~\eqref{eq:double_slit_dvch}.
 

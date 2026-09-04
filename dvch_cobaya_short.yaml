@@ -1,0 +1,35 @@
+likelihood:
+  dvch_plik:
+    external: dvch_cobaya_planck.planck_loglike
+params:
+  H0:
+    prior: {min: 60, max: 75}
+    ref: {dist: norm, loc: 67, scale: 0.5}
+  ombh2:
+    prior: {min: 0.019, max: 0.026}
+    ref: {dist: norm, loc: 0.0224, scale: 0.0002}
+  omch2:
+    prior: {min: 0.09, max: 0.15}
+    ref: {dist: norm, loc: 0.12, scale: 0.002}
+  tau:
+    prior: {min: 0.03, max: 0.09}
+    ref: {dist: norm, loc: 0.054, scale: 0.003}
+  ln10As:
+    prior: {min: 2.8, max: 3.3}
+    ref: {dist: norm, loc: 3.044, scale: 0.01}
+  ns:
+    prior: {min: 0.90, max: 1.05}
+    ref: {dist: norm, loc: 0.965, scale: 0.005}
+  DVCH_n:
+    prior: {min: 0.01, max: 0.25}
+    ref: {dist: norm, loc: 0.09, scale: 0.01}
+  DVCH_beta:
+    prior: {min: 0, max: 0.001}
+    ref: {dist: norm, loc: 0.0001, scale: 0.00002}
+sampler:
+  mcmc:
+    max_samples: 12
+    burn_in: 0
+    learn_proposal: false
+    Rminus1_stop: 100
+output: dvch_planck_short_chain

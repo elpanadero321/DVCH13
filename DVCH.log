@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.8.27)  4 SEP 2026 17:06
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.8.27)  4 SEP 2026 17:28
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1114,98 +1114,98 @@ ne 841.
 [6]
 
 Package natbib Warning: Citation `Aghanim:2018eyx' on page 7 undefined on input
- line 870.
+ line 872.
 
 
 Package natbib Warning: Citation `Planck:2019nip' on page 7 undefined on input 
-line 870.
+line 872.
 
 
 Package natbib Warning: Citation `Jeffreys:1961' on page 7 undefined on input l
-ine 870.
+ine 872.
 
 [7 <./figures/dvch_results_with_numbers.png>]
 <figures/dvch_late_time_residuals.png, id=368, 1148.1294pt x 357.4956pt>
 File: figures/dvch_late_time_residuals.png Graphic file (type png)
 <use figures/dvch_late_time_residuals.png>
 Package pdftex.def Info: figures/dvch_late_time_residuals.png  used on input li
-ne 874.
+ne 876.
 (pdftex.def)             Requested size: 499.79782pt x 155.61842pt.
 
 
 Package natbib Warning: Citation `Adame:2024ywp' on page 8 undefined on input l
-ine 877.
+ine 879.
 
 
 Package natbib Warning: Citation `Moresco:2016mzx' on page 8 undefined on input
- line 877.
+ line 879.
 
 
 Package natbib Warning: Citation `Planck:2019nip' on page 8 undefined on input 
-line 877.
+line 879.
 
 
 Package natbib Warning: Citation `Adame:2024ywp' on page 8 undefined on input l
-ine 877.
+ine 879.
 
 
 Package natbib Warning: Citation `Moresco:2016mzx' on page 8 undefined on input
- line 877.
+ line 879.
 
 
 Package natbib Warning: Citation `Planck:2019nip' on page 8 undefined on input 
-line 877.
+line 879.
 
 [8 <./figures/dvch_sigma8_global_comparison.png>] [9 <./figures/dvch_realdata_d
 iagnostics.png> <./figures/dvch_robustness_scan.png>] [10]
 
 Package natbib Warning: Citation `Valiviita:2008iv' on page 11 undefined on inp
-ut line 969.
-
-
-Package natbib Warning: Citation `Asgari:2020wuj' on page 11 undefined on input
- line 1049.
-
-
-Package natbib Warning: Citation `Abbott:2021asy' on page 11 undefined on input
- line 1049.
+ut line 971.
 
 [11 <./figures/dvch_late_time_residuals.png>]
 
+Package natbib Warning: Citation `Asgari:2020wuj' on page 12 undefined on input
+ line 1051.
+
+
+Package natbib Warning: Citation `Abbott:2021asy' on page 12 undefined on input
+ line 1051.
+
+
 Package natbib Warning: Citation `Blas:2011rf' on page 12 undefined on input li
-ne 1109.
+ne 1111.
 
 
 Package natbib Warning: Citation `Lewis:1999bs' on page 12 undefined on input l
-ine 1109.
+ine 1111.
 
 
 Package natbib Warning: Citation `Planck:2019nip' on page 12 undefined on input
- line 1112.
+ line 1114.
 
-<figures/dvch_relativistic_perturbation_validation_status.png, id=423, 860.013p
+<figures/dvch_relativistic_perturbation_validation_status.png, id=422, 860.013p
 t x 353.6412pt>
 File: figures/dvch_relativistic_perturbation_validation_status.png Graphic file
  (type png)
 <use figures/dvch_relativistic_perturbation_validation_status.png>
 Package pdftex.def Info: figures/dvch_relativistic_perturbation_validation_stat
-us.png  used on input line 1143.
+us.png  used on input line 1145.
 (pdftex.def)             Requested size: 236.16165pt x 97.10863pt.
 [12]
 
 Package natbib Warning: Citation `Bekenstein:1973ur' on page 13 undefined on in
-put line 1177.
+put line 1179.
 
 
 Package natbib Warning: Citation `Hawking:1975vcx' on page 13 undefined on inpu
-t line 1177.
+t line 1179.
 
 
 Package natbib Warning: Citation `Gibbons:1977mu' on page 13 undefined on input
- line 1177.
+ line 1179.
 
 
-Overfull \hbox (22.87788pt too wide) detected at line 1232
+Overfull \hbox (22.87788pt too wide) detected at line 1234
 [][][]\OML/lmm/m/it/10 I[]\OT1/lmr/m/n/10 (\OML/lmm/m/it/10 x\OT1/lmr/m/n/10 ) 
 = \OML/lmm/m/it/10 I[] [] [][] ;  [] \OMS/lmsy/m/n/10 ^^\ \OT1/lmr/m/n/10 1\OML
 /lmm/m/it/10 ;
@@ -1213,14 +1213,14 @@ Overfull \hbox (22.87788pt too wide) detected at line 1232
 
 
 Package natbib Warning: Citation `Feynman:1965' on page 13 undefined on input l
-ine 1233.
+ine 1235.
 
 
 Package natbib Warning: Citation `Landau:1981' on page 13 undefined on input li
-ne 1233.
+ne 1235.
 
 
-Overfull \hbox (118.40848pt too wide) detected at line 1240
+Overfull \hbox (118.40848pt too wide) detected at line 1242
 [][][]\OML/lmm/m/it/10 ^^_[] \OT1/lmr/m/n/10 = [] [] [][] \OML/lmm/m/it/10 ;  [
 ];
  []
@@ -1229,11 +1229,11 @@ Overfull \hbox (118.40848pt too wide) detected at line 1240
 <figures/dvch_double_slit.png, id=448, 867.24pt x 578.16pt>
 File: figures/dvch_double_slit.png Graphic file (type png)
 <use figures/dvch_double_slit.png>
-Package pdftex.def Info: figures/dvch_double_slit.png  used on input line 1246.
+Package pdftex.def Info: figures/dvch_double_slit.png  used on input line 1248.
 
 (pdftex.def)             Requested size: 236.16165pt x 157.43741pt.
 LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 1
-248.
+250.
 
 (D:\miktex\tex/latex/lm\ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
@@ -1242,271 +1242,271 @@ File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 File: figures/dvch_full_mcmc_corner.png Graphic file (type png)
 <use figures/dvch_full_mcmc_corner.png>
 Package pdftex.def Info: figures/dvch_full_mcmc_corner.png  used on input line 
-1300.
+1302.
 (pdftex.def)             Requested size: 236.16165pt x 236.16118pt.
 <figures/dvch_full_mcmc_traces.png, id=450, 715.0715pt x 586.5915pt>
 File: figures/dvch_full_mcmc_traces.png Graphic file (type png)
 <use figures/dvch_full_mcmc_traces.png>
 Package pdftex.def Info: figures/dvch_full_mcmc_traces.png  used on input line 
-1308.
+1310.
 (pdftex.def)             Requested size: 236.16165pt x 193.72795pt.
  [14{D:/miktex/fonts/enc/dvips/lm/lm-ts1.enc} <./figures/dvch_double_slit.png> 
 <./figures/dvch_full_mcmc_corner.png> <./figures/dvch_full_mcmc_traces.png>]
 
 Package natbib Warning: Citation `Akaike:1974' on page 15 undefined on input li
-ne 1421.
+ne 1423.
 
 
 Package natbib Warning: Citation `Schwarz:1978' on page 15 undefined on input l
-ine 1421.
+ine 1423.
 
 
 Package natbib Warning: Citation `Aghanim:2018eyx' on page 15 undefined on inpu
-t line 1435.
+t line 1437.
 
 
 Package natbib Warning: Citation `Planck:2019nip' on page 15 undefined on input
- line 1435.
+ line 1437.
 
 
 Package natbib Warning: Citation `Blas:2011rf' on page 15 undefined on input li
-ne 1435.
+ne 1437.
 
 
 Package natbib Warning: Citation `Lewis:1999bs' on page 15 undefined on input l
-ine 1435.
+ine 1437.
 
 
 Package natbib Warning: Citation `Torrado:2020dgo' on page 15 undefined on inpu
-t line 1435.
+t line 1437.
 
 
 Package natbib Warning: Citation `Adame:2024ywp' on page 15 undefined on input 
-line 1435.
+line 1437.
 
 
 Package natbib Warning: Citation `Brout2022' on page 15 undefined on input line
- 1435.
+ 1437.
 
 
 Package natbib Warning: Citation `Asgari:2020wuj' on page 15 undefined on input
- line 1435.
+ line 1437.
 
 
 Package natbib Warning: Citation `Abbott:2021asy' on page 15 undefined on input
- line 1435.
+ line 1437.
 
 [15]
 
 Package natbib Warning: Citation `Sola:2017znb' on page 16 undefined on input l
-ine 1475.
+ine 1477.
 
 
 Package natbib Warning: Citation `Nunes:2022bov' on page 16 undefined on input 
-line 1475.
+line 1477.
 
 
 Package natbib Warning: Citation `Pan:2021dxa' on page 16 undefined on input li
-ne 1475.
+ne 1477.
 
 
 Package natbib Warning: Citation `DiValentino:2021izs' on page 16 undefined on 
-input line 1475.
+input line 1477.
 
 
 Package natbib Warning: Citation `Valiviita:2008iv' on page 16 undefined on inp
-ut line 1493.
+ut line 1495.
 
 
 Package natbib Warning: Citation `Jeffreys:1961' on page 16 undefined on input 
-line 1504.
+line 1506.
 
 
 Package natbib Warning: Citation `Adame:2024ywp' on page 16 undefined on input 
-line 1524.
+line 1526.
 
 <figures/dvch_modified_boltzmann_solver.png, id=482, 1004.0712pt x 364.7226pt>
 File: figures/dvch_modified_boltzmann_solver.png Graphic file (type png)
 <use figures/dvch_modified_boltzmann_solver.png>
 Package pdftex.def Info: figures/dvch_modified_boltzmann_solver.png  used on in
-put line 1551.
+put line 1553.
 (pdftex.def)             Requested size: 236.16165pt x 85.78217pt.
 [16]
 
 Package natbib Warning: Citation `Torrado:2020dgo' on page 17 undefined on inpu
-t line 1608.
+t line 1610.
 
 
 Package natbib Warning: Citation `Blas:2011rf' on page 17 undefined on input li
-ne 1608.
+ne 1610.
 
 
 Package natbib Warning: Citation `Lewis:1999bs' on page 17 undefined on input l
-ine 1608.
+ine 1610.
 
 
 Package natbib Warning: Citation `Planck:2019nip' on page 17 undefined on input
- line 1608.
+ line 1610.
 
 <figures/dvch_cmb_class_camb_mcmc_status.png, id=494, 710.655pt x 354.123pt>
 File: figures/dvch_cmb_class_camb_mcmc_status.png Graphic file (type png)
 <use figures/dvch_cmb_class_camb_mcmc_status.png>
 Package pdftex.def Info: figures/dvch_cmb_class_camb_mcmc_status.png  used on i
-nput line 1613.
+nput line 1615.
 (pdftex.def)             Requested size: 216.4812pt x 107.87495pt.
 <figures/dvch_mcmc_convergence.png, id=495, 1147.6476pt x 357.4956pt>
 File: figures/dvch_mcmc_convergence.png Graphic file (type png)
 <use figures/dvch_mcmc_convergence.png>
 Package pdftex.def Info: figures/dvch_mcmc_convergence.png  used on input line 
-1640.
+1642.
 (pdftex.def)             Requested size: 236.16165pt x 73.56526pt.
 [17 <./figures/dvch_modified_boltzmann_solver.png> <./figures/dvch_cmb_class_ca
 mb_mcmc_status.png> <./figures/dvch_mcmc_convergence.png>] [18]
 
 Package natbib Warning: Citation `Adame:2024ywp' on page 19 undefined on input 
-line 1802.
+line 1804.
 
 
 Package natbib Warning: Citation `Brout2022' on page 19 undefined on input line
- 1803.
+ 1805.
 
 
 Package natbib Warning: Citation `Moresco:2016mzx' on page 19 undefined on inpu
-t line 1803.
+t line 1805.
 
 
 Package natbib Warning: Citation `Aghanim:2018eyx' on page 19 undefined on inpu
-t line 1803.
+t line 1805.
 
 
 Package natbib Warning: Citation `Planck:2019nip' on page 19 undefined on input
- line 1803.
+ line 1805.
 
 
 Package natbib Warning: Citation `Blas:2011rf' on page 19 undefined on input li
-ne 1803.
+ne 1805.
 
 
 Package natbib Warning: Citation `Lewis:1999bs' on page 19 undefined on input l
-ine 1803.
+ine 1805.
 
 
 Package natbib Warning: Citation `Torrado:2020dgo' on page 19 undefined on inpu
-t line 1803.
+t line 1805.
 
 
 Package natbib Warning: Citation `Lewis:2019xzd' on page 19 undefined on input 
-line 1803.
+line 1805.
 
 
 Package natbib Warning: Citation `Akaike:1974' on page 19 undefined on input li
-ne 1803.
+ne 1805.
 
 
 Package natbib Warning: Citation `Schwarz:1978' on page 19 undefined on input l
-ine 1803.
+ine 1805.
 
 
 Package natbib Warning: Citation `Jeffreys:1961' on page 19 undefined on input 
-line 1803.
+line 1805.
 
 [19]
 
 Package natbib Warning: Citation `Aghanim:2018eyx' on page 20 undefined on inpu
-t line 1890.
+t line 1892.
 
 
 Package natbib Warning: Citation `Planck:2019nip' on page 20 undefined on input
- line 1890.
+ line 1892.
 
 
 Package natbib Warning: Citation `Beutler:2011hx' on page 20 undefined on input
- line 1890.
+ line 1892.
 
 
 Package natbib Warning: Citation `Ross:2014qpa' on page 20 undefined on input l
-ine 1890.
+ine 1892.
 
 
 Package natbib Warning: Citation `Alam:2016hwk' on page 20 undefined on input l
-ine 1890.
+ine 1892.
 
 
 Package natbib Warning: Citation `Alam:2020sor' on page 20 undefined on input l
-ine 1890.
+ine 1892.
 
 
 Package natbib Warning: Citation `Brout2022' on page 20 undefined on input line
- 1890.
+ 1892.
 
 
 Package natbib Warning: Citation `Alam:2016hwk' on page 20 undefined on input l
-ine 1890.
+ine 1892.
 
 
 Package natbib Warning: Citation `Alam:2020sor' on page 20 undefined on input l
-ine 1890.
+ine 1892.
 
 
 Package natbib Warning: Citation `Blas:2011rf' on page 20 undefined on input li
-ne 1891.
+ne 1893.
 
 
 Package natbib Warning: Citation `Lewis:1999bs' on page 20 undefined on input l
-ine 1891.
+ine 1893.
 
 
 Package natbib Warning: Citation `Torrado:2020dgo' on page 20 undefined on inpu
-t line 1894.
+t line 1896.
 
 
 Package natbib Warning: Citation `Aghanim:2018eyx' on page 20 undefined on inpu
-t line 1937.
+t line 1939.
 
 
 Package natbib Warning: Citation `Planck:2019nip' on page 20 undefined on input
- line 1937.
+ line 1939.
 
 
 Package natbib Warning: Citation `Beutler:2011hx' on page 20 undefined on input
- line 1947.
+ line 1949.
 
 
 Package natbib Warning: Citation `Ross:2014qpa' on page 20 undefined on input l
-ine 1947.
+ine 1949.
 
 
 Package natbib Warning: Citation `Alam:2016hwk' on page 20 undefined on input l
-ine 1948.
+ine 1950.
 
 
 Package natbib Warning: Citation `Alam:2020sor' on page 20 undefined on input l
-ine 1948.
+ine 1950.
 
 [20]
 
 Package natbib Warning: Citation `Brout2022' on page 21 undefined on input line
- 1965.
+ 1967.
 
 
 Package natbib Warning: Citation `Blas:2011rf' on page 21 undefined on input li
-ne 1994.
+ne 1996.
 
 
 Package natbib Warning: Citation `Lewis:1999bs' on page 21 undefined on input l
-ine 1994.
+ine 1996.
 
 
 Package natbib Warning: Citation `Torrado:2020dgo' on page 21 undefined on inpu
-t line 2029.
+t line 2031.
 
 
 Package natbib Warning: Citation `Blas:2011rf' on page 21 undefined on input li
-ne 2029.
+ne 2031.
 
 
 Package natbib Warning: Citation `Lewis:2019xzd' on page 21 undefined on input 
-line 2031.
+line 2033.
 
 [21]
 No file DVCH.bbl.
@@ -1522,10 +1522,10 @@ Package rerunfilecheck Info: File `DVCH.out' has not changed.
 (rerunfilecheck)             Checksum: 6B3A609D5F3148BFE761A9ECB5B72B8B;14718.
  ) 
 Here is how much of TeX's memory you used:
- 33909 strings out of 467870
- 760121 string characters out of 5435190
- 1286539 words of memory out of 5000000
- 62012 multiletter control sequences out of 15000+600000
+ 33911 strings out of 467870
+ 760141 string characters out of 5435190
+ 1286686 words of memory out of 5000000
+ 62014 multiletter control sequences out of 15000+600000
  720502 words of font info for 109 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  84i,12n,104p,1022b,609s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -1546,7 +1546,7 @@ lmsy7.pfb><D:/miktex/fonts/type1/public/lm/lmsy8.pfb><D:/miktex/fonts/type1/pub
 lic/lm/lmsy9.pfb><D:/miktex/fonts/type1/public/lm/lmtt10.pfb><D:/miktex/fonts/t
 ype1/public/lm/lmtt8.pfb><D:/miktex/fonts/type1/public/amsfonts/symbols/msam10.
 pfb><D:/miktex/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on DVCH.pdf (22 pages, 4797937 bytes).
+Output written on DVCH.pdf (22 pages, 4798141 bytes).
 PDF statistics:
  760 PDF objects out of 1000 (max. 8388607)
  216 named destinations out of 1000 (max. 500000)
