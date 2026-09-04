@@ -45,6 +45,11 @@ os.environ.setdefault(
     "commander/commander_dx12_v3_2_29.clik",
 )
 os.environ.setdefault(
+    "DVCH_PLANCK_LOWE",
+    "/mnt/d/DVCH-external/planck-data/baseline/plc_3.0/low_l/"
+    "simall/simall_100x143_offlike5_EE_Aplanck_B.clik",
+)
+os.environ.setdefault(
     "DVCH_PLANCK_LENSING",
     "/mnt/d/DVCH-external/planck-data/baseline/plc_3.0/lensing/"
     "smicadx12_Dec5_ftl_mv2_ndclpp_p_teb_consext8.clik_lensing",
@@ -73,6 +78,7 @@ OFFICIAL_PRIORS = {
 }
 
 OFFICIAL_FIXED = {
+    "A_planck": 1.0,
     "cib_index": -1.3,
     "galf_EE_index": -2.4,
     "galf_TE_index": -2.4,
