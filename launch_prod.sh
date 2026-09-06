@@ -1,8 +1,17 @@
 #!/bin/bash
 # Launch the 4-chain MPI production run for DVCH Planck MCMC.
 set -e
-cd /mnt/d/DVCH13-1
-export LD_LIBRARY_PATH=/home/danieproyect/plc-3.1/lib
+cd "$(dirname "$0")"
+
+# Portable: read the clik lib directory from DVCH_CLIK_LIB_DIR (see env.sh.example).
+if [[ -n "${DVCH_CLIK_LIB_DIR:-}" ]]; then
+    export LD_LIBRARY_PATH="${DVCH_CLIK_LIB_DIR}${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"
+elif [[ -z "${LD_LIBRARY_PATH:-}" ]]; then
+    echo "ERROR: set DVCH_CLIK_LIB_DIR (or LD_LIBRARY_PATH) to the directory" >&2
+    echo "       containing libclik.so (e.g. .../plc-3.1/lib)." >&2
+    exit 1
+fi
+
 export DVCH_MAX_SAMPLES=2000
 export DVCH_BURN_IN=200
 export DVCH_LEARN_PROPOSAL=true

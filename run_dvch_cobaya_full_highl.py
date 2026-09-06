@@ -22,49 +22,45 @@ from dvch_cobaya_planck import planck_loglike
 
 
 ROOT = Path(__file__).resolve().parent
-LIKELIHOOD = Path(
-    os.environ.get(
-        "DVCH_PLANCK_LIKELIHOOD",
-        "/mnt/d/DVCH-external/planck-data/baseline/plc_3.0/hi_l/plik/"
-        "plik_rd12_HM_v22b_TTTEEE.clik",
+
+# ---------------------------------------------------------------------------
+# Portable path resolution.  All machine-specific locations are read from the
+# environment (see env.sh.example).  If a required variable is missing we fail
+# with a clear message instead of silently using a hardcoded path.
+# ---------------------------------------------------------------------------
+_REQUIRED_ENV = {
+    "DVCH_CAMB_ROOT": "root directory of the patched CAMB checkout",
+    "DVCH_CLIK_EGG": "path to the clik Python egg (clik-3.1-py3.x-*.egg)",
+    "DVCH_PLANCK_LIKELIHOOD": "path to plik_rd12_HM_v22b_TTTEEE.clik",
+    "DVCH_PLANCK_LOWL": "path to commander_dx12_v3_2_29.clik",
+    "DVCH_PLANCK_LOWE": "path to simall_100x143_offlike5_EE_Aplanck_B.clik",
+    "DVCH_PLANCK_LENSING": "path to smicadx12_..._consext8.clik_lensing",
+}
+
+_missing = [k for k in _REQUIRED_ENV if not os.environ.get(k)]
+if _missing:
+    raise SystemExit(
+        "Missing required environment variables:\n  "
+        + "\n  ".join(f"{k}  ({_REQUIRED_ENV[k]})" for k in _missing)
+        + "\n\nCopy env.sh.example to env.sh, edit the paths, then `source env.sh`."
     )
-)
-os.environ.setdefault("DVCH_CAMB_ROOT", "/mnt/d/DVCH-external/CAMB-master")
-EGG = Path(
-    os.environ.get(
-        "DVCH_CLIK_EGG",
-        "/home/danieproyect/clik-install/local/lib/python3.14/dist-packages/"
-        "clik-3.1-py3.14-linux-x86_64.egg",
-    )
-)
-os.environ.setdefault("DVCH_CLIK_EGG", str(EGG))
+
+LIKELIHOOD = Path(os.environ["DVCH_PLANCK_LIKELIHOOD"])
+EGG = Path(os.environ["DVCH_CLIK_EGG"])
+
 # The clik Python egg loads libclik.so at import time via dlopen("libclik.so").
 # The dynamic linker resolves that name against LD_LIBRARY_PATH, which must be
 # set BEFORE the Python process starts (setting os.environ here is too late).
 # The Waf build (which includes SimAll) installs libclik.so under plc-3.1/lib.
 # Run via the wrapper `run_dvch_cobaya_full_highl.sh`, or export it yourself:
-#   export LD_LIBRARY_PATH=/home/danieproyect/plc-3.1/lib
-if "/home/danieproyect/plc-3.1/lib" not in os.environ.get("LD_LIBRARY_PATH", ""):
+#   export LD_LIBRARY_PATH=/path/to/plc-3.1/lib
+if not os.environ.get("LD_LIBRARY_PATH"):
     raise SystemExit(
-        "LD_LIBRARY_PATH must include /home/danieproyect/plc-3.1/lib. "
-        "Run via run_dvch_cobaya_full_highl.sh or export it in the shell."
+        "LD_LIBRARY_PATH is not set. It must point to the directory containing "
+        "libclik.so (e.g. /path/to/plc-3.1/lib). Run via "
+        "run_dvch_cobaya_full_highl.sh or export it in the shell."
     )
-os.environ.setdefault("DVCH_PLANCK_LIKELIHOOD", str(LIKELIHOOD))
-os.environ.setdefault(
-    "DVCH_PLANCK_LOWL",
-    "/mnt/d/DVCH-external/planck-data/baseline/plc_3.0/low_l/"
-    "commander/commander_dx12_v3_2_29.clik",
-)
-os.environ.setdefault(
-    "DVCH_PLANCK_LOWE",
-    "/mnt/d/DVCH-external/planck-data/baseline/plc_3.0/low_l/"
-    "simall/simall_100x143_offlike5_EE_Aplanck_B.clik",
-)
-os.environ.setdefault(
-    "DVCH_PLANCK_LENSING",
-    "/mnt/d/DVCH-external/planck-data/baseline/plc_3.0/lensing/"
-    "smicadx12_Dec5_ftl_mv2_ndclpp_p_teb_consext8.clik_lensing",
-)
+
 sys.path.insert(0, str(EGG))
 
 OFFICIAL_PRIORS = {
@@ -175,5 +171,6 @@ def build_info() -> dict:
 
 
 if __name__ == "__main__":
-    info, _ = run(build_info(), debug=True, force=True)
+    debug = os.environ.get("DVCH_DEBUG", "false").lower() == "true"
+    info, _ = run(build_info(), debug=debug, force=True)
     print("Full high-l nuisance smoke chain completed:", info["output"])
