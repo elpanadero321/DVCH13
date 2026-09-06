@@ -38,6 +38,17 @@ EGG = Path(
     )
 )
 os.environ.setdefault("DVCH_CLIK_EGG", str(EGG))
+# The clik Python egg loads libclik.so at import time via dlopen("libclik.so").
+# The dynamic linker resolves that name against LD_LIBRARY_PATH, which must be
+# set BEFORE the Python process starts (setting os.environ here is too late).
+# The Waf build (which includes SimAll) installs libclik.so under plc-3.1/lib.
+# Run via the wrapper `run_dvch_cobaya_full_highl.sh`, or export it yourself:
+#   export LD_LIBRARY_PATH=/home/danieproyect/plc-3.1/lib
+if "/home/danieproyect/plc-3.1/lib" not in os.environ.get("LD_LIBRARY_PATH", ""):
+    raise SystemExit(
+        "LD_LIBRARY_PATH must include /home/danieproyect/plc-3.1/lib. "
+        "Run via run_dvch_cobaya_full_highl.sh or export it in the shell."
+    )
 os.environ.setdefault("DVCH_PLANCK_LIKELIHOOD", str(LIKELIHOOD))
 os.environ.setdefault(
     "DVCH_PLANCK_LOWL",
@@ -78,7 +89,7 @@ OFFICIAL_PRIORS = {
 }
 
 OFFICIAL_FIXED = {
-    "A_planck": 1.0,
+    "A_planck": 1.000442,
     "cib_index": -1.3,
     "galf_EE_index": -2.4,
     "galf_TE_index": -2.4,
@@ -138,9 +149,23 @@ def build_info() -> dict:
     info["sampler"]["mcmc"]["max_samples"] = int(
         os.environ.get("DVCH_MAX_SAMPLES", "32")
     )
-    info["sampler"]["mcmc"]["burn_in"] = 0
-    info["sampler"]["mcmc"]["learn_proposal"] = False
-    info["sampler"]["mcmc"]["Rminus1_stop"] = 100
+    info["sampler"]["mcmc"]["burn_in"] = float(
+        os.environ.get("DVCH_BURN_IN", "0")
+    )
+    info["sampler"]["mcmc"]["learn_proposal"] = (
+        os.environ.get("DVCH_LEARN_PROPOSAL", "false").lower() == "true"
+    )
+    info["sampler"]["mcmc"]["Rminus1_stop"] = float(
+        os.environ.get("DVCH_RMINUS1_STOP", "100")
+    )
+    if os.environ.get("DVCH_LEARN_RMINUS1_MAX"):
+        info["sampler"]["mcmc"]["learn_proposal_Rminus1_max"] = float(
+            os.environ["DVCH_LEARN_RMINUS1_MAX"]
+        )
+    # Optional initial covariance matrix (regularized empirical covmat).
+    covmat = os.environ.get("DVCH_COVMAT")
+    if covmat:
+        info["sampler"]["mcmc"]["covmat"] = covmat
     info["output"] = os.environ.get(
         "DVCH_CHAIN_OUTPUT", "dvch_planck_full_highl_chain"
     )
