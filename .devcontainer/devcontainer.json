@@ -1,0 +1,35 @@
+{
+  // ============================================================
+  // DVCH MCMC — GitHub Codespaces (4 cores / 16 GB)
+  // El bundle trae .so compiladas para CPython 3.14: el feature
+  // de Python fija 3.14 y Docker-in-Docker permite la ruta Docker
+  // (python:3.14-slim) sin recompilar CAMB/clik.
+  // ============================================================
+  "name": "DVCH Planck MCMC (Py3.14)",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
+  "features": {
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.14"
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  "hostRequirements": {
+    // 4 cadenas MPI en paralelo = 4 cores x 1 hilo. 16 GB sobra; el cuello es CPU.
+    "cpus": 4,
+    "memory": "16gb",
+    "storage": "32gb"
+  },
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y --no-install-recommends gfortran libgfortran5 libopenmpi-dev openmpi-bin liblapack3 libfftw3-double3 libfftw3-single3 procps ca-certificates && python3 -m pip install --upgrade pip && python3 -m pip install numpy scipy pandas matplotlib getdist mpi4py pyyaml 'cobaya==3.6.2'",
+  // 1 hilo por cadena: lo que importa es el paralelismo entre las 4 cadenas.
+  "remoteEnv": {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-python.python"]
+    }
+  }
+}

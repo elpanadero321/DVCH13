@@ -1,0 +1,120 @@
+# ============================================================
+# DVCH Planck 2018 MCMC — GitHub Actions (sin tarjeta)
+#
+# Por que Actions y no Codespaces:
+#   el runner ubuntu-latest tiene 4 vCPU / 16 GB x86_64, igual
+#   que el Codespace, pero NO se duerme por inactividad. A cambio,
+#   hay un limite duro de 6 h por job (timeout-minutes <= 360).
+#
+# Estrategia para caber en ese limite:
+#   1. mode=smoke  -> mini-run de ~25 min que imprime la ACEPTACION
+#      real del MCMC. Sirve para saber el ETA antes de gastar horas.
+#   2. mode=full   -> corrida 4 cadenas x 2000 muestras, con
+#      timeout-minutes: 355 (5 h 55 min, por debajo del limite).
+#      Si no alcanza a terminar, sube igual los artefactos y se
+#      relanza: Cobaya reanuda desde dvch_prod.checkpoint.
+#
+# NO recompila nada: usa deploy/Dockerfile sobre python:3.14-slim,
+# que es la ABI exacta de los .so que trae el bundle.
+#
+# Requisito unico: DVCH_BUNDLE_URL (secret o input). El bundle
+# caduca a las ~72 h, asi que si falla la descarga hay que volver
+# a subirlo con: bash deploy/upload_bundle.sh
+# ============================================================
+
+name: DVCH MCMC (Planck 2018)
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "smoke = mide aceptacion en ~25 min | full = corrida completa"
+        type: choice
+        options: ["smoke", "full"]
+        default: "smoke"
+      max_samples:
+        description: "Muestras aceptadas por cadena (solo mode=full)"
+        type: string
+        default: "2000"
+      burn_in:
+        description: "Burn-in por cadena (solo mode=full)"
+        type: string
+        default: "200"
+      nchains:
+        description: "Cadenas MPI (4 = 4 vCPU del runner; no subir)"
+        type: string
+        default: "4"
+      bundle_url:
+        description: "URL del bundle (vacio = usa el secret DVCH_BUNDLE_URL)"
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+# Un solo run a la vez: evita que dos corridas se pisen los artefactos.
+concurrency:
+  group: dvch-mcmc-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  mcmc:
+    runs-on: ubuntu-latest
+    # Limite duro de GitHub Actions = 360 min. Nos quedamos a 5 min del borde.
+    timeout-minutes: 355
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Comprobar Docker y recursos
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker version --format '{{.Server.Version}}'
+          echo "cores : $(nproc)"
+          free -h
+          df -h "$GITHUB_WORKSPACE"
+
+      - name: Resolver URL del bundle
+        id: url
+        shell: bash
+        env:
+          INPUT_URL: ${{ inputs.bundle_url }}
+          SECRET_URL: ${{ secrets.DVCH_BUNDLE_URL }}
+        run: |
+          set -euo pipefail
+          URL="${INPUT_URL:-$SECRET_URL}"
+          if [[ -z "$URL" ]]; then
+            echo "ERROR: falta la URL del bundle." >&2
+            echo "  Opcion A: define el secret DVCH_BUNDLE_URL en el repo." >&2
+            echo "  Opcion B: pasala en el input bundle_url al lanzar el workflow." >&2
+            echo "  Para generarla: bash deploy/upload_bundle.sh" >&2
+            exit 1
+          fi
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+          echo "Bundle: $URL"
+
+      - name: Descargar y descomprimir bundle
+        shell: bash
+        env:
+          BUNDLE_URL: ${{ steps.url.outputs.url }}
+        run: |
+          set -euo pipefail
+          curl -L --fail --retry 3 --retry-delay 5 -o bundle.tar.gz "$BUNDLE_URL"
+          echo "bundle: $(du -h bundle.tar.gz | cut -f1)"
+          gzip -t bundle.tar.gz
+          tar -xzf bundle.tar.gz
+          [[ -d dvch_bundle_stage ]] || { echo "ERROR: bundle incompleto"; exit 1; }
+          echo "descomprimido: $(du -sh dvch_bundle_stage | cut -f1)"
+
+      - name: Inyectar covmat en el bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          # El bundle se empaqueto SIN covmats. dvch_prod_wide.covmat viaja en
+          # el repo (git) y es el que evita la aceptacion pesima del ~7 %.
+          # Se copia al host mount para que el contenedor lo vea.
+          mkdir -p dvch_bundle_stage/repo
+          cp -v dvch_prod_wide.covmat dvch_bundle_stage/repo/dvch_prod_wide.covmat
+          wc -c < dvch_bundle_stage/repo/dvch_prod_wide.covmat
+# ---PART3---
