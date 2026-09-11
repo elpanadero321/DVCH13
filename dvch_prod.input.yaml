@@ -288,10 +288,10 @@ params:
     value: 1.000442
 sampler:
   mcmc:
-    max_samples: 400
+    max_samples: 2000
     burn_in: 200.0
-    learn_proposal: false
-    Rminus1_stop: 0.01
+    learn_proposal: true
+    Rminus1_stop: 100.0
     covmat: dvch_prod_wide.covmat
-    seed: 42
+    seed: 1
 output: dvch_prod

@@ -80,8 +80,8 @@ def main():
     med = np.median(flat, axis=0)
     q16 = np.percentile(flat, 16, axis=0)
     q84 = np.percentile(flat, 84, axis=0)
-        lo = np.percentile(flat, 2.5, axis=0)
-        hi = np.percentile(flat, 97.5, axis=0)
+    lo = np.percentile(flat, 2.5, axis=0)
+    hi = np.percentile(flat, 97.5, axis=0)
 
     print("\n=== Extended posterior ===")
     for j, nm in enumerate(names):
@@ -106,10 +106,10 @@ def main():
         for w in range(min(N_WALKERS, 12)):
             axes[j].plot(raw[:, w, j], alpha=0.3, lw=0.5)
         axes[j].axvline(N_BURN, color="k", ls="--", lw=0.8)
-            axes[j].axhline(med[j], color="C0", lw=1.0)
-            axes[j].axhspan(lo[j], hi[j], color="C0", alpha=0.15)
-            axes[j].set_ylabel(names[j])
-            axes[j].grid(alpha=0.2)
+        axes[j].axhline(med[j], color="C0", lw=1.0)
+        axes[j].axhspan(lo[j], hi[j], color="C0", alpha=0.15)
+        axes[j].set_ylabel(names[j])
+        axes[j].grid(alpha=0.2)
     axes[-1].set_xlabel("step")
     fig.suptitle("DVCH extended MCMC traces", y=1.01)
     fig.tight_layout()

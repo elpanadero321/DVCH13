@@ -4,7 +4,7 @@
 > este proyecto, lee este archivo completo antes de hacer cualquier otra cosa.
 > Contiene el estado, el entorno, los comandos, los resultados ya obtenidos y las
 > trampas conocidas. Así no se repite trabajo ni se inventa nada.
-> Última actualización: 2026-09-09 (sesión de pruebas completas).
+> Última actualización: 2026-10-09 (auditoría: la MCMC de física completa sigue SIN ejecutar).
 
 ---
 
@@ -252,6 +252,7 @@ R-hat<1.01 en ninguna cadena actual.**
 2. Para el MCMC Planck real en WSL: (a) clonar/compilar CAMB con
    `camb_patch/` (ver `camb_patch/README_patch.md`), (b) obtener datos `.clik`
    bajo licencia, (c) crear `env.sh` desde `env.sh.example`, (d) `launch_prod.sh`.
+   **Reconfirmado SIN ejecutar el 2026-10-09 — ver §9.**
 3. Si se quiere R-hat<1.01 en el pipeline por defecto, aumentar `n_steps` en
    `dvch_full_mcmc_pipeline.py` (decisión de configuración, no hecha aún).
 4. Compilar CLASS/CAMB desde los "emuladores" de `D:\Nueva carpeta (3)` si se
@@ -279,6 +280,192 @@ R-hat<1.01 en ninguna cadena actual.**
   `run_extended.ps1`
 - Corrida extendida: `EXT_MCMC.log`, `dvch_mcmc_extended_summary.csv`,
   `dvch_mcmc_extended_convergence.csv`, `figures/dvch_mcmc_extended_traces.png`
+
+---
+
+## 9. Auditoría 2026-10-09 — la MCMC de física completa sigue SIN ejecutar
+
+> **Instrucción de esta sesión:** registrar el estado y dejar escrito *lo que se
+> debe hacer al ejecutar*. **NO se ejecutó ningún comando de física pesada.**
+> No se modificó ningún script del pipeline; solo este archivo de contexto.
+
+### 9.1 Veredicto
+
+**La MCMC de física completa (Planck 2018 TTTEEE+lowl+lensing + Pantheon+ + BAO
+vía CAMB patcheado + clik + Cobaya/MPI) NO se ha ejecutado.** Lo único que existe
+son validaciones *late-time* (CC+BAO) y cadenas *smoke* que **no convergen**.
+El estado real es `prepared_not_run` / `blocked_on_external_deps`.
+
+### 9.2 Evidencia verificada (leída en disco, no inferida)
+
+| Fuente | Dato |
+|---|---|
+| `dvch_cmb_class_camb_mcmc_status.csv` | `Planck clik likelihood = False (external)` |
+| `dvch_planck_preflight_report.json` (2026-09-09) | `classy = NOT_INCLUDED_LOCALLY`, `clik = NOT_INCLUDED_LOCALLY`, `plancklens = NOT_INCLUDED_LOCALLY`; `camb = OK` (PyPI, **sin parche DVCH**) |
+| `dvch_planck_chain_diagnostics.csv` | R-hat de 0.96 a **13.56** (DVCH_beta R-hat=11.21) → **no convergido** |
+| `dvch_prod.[1-4].txt` | 28 líneas c/u → **smoke**, no producción |
+| `dvch_planck_full_highl_chain.1.txt` | 33 líneas → **smoke** |
+| `dvch_planck_chain_a.1.txt` | 16 líneas → **smoke** |
+| `dvch_prod_run.log` | La corrida productiva **falló**: `*ERROR* Can't open covmat file 'dvch_prod.covmat'` (MPI prun non-zero exit) |
+| `env.sh` | **NO existe** (solo `env.sh.example`) |
+| CAMB patcheado | **NO compilado** (existe `camb_patch/DVCHModel.f90` + `README_patch.md`, pendiente aplicar los 4 parches y compilar) |
+| clik | En WSL hay `libclik.so` + egg compilados, pero **faltan los datos `.clik`** (licencia Planck) |
+
+### 9.3 Bloqueantes exactos para la corrida real
+
+1. **CAMB patcheado compilado** que acepte `DVCH_flag`, `DVCH_n`, `DVCH_beta`.
+   Hoy solo se aplica el `camb` de PyPI (2.0.4), que **no** tiene la física DVCH.
+2. **Datos Planck `.clik`** (bajo licencia) + `libclik.so` en `LD_LIBRARY_PATH`
+   (la librería sí está en WSL; los datos no).
+3. **`env.sh`** creado desde `env.sh.example` con las rutas reales.
+4. **`dvch_prod.covmat`**: la corrida productiva murió porque el covmat de salida
+   colisionaba con el de entrada. Usar `DVCH_COVMAT=dvch_prod_wide.covmat` y un
+   `DVCH_CHAIN_OUTPUT` distinto.
+
+### 9.4 LO QUE SE DEBE HACER AL EJECUTAR (NO ejecutado aún)
+
+> Todos los comandos van dentro de **WSL2 Ubuntu**, no en PowerShell de Windows.
+> Requisitos: `gfortran`, `build-essential`, `libopenmpi-dev`, `openmpi-bin`,
+> `liblapack-dev`, `libfftw3-dev`.
+
+**Paso 0 — Dependencias Python (WSL):**
+```bash
+pip install -r requirements-cmb.txt
+```
+
+**Paso 1 — Compilar CAMB patcheado con DVCH:**
+```bash
+git clone https://github.com/cmbant/CAMB.git
+cd CAMB
+cp /mnt/d/DVCH13-1/camb_patch/DVCHModel.f90 fortran/
+# Aplicar los 4 parches manuales según camb_patch/README_patch.md:
+#   - fortran/equations.f90 : use DVCHModel (x2) + bloque CDM DVCH
+#   - fortran/model.f90     : DVCH_flag, DVCH_n, DVCH_beta
+#   - fortran/Makefile_main : añadir DVCHModel a SOURCEFILES
+#   - camb/model.py         : exponer los 3 parámetros
+python setup.py build && python setup.py install
+# Verificar:
+python -c "import camb; p=camb.CAMBparams(); p.DVCH_flag=True; p.DVCH_n=0.2; p.DVCH_beta=1e-4; print('DVCH OK')"
+```
+
+**Paso 2 — Obtener y compilar los datos Planck clik (licencia):**
+```bash
+tar -xzf COM_Likelihood_Code-v3.0_R3.01.tar.gz
+cd code/plc_3.0 && ./waf configure --install_all_deps && ./waf install
+# Produce: plc_3.0/lib/libclik.so, plc-3.1/*.clik, clik-3.1-py3.x-*.egg
+```
+
+**Paso 3 — Crear `env.sh` desde la plantilla:**
+```bash
+cd /mnt/d/DVCH13-1
+cp env.sh.example env.sh
+# Editar env.sh con las rutas reales:
+#   DVCH_CAMB_ROOT        -> /ruta/a/CAMB
+#   DVCH_CLIK_EGG         -> /ruta/a/clik-3.1-py3.x-linux-x86_64.egg
+#   DVCH_PLANCK_LIKELIHOOD / _LOWL / _LOWE / _LENSING -> *.clik
+#   DVCH_CLIK_LIB_DIR     -> /ruta/a/plc_3.0/lib
+source env.sh
+```
+
+**Paso 4 — Smoke test clik (1 evaluación, sin cadena):**
+```bash
+python dvch_planck_clik_smoke.py
+# Valores de self-check oficiales (README_INSTALL.md §11):
+#   High-l plik=-1172.47, Low-l TT commander=-11.6257,
+#   Low-l EE simall=-197.99, Lensing=-4.42, A_planck=1.000442
+```
+
+**Paso 5 — Preflight (read-only):**
+```bash
+python dvch_planck_preflight.py   # debe mostrar clik=OK, camb=OK
+```
+
+**Paso 6 — Cadena corta (validar que arranca):**
+```bash
+python run_dvch_cobaya_short.py   # usa dvch_cobaya_short.yaml (12 samples)
+```
+
+**Paso 7 — Corrida productiva 4 cadenas MPI:**
+```bash
+# Corregir colisión de covmat (ver §9.3 punto 4) y lanzar:
+export DVCH_COVMAT=dvch_prod_wide.covmat
+export DVCH_CHAIN_OUTPUT=dvch_prod
+export DVCH_CHAIN_SEED=1
+nohup mpirun -np 4 python3 run_dvch_cobaya_full_highl.py > dvch_prod_run.log 2>&1 &
+# O usar el wrapper que fija LD_LIBRARY_PATH:
+#   bash run_dvch_cobaya_full_highl.sh
+# O el lanzador de producción:
+#   bash launch_prod.sh
+```
+
+**Paso 8 — Diagnóstico de convergencia (criterio del repo):**
+```bash
+python3 dvch_planck_chain_diagnostics.py \
+    dvch_prod.1.txt dvch_prod.2.txt dvch_prod.3.txt dvch_prod.4.txt
+# Criterio: R-hat < 1.01 y ESS > 100 para TODOS los parámetros.
+# Salida: dvch_planck_chain_diagnostics.csv
+```
+
+**Paso 9 — Post-proceso y evidencia:**
+```bash
+# Triangulares/estadísticas con GetDist sobre las cadenas convergidas.
+# Registrar en este archivo SOLO resultados con ejecución real (README_INSTALL.md §11).
+```
+
+### 9.5 Notas / trampas al ejecutar
+
+- El `camb` de PyPI **no sirve** para la corrida Planck (no tiene DVCH). Hay que
+  compilar el CAMB patcheado; el PyPI solo vale para el cross-check §5.6.
+- `libclik.so` debe estar en `LD_LIBRARY_PATH` **antes** de arrancar Python; los
+  wrappers `run_dvch_cobaya_full_highl.sh` y `launch_prod.sh` ya lo gestionan vía
+  `DVCH_CLIK_LIB_DIR`.
+- No dejar que `DVCH_COVMAT` y `DVCH_CHAIN_OUTPUT` compartan nombre (causa del
+  fallo de `dvch_prod_run.log`).
+- El criterio de convergencia del repo es **R-hat < 1.01**; las cadenas actuales
+  (`dvch_planck_chain_diagnostics.csv`, R-hat hasta 13.56) **no** lo cumplen.
+- No inventar posteriores ni convergencia: todo debe respaldarse con ejecución real.
+
+### 9.6 Estado de este archivo
+
+- Sección añadida el **2026-10-09** como registro de auditoría.
+- **No** se ejecutó ningún comando de física; **no** se tocaron scripts del pipeline.
+
+### 9.7 Diagnóstico 2026-10-11 — la corrida SÍ arranca; muere por el covmat
+
+> Relectura en disco de `dvch_prod_run.log` (286 líneas, corrida del 2026-09-05) y de
+> `dvch_prod.progress`. **No se ejecutó física**; este apartado solo corrige/afina §9.2–9.3.
+
+**Hallazgo principal:** la corrida productiva **no falla por dependencias externas**, sino
+que **arranca, calcula física real y aborta a los ~33 s** por la colisión de covmat.
+
+Evidencia directa del log:
+
+| Línea(s) de `dvch_prod_run.log` | Contenido | Lectura |
+|---|---|---|
+| 10–17 | `plik ... got -1172.47 expected -1172.47 (diff -4.34e-07)` | clik + datos `.clik` **presentes y validados** |
+| 27–37 | `Initialized external likelihood.` ×4 | CAMB-DVCH + likelihood externo OK en los 4 rangos MPI |
+| 252–268 | loglikes −1831.18 / −1543.77 / −1510.53 / −1804.99; coste **12.86 s/eval** | el sampler **evalúa de verdad**, con `DVCH_n`/`DVCH_beta` muestreados |
+| **26** | `From regexp 'dvch_prod[\._]covmat$' ... deleting files ['./dvch_prod.covmat']` | Cobaya **borra** el covmat de entrada |
+| **273** | `*ERROR* Can't open covmat file 'dvch_prod.covmat'.` → `prun:non-zero-exit` | MPI aborta y la cadena se detiene |
+
+**Causa raíz confirmada:** `DVCH_COVMAT` compartía nombre con el prefijo de salida
+(`dvch_prod`). La regex de limpieza de Cobaya (`dvch_prod[._]covmat$`) elimina el covmat
+de entrada antes de leerlo → `_load_covmat` falla → aborto MPI. Es el bloqueante §9.3-4.
+
+**Matiz que corrige §9.2:** el log del 2026-09-05 demuestra que en esa ejecución
+**sí** existían los datos Planck `.clik` (bajo `/mnt/d/DVCH-external/planck-data/baseline/plc_3.0/`)
+y **sí** se cargó clik + CAMB-DVCH con los 3 parámetros DVCH. Por tanto, para *esa*
+corrida los bloqueantes 1 (CAMB parcheado) y 2 (datos `.clik`) **estaban resueltos**;
+el único que mató el run fue el 4. El estado `blocked_on_external_deps` de §9.2/§9.1
+puede estar desactualizado respecto a la ruta `/mnt/d/DVCH-external/planck-data/`.
+
+**Acción aplicada (solo script de lanzamiento, sin física):** se corrigió
+`launch_prod.sh` (líneas 18–23) para usar `DVCH_COVMAT=dvch_prod_wide.covmat` separado
+de `DVCH_CHAIN_OUTPUT=dvch_prod`, con comentario que referencia este fallo.
+
+**Pendiente de verificar con ejecución real (no asumido):** que tras el fix la cadena
+pase de `_load_covmat`, arranque el muestreo y converja. Criterio del repo: R-hat < 1.01
+y ESS > 100. No se declara convergencia hasta tener cadenas reales.
 
 
 

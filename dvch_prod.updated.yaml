@@ -360,12 +360,12 @@ sampler:
     output_every: 60s
     learn_every: 40d
     temperature: 1
-    learn_proposal: false
+    learn_proposal: true
     learn_proposal_Rminus1_max: 2.0
     learn_proposal_Rminus1_max_early: 30.0
     learn_proposal_Rminus1_min: 0.0
-    max_samples: 400
-    Rminus1_stop: 0.01
+    max_samples: 2000
+    Rminus1_stop: 100.0
     Rminus1_cl_stop: 0.2
     Rminus1_cl_level: 0.95
     Rminus1_single_split: 4
@@ -403,7 +403,7 @@ sampler:
         - calib_217T
     callback_function: null
     callback_every: null
-    seed: 42
+    seed: 1
     check_every: null
     oversample: null
     drag_limits: null

@@ -4,8 +4,8 @@
     "scipy": "OK",
     "matplotlib": "OK",
     "pandas": "OK",
-    "emcee": "OK",
-    "corner": "OK",
+    "emcee": "NOT_INCLUDED_LOCALLY",
+    "corner": "NOT_INCLUDED_LOCALLY",
     "getdist": "OK",
     "cobaya": "OK",
     "classy (CLASS)": "NOT_INCLUDED_LOCALLY",
@@ -21,5 +21,5 @@
     "dvch_mcmc_chains_full.csv": "OK",
     "dvch_full_mcmc_pipeline.py": "OK"
   },
-  "timestamp": "2026-09-09T14:43:42.620649"
+  "timestamp": "2026-09-10T22:35:04.907233"
 }

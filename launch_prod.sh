@@ -15,7 +15,11 @@ fi
 export DVCH_MAX_SAMPLES=2000
 export DVCH_BURN_IN=200
 export DVCH_LEARN_PROPOSAL=true
-export DVCH_COVMAT=dvch_prod.covmat
+# Input covmat MUST NOT share its name with DVCH_CHAIN_OUTPUT: Cobaya's cleanup
+# regexp 'dvch_prod[._]covmat$' deletes any input covmat named dvch_prod.covmat,
+# which then aborts the run with "Can't open covmat file 'dvch_prod.covmat'"
+# (see dvch_prod_run.log and §9.3 point 4 of DVCH_CONTEXTO_SESION.md).
+export DVCH_COVMAT=dvch_prod_wide.covmat
 export DVCH_CHAIN_OUTPUT=dvch_prod
 export DVCH_CHAIN_SEED=1
 nohup mpirun -np 4 python3 run_dvch_cobaya_full_highl.py > dvch_prod_run.log 2>&1 &

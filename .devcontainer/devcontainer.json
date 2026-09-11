@@ -1,0 +1,59 @@
+{
+  // ============================================================
+  // devcontainer.json — GitHub Codespaces / VS Code Dev Containers
+  // Para correr la MCMC DVCH FULL en la nube GRATIS (120 core-h/mes).
+  //
+  // Al abrir el Codespace, este contenedor ya trae:
+  //   - Python 3.14 (ABI que necesitan los .so del bundle)
+  //   - gfortran + OpenMPI (por si hay que recompilar)
+  //   - Docker-in-Docker (para la ruta reproducible del Dockerfile)
+  //   - deps Python (numpy, scipy, cobaya, mpi4py, ...)
+  //
+  // Luego solo faltan 2 comandos (ver deploy/README_REMOTE.md):
+  //   1) subir el bundle desde tu PC  -> deploy/upload_bundle.sh
+  //   2) en el Codespace:
+  //      export DVCH_BUNDLE_URL='<url>'
+  //      bash deploy/setup_cloud.sh
+  // ============================================================
+  "name": "DVCH MCMC (Planck 2018)",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
+
+  "features": {
+    // Python 3.14 exacto: los .so del bundle son cpython-314.
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.14"
+    },
+    // Docker-in-Docker: permite la ruta reproducible python:3.14-slim.
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest",
+      "enableNonRootDocker": "true"
+    }
+  },
+
+  "hostRequirements": {
+    // La MCMC necesita >= 8 GB y varios cores. Codespaces 4-core/8GB vale;
+    // 8-core/16GB termina antes. Ajusta segun tu cuota.
+    "cpus": 4,
+    "memory": "8gb",
+    "storage": "32gb"
+  },
+
+  // Instala toolchain de compilacion + deps Python al crear el Codespace.
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y --no-install-recommends gfortran libgfortran5 libopenmpi-dev openmpi-bin liblapack-dev libfftw3-dev rsync && python3 -m pip install --upgrade pip && python3 -m pip install numpy scipy pandas matplotlib getdist mpi4py pyyaml 'cobaya==3.6.2'",
+
+  // Evita que el Codespace se duerma y corte la MCMC en mitad de la cadena.
+  // (El timeout tambien se puede fijar en la UI de GitHub; esto lo refuerza.)
+  "remoteEnv": {
+    "OMP_NUM_THREADS": "1"
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-python.python", "ms-toolsai.jupyter"]
+    }
+  },
+
+  // El comando por defecto solo imprime las instrucciones; no lanza la
+  // MCMC automaticamente para que elijas cuando arrancar (y subas el bundle).
+  "postAttachCommand": "echo '=== DVCH listo. Siguiente: export DVCH_BUNDLE_URL=<url>; bash deploy/setup_cloud.sh ==='"
+}
