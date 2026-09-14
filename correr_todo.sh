@@ -53,7 +53,9 @@ if [ "$SKIP_INSTALL" = "1" ]; then
   step "1/6  Instalacion  (SALTADA por DVCH_SKIP_INSTALL=1)"
 else
   step "1/6  Instalacion de dependencias (offline-friendly)"
-  python3 -m venv .venv
+  if ! python3 -m venv .venv; then
+    die "No se pudo crear .venv (falta python3-venv/ensurepip). En Ubuntu/WSL: sudo apt install python3-venv. O usa un venv ya listo con DVCH_SKIP_INSTALL=1."
+  fi
   # shellcheck disable=SC1091
   source .venv/bin/activate
   pip install --upgrade pip wheel
