@@ -1,0 +1,45 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+.ipynb_checkpoints/
+.venv/
+venv/
+build/
+
+# ---- LaTeX build artifacts (regenerated on every compile) ----
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.lot
+*.out
+*.synctex.gz
+*.toc
+# NOTE: *.log is covered by the Logs section below; DVCH.log is a LaTeX artifact.
+
+# ---- Logs ----
+*.log
+
+# ---- Cobaya / MCMC run outputs (regenerable from the pipeline) ----
+*.checkpoint
+*.progress
+*.locked
+*.updated.yaml
+*.updated.dill_pickle
+*.input.yaml
+*.[0-9].txt
+
+# ---- Dependency archives / packaging (should not be tracked) ----
+pkgs/
+*.zip
+*.tar.gz
+DVCH_pipeline_portable.zip
+
+# ---- OS cruft ----
+.DS_Store
+Thumbs.db
