@@ -1254,48 +1254,47 @@ synthetic profile; it is not a confidence statement about Tonomura data.
 \subsection{Full late-time MCMC results}
 \label{subsec:full_mcmc_results}
 
-We implement a full late-time MCMC pipeline using the \texttt{emcee} ensemble sampler to constrain the DVCH parameter space with Pantheon+ SNe Ia, DESI DR1 BAO, and cosmic chronometer data. The analysis uses 24 walkers for 2000 steps with a burn-in of 800 steps, producing 1056 effective samples after thinning.
+We implement a late-time MCMC pipeline (\texttt{dvch\_full\_mcmc\_pipeline.py}) using the \texttt{emcee} ensemble sampler to constrain the DVCH background parameters against the fast cosmic-chronometer (33 $H(z)$ points, Moresco et al.\ 2016 compilation) and DESI DR1 BAO (10 $D_M/r_d$ and $D_V/r_d$ points) dataset, $N_{\rm data}=43$; Pantheon$+$ supernovae are not included in this run. The analysis uses 24 walkers for 2000 steps with a burn-in of 800 steps; thinning by half of the shortest integrated autocorrelation time leaves 1104 stored samples (\texttt{dvch\_mcmc\_chains\_full.csv}).
 
-The free parameters in our MCMC analysis are:
+The free parameters in this MCMC analysis, with flat priors, are:
 \begin{itemize}
-    \item $H_0$: Hubble constant
-    \item $n$: DVCH tracking parameter
-    \item $\beta$: DVCH curvature suppression parameter
-    \item $r_d$: Sound horizon at baryon drag epoch
-    \item $M$: SNe Ia absolute magnitude
-    \item $\sigma_M$: Intrinsic dispersion in SNe Ia
-    \item $\sigma_S$: Systematic uncertainty scaling
+    \item $\Omm$: present matter density, $0.05<\Omm<0.95$
+    \item $n$: DVCH tracking parameter, $0.001<n<0.999$
+    \item $\beta$: DVCH curvature suppression parameter, $0\le\beta<1$
+    \item $H_0$: Hubble constant, $40<H_0<120~\mathrm{km\,s^{-1}\,Mpc^{-1}}$
 \end{itemize}
+The sound horizon is held fixed at $r_d=147.09~\mathrm{Mpc}$; no supernova nuisance parameters enter this likelihood.
 
 \begin{center}
 \refstepcounter{table}\label{tab:dvch_mcmc_posteriors}
 \begin{minipage}{0.98\linewidth}
 \centering
 \footnotesize
-\textbf{Table~\thetable. DVCH parameter posteriors from full late-time MCMC analysis.}
-Posterior median and 68\%/95\% credible intervals.
+\textbf{Table~\thetable. DVCH parameter posteriors from the late-time CC+DESI-BAO MCMC run.}
+Posterior median and 68\%/95\% credible intervals, read from \texttt{dvch\_mcmc\_full\_summary.csv}.
+The $\beta$ posterior fills its flat prior and is therefore unconstrained by this dataset.
 \begin{tabular}{lccc}
 \toprule
 Parameter & Median & 68\% CI & 95\% CI \\
 \midrule
-$H_0$ & 69.03 & $67.5-70.5$ & $66.0-72.0$ \\
-$n$ & 0.0926 & $0.085-0.100$ & $0.080-0.110$ \\
-$\beta \times 10^{-4}$ & 1.00 & $0.90-1.10$ & $0.85-1.15$ \\
-$r_d$ & 147.09 & $145.0-149.0$ & $143.0-151.0$ \\
+$\Omm$ & 0.295 & $0.278-0.314$ & $0.260-0.329$ \\
+$n$ & 0.216 & $0.083-0.348$ & $0.016-0.476$ \\
+$\beta$ & 0.482 & $0.156-0.828$ & $0.030-0.977$ \\
+$H_0~[\mathrm{km\,s^{-1}\,Mpc^{-1}}]$ & 68.38 & $67.24-69.48$ & $66.14-70.45$ \\
 \bottomrule
 \end{tabular}
 \end{minipage}
 \end{center}
 
-Convergence diagnostics for our MCMC chains show good mixing and convergence:
+Convergence diagnostics for this chain, as written by the pipeline to \texttt{dvch\_mcmc\_full\_convergence.csv} and \texttt{dvch\_mcmc\_full\_evidence.csv}, are (parameter order $\Omm,\,n,\,\beta,\,H_0$):
 \begin{itemize}
-    \item Maximum Gelman-Rubin statistic: $\max(\widehat R) = 1.059$
-    \item Minimum effective sample size: $\min(N_{\rm eff}) = 379$
-    \item Autocorrelation times: $\tau = [57.88, 72.23, 75.88, 55.30]$
-    \item Acceptance fraction: 0.490
+    \item Split-chain Gelman-Rubin statistic: $\widehat R = [1.045,\,1.042,\,1.094,\,1.058]$, i.e.\ $\max(\widehat R) = 1.094$ (for $\beta$)
+    \item Effective sample size: $N_{\rm eff} = [403,\,458,\,306,\,551]$, i.e.\ $\min(N_{\rm eff}) = 306$ (for $\beta$)
+    \item Integrated autocorrelation times implied by $N_{\rm eff}=N_{\rm walkers}(N_{\rm steps}-N_{\rm burn})/\tau$: $\tau \simeq [71,\,63,\,94,\,52]$
+    \item Mean acceptance fraction: 0.497
 \end{itemize}
 
-These values satisfy the adopted $\widehat R$ criterion, while the minimum ESS is slightly below the preferred screening value of 400. We therefore treat this chain as a local late-time diagnostic and do not describe it as a fully converged production posterior.
+These values do \emph{not} satisfy the $\widehat R-1<0.01$ threshold adopted for a production posterior; all four parameters exceed $\widehat R=1.04$, and $\beta$ and $H_0$ also exceed the looser $\widehat R<1.05$ screening value. The minimum ESS is likewise below the preferred screening value of 400. The chain is therefore reported only as a local late-time sampler diagnostic: the intervals in Table~\ref{tab:dvch_mcmc_posteriors} are indicative and must not be quoted as converged constraints. Substantially longer chains (or more walkers) are required before this analysis can be promoted to a production posterior.
 
 \begin{center}
 \refstepcounter{figure}\label{fig:dvch_full_mcmc_corner}
@@ -1309,15 +1308,15 @@ These values satisfy the adopted $\widehat R$ criterion, while the minimum ESS i
 \refstepcounter{figure}\label{fig:dvch_full_mcmc_traces}
 \includegraphics[width=0.96\linewidth]{figures/dvch_full_mcmc_traces.png}
 \begin{minipage}{0.96\linewidth}\footnotesize
-\textbf{Figure~\thefigure.} MCMC trace plots showing the evolution of parameter values across the chain iterations. Good mixing is indicated by stationary traces without long-term trends.
+\textbf{Figure~\thefigure.} MCMC trace plots showing the evolution of parameter values across the chain iterations for the CC+DESI-BAO run. The residual drifts visible here are consistent with the $\widehat R>1.04$ values reported in the text; the run is a sampler diagnostic, not a converged posterior.
 \end{minipage}
 \end{center}
 
-Model comparison statistics for our analysis yield:
+Model comparison statistics for this run (\texttt{dvch\_mcmc\_full\_evidence.csv}) yield:
 \begin{itemize}
-    \item Best-fit chi-squared: $\chi^2 = 28.28$ (43 data points)
-    \item Akaike Information Criterion: $\mathrm{AIC} = 36.28$
-    \item Bayesian Information Criterion: $\mathrm{BIC} = 43.33$
+    \item Best-fit chi-squared: $\chi^2 = 28.03$ (43 data points, 4 free parameters)
+    \item Akaike Information Criterion: $\mathrm{AIC} = 36.03$
+    \item Bayesian Information Criterion: $\mathrm{BIC} = 43.07$
 \end{itemize}
 
 These information criteria provide a quantitative measure of model quality, balancing goodness-of-fit against model complexity.

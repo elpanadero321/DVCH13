@@ -29,7 +29,7 @@ print("The current CSV is a deterministic synthetic diagnostic, not Tonomura dat
 print()
 print("=== Full MCMC: chains, summary, convergence, evidence ===")
 ch = pd.read_csv("dvch_mcmc_chains_full.csv")
-print(f"chains_full rows = {len(ch)} (doc claims 1056), cols = {list(ch.columns)}")
+print(f"chains_full rows = {len(ch)} (doc claims 1104), cols = {list(ch.columns)}")
 for p in ["Om", "n", "beta", "H0"]:
     v = ch[p].to_numpy()
     print(f"  {p:5s} median={np.median(v):.4f}  68%=[{np.percentile(v,16):.4f},{np.percentile(v,84):.4f}]  "
