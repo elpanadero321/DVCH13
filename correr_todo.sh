@@ -60,6 +60,9 @@ else
   source .venv/bin/activate
   pip install --upgrade pip wheel
   [ -f requirements.txt ]     && pip install -r requirements.txt
+  # El paso 4 (bateria) usa pytest y camb (cross-check) incluso en modo solo-fondo;
+  # requirements.txt no los trae y requirements-cmb.txt se salta con DVCH_SKIP_CMB=1.
+  pip install "pytest>=8" "camb>=1.5"
   if [ "$SKIP_CMB" != "1" ]; then
     [ -f requirements-cmb.txt ] && pip install -r requirements-cmb.txt
     mkdir -p build data
