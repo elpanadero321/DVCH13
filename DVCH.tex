@@ -1254,17 +1254,14 @@ synthetic profile; it is not a confidence statement about Tonomura data.
 \subsection{Full late-time MCMC results}
 \label{subsec:full_mcmc_results}
 
-We implement a full late-time MCMC pipeline using the \texttt{emcee} ensemble sampler to constrain the DVCH parameter space with Pantheon+ SNe Ia, DESI DR1 BAO, and cosmic chronometer data. The analysis uses 24 walkers for 2000 steps with a burn-in of 800 steps, producing 1056 effective samples after thinning.
+We implement a full late-time MCMC pipeline using the \texttt{emcee} ensemble sampler to constrain the DVCH parameter space with DESI DR1 BAO and cosmic chronometer data (43 data points in total). The analysis uses 24 walkers for 2000 steps with a burn-in of 800 steps, producing 1056 effective samples after thinning.
 
 The free parameters in our MCMC analysis are:
 \begin{itemize}
-    \item $H_0$: Hubble constant
+    \item $\Omega_m$: present matter density fraction
     \item $n$: DVCH tracking parameter
     \item $\beta$: DVCH curvature suppression parameter
-    \item $r_d$: Sound horizon at baryon drag epoch
-    \item $M$: SNe Ia absolute magnitude
-    \item $\sigma_M$: Intrinsic dispersion in SNe Ia
-    \item $\sigma_S$: Systematic uncertainty scaling
+    \item $H_0$: Hubble constant
 \end{itemize}
 
 \begin{center}
@@ -1273,35 +1270,35 @@ The free parameters in our MCMC analysis are:
 \centering
 \footnotesize
 \textbf{Table~\thetable. DVCH parameter posteriors from full late-time MCMC analysis.}
-Posterior median and 68\%/95\% credible intervals.
+Posterior median and 68\%/95\% credible intervals (from \texttt{dvch\_mcmc\_full\_summary.csv}).
 \begin{tabular}{lccc}
 \toprule
 Parameter & Median & 68\% CI & 95\% CI \\
 \midrule
-$H_0$ & 69.03 & $67.5-70.5$ & $66.0-72.0$ \\
-$n$ & 0.0926 & $0.085-0.100$ & $0.080-0.110$ \\
-$\beta \times 10^{-4}$ & 1.00 & $0.90-1.10$ & $0.85-1.15$ \\
-$r_d$ & 147.09 & $145.0-149.0$ & $143.0-151.0$ \\
+$\Omega_m$ & 0.2953 & $0.2777-0.3140$ & $0.2598-0.3293$ \\
+$n$ & 0.2164 & $0.0829-0.3480$ & $0.0155-0.4764$ \\
+$\beta$ & 0.4824 & $0.1565-0.8285$ & $0.0300-0.9766$ \\
+$H_0$ & 68.38 & $67.24-69.48$ & $66.14-70.45$ \\
 \bottomrule
 \end{tabular}
 \end{minipage}
 \end{center}
 
-Convergence diagnostics for our MCMC chains show good mixing and convergence:
+The reported convergence diagnostics (from \texttt{dvch\_mcmc\_full\_convergence.csv}) are:
 \begin{itemize}
-    \item Maximum Gelman-Rubin statistic: $\max(\widehat R) = 1.059$
-    \item Minimum effective sample size: $\min(N_{\rm eff}) = 379$
-    \item Autocorrelation times: $\tau = [57.88, 72.23, 75.88, 55.30]$
-    \item Acceptance fraction: 0.490
+    \item Maximum Gelman-Rubin statistic: $\max(\widehat R) = 1.0938$ ($\beta$; $\Omega_m$ 1.0451, $n$ 1.0421, $H_0$ 1.0583)
+    \item Effective sample sizes: $N_{\rm eff} = [403, 458, 306, 551]$ for $[\Omega_m, n, \beta, H_0]$
+    \item Minimum effective sample size: $\min(N_{\rm eff}) = 306$ ($\beta$)
+    \item Acceptance fraction: 0.497
 \end{itemize}
 
-These values satisfy the adopted $\widehat R$ criterion, while the minimum ESS is slightly below the preferred screening value of 400. We therefore treat this chain as a local late-time diagnostic and do not describe it as a fully converged production posterior.
+These values do \emph{not} satisfy the adopted $\widehat R < 1.01$ criterion, so this chain is treated as a local late-time diagnostic rather than a fully converged production posterior. The evidence values recorded for this run are $\chi^2_{\rm best}=28.03$ for $n_{\rm data}=43$ and $k=4$ parameters, giving $\mathrm{AIC}=36.03$ and $\mathrm{BIC}=43.07$ (\texttt{dvch\_mcmc\_full\_evidence.csv}).
 
 \begin{center}
 \refstepcounter{figure}\label{fig:dvch_full_mcmc_corner}
 \includegraphics[width=0.96\linewidth]{figures/dvch_full_mcmc_corner.png}
 \begin{minipage}{0.96\linewidth}\footnotesize
-\textbf{Figure~\thefigure.} Corner plot showing posterior distributions and correlations between DVCH parameters from the full late-time MCMC analysis. Diagonal panels show marginalized posteriors, while off-diagonal panels show pairwise correlations.
+\textbf{Figure~\thefigure.} Corner plot showing posterior distributions and correlations between the four sampled DVCH parameters ($\Omega_m$, $n$, $\beta$, $H_0$) from the full late-time MCMC analysis (DESI DR1 BAO + cosmic chronometers). Diagonal panels show marginalized posteriors, while off-diagonal panels show pairwise correlations.
 \end{minipage}
 \end{center}
 
@@ -1309,7 +1306,7 @@ These values satisfy the adopted $\widehat R$ criterion, while the minimum ESS i
 \refstepcounter{figure}\label{fig:dvch_full_mcmc_traces}
 \includegraphics[width=0.96\linewidth]{figures/dvch_full_mcmc_traces.png}
 \begin{minipage}{0.96\linewidth}\footnotesize
-\textbf{Figure~\thefigure.} MCMC trace plots showing the evolution of parameter values across the chain iterations. Good mixing is indicated by stationary traces without long-term trends.
+\textbf{Figure~\thefigure.} MCMC trace plots showing the evolution of the four sampled parameters across the chain iterations. The $\Omega_m$ and $H_0$ traces are stationary after burn-in, whereas the $\beta$ trace shows a slow drift that is not fully mixed by the end of the chain --- consistent with its $\widehat R = 1.0938$ and low ESS, and the reason this run is treated as a diagnostic rather than a converged posterior.
 \end{minipage}
 \end{center}
 
@@ -1631,7 +1628,7 @@ BAO+chronometer likelihood, writes the chains to \texttt{dvch\_mcmc\_chains.csv}
 and reports posterior summaries in \texttt{dvch\_mcmc\_convergence\_summary.csv}.
 For the run included here, the convergence diagnostics are
 \begin{equation}
-\max(\widehat R)=1.093,\qquad \min(N_{\rm eff})\simeq 36,
+\max(\widehat R)=1.104,\qquad \min(N_{\rm eff})\simeq 57,
 \end{equation}
 with chain acceptance fractions stored in \texttt{dvch\_mcmc\_acceptance.csv}.
 This is a local late-time BAO+chronometer MCMC diagnostic; it is not a
