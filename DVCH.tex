@@ -1312,9 +1312,9 @@ These values do \emph{not} satisfy the adopted $\widehat R < 1.01$ criterion, so
 
 Model comparison statistics for our analysis yield:
 \begin{itemize}
-    \item Best-fit chi-squared: $\chi^2 = 28.28$ (43 data points)
-    \item Akaike Information Criterion: $\mathrm{AIC} = 36.28$
-    \item Bayesian Information Criterion: $\mathrm{BIC} = 43.33$
+    \item Best-fit chi-squared: $\chi^2 = 28.03$ (43 data points, $k=4$ parameters)
+    \item Akaike Information Criterion: $\mathrm{AIC} = 36.03$
+    \item Bayesian Information Criterion: $\mathrm{BIC} = 43.07$
 \end{itemize}
 
 These information criteria provide a quantitative measure of model quality, balancing goodness-of-fit against model complexity.
@@ -1660,8 +1660,8 @@ described below.
 \begin{minipage}{0.98\linewidth}
 \centering
 \footnotesize
-\textbf{Table~\thetable. Current DVCH posterior/diagnostic summary available in this archive.}
-The values are those available from the present late-time diagnostic analysis;
+\textbf{Table~\thetable. Current DVCH best-fit/diagnostic summary available in this archive.}
+These are point values from the joint real-data best fit (\texttt{dvch\_joint\_realdata\_fit.py}), not the posterior medians of the late-time MCMC chain of Table~\ref{tab:dvch_mcmc_posteriors} (where $n$ and $H_0$ are sampled and constrained by BAO + cosmic chronometers);
 they should not be reinterpreted as a completed Planck CMB posterior.
 \begin{tabular}{lll}
 \toprule
