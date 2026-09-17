@@ -1,5 +1,6 @@
 # ---- Python ----
 __pycache__/
+.pytest_cache/
 *.py[cod]
 *$py.class
 *.egg-info/
@@ -43,3 +44,6 @@ DVCH_pipeline_portable.zip
 # ---- OS cruft ----
 .DS_Store
 Thumbs.db
+
+# ---- Agent tooling (local) ----
+.kilo/
