@@ -29,11 +29,15 @@ mkdir -p "$STAGE"
 echo "[pkg] copiando repo (sin salidas de cadena)"
 mkdir -p "$STAGE/repo"
 rsync -a --delete \
-  --exclude 'dvch_prod*' \
+  --exclude 'dvch_prod.*' \
+  --exclude 'dvch_prod_run.log' \
   --exclude 'dvch_planck_short_chain*' \
   --exclude '*.pyc' \
   --exclude '__pycache__' \
   --exclude '.git' \
+  --exclude '.venv/' \
+  --exclude 'DVCH13/' \
+  --exclude '.pytest_cache/' \
   "$REPO"/ "$STAGE/repo"/
 
 echo "[pkg] copiando CAMB parcheado (ya compilado: .so + build)"
@@ -78,4 +82,3 @@ echo "[pkg] LISTO:"
 ls -lh "$OUT"
 echo "[pkg] tamano del stage:"
 du -sh "$STAGE"
-EOF
