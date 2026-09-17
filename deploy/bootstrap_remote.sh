@@ -74,4 +74,3 @@ setsid bash -c "cd '$BUNDLE_ROOT/repo' && source '$BUNDLE_ROOT/env_remote.sh' &&
 disown
 echo "[boot] MCMC lanzada. Log: $BUNDLE_ROOT/repo/dvch_prod_run.log"
 echo "[boot] Monitorea con: tail -f $BUNDLE_ROOT/repo/dvch_prod_run.log"
-EOF

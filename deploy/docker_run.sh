@@ -13,16 +13,29 @@
 set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-BUNDLE_DIR="$(dirname "$HERE")/dvch_bundle_stage"
+
+# El Dockerfile necesita un contexto de build con 'dvch_bundle_stage/' y
+# 'deploy/' como hermanos. Se soportan dos layouts:
+#   (a) deploy/ ya es hermano de dvch_bundle_stage/ -> contexto = dirname(HERE)
+#   (b) deploy/ anidado en el bundle (<stage>/repo/deploy/, el caso del
+#       tarball): se resuelve el stage y se publica deploy/ a su lado.
+if [[ -d "$(dirname "$HERE")/dvch_bundle_stage" ]]; then
+    BUNDLE_DIR="$(dirname "$HERE")/dvch_bundle_stage"
+    CTX="$(dirname "$HERE")"
+else
+    BUNDLE_DIR="$(cd "$HERE/../.." && pwd)"
+    CTX="$(dirname "$BUNDLE_DIR")"
+    if [[ ! -d "$CTX/deploy" ]]; then
+        echo "[docker] publicando deploy/ junto al bundle (contexto de build)"
+        cp -r "$HERE" "$CTX/deploy"
+    fi
+fi
 
 if [[ ! -d "$BUNDLE_DIR" ]]; then
     echo "ERROR: no encuentro $BUNDLE_DIR" >&2
     echo "       Descomprime primero: tar -xzf dvch_portable_bundle.tar.gz" >&2
     exit 1
 fi
-
-# El Dockerfile espera 'dvch_bundle_stage/' y 'deploy/' en el contexto de build.
-CTX="$(dirname "$HERE")"
 cp "$HERE/Dockerfile" "$CTX/Dockerfile.dvch"
 cp "$HERE/entrypoint.sh" "$CTX/dvch_bundle_stage/entrypoint.sh"
 
