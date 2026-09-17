@@ -172,5 +172,6 @@ def build_info() -> dict:
 
 if __name__ == "__main__":
     debug = os.environ.get("DVCH_DEBUG", "false").lower() == "true"
-    info, _ = run(build_info(), debug=debug, force=True)
+    resume = os.environ.get("DVCH_RESUME", "true").strip().lower() in ("1", "true", "yes")
+    info, _ = run(build_info(), debug=debug, resume=resume, force=not resume)
     print("Full high-l nuisance smoke chain completed:", info["output"])

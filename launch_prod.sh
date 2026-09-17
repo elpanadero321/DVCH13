@@ -27,6 +27,10 @@ export DVCH_RMINUS1_STOP=0.01
 export DVCH_COVMAT=dvch_prod_wide.covmat
 export DVCH_CHAIN_OUTPUT=dvch_prod
 export DVCH_CHAIN_SEED=1
+# Resume: Cobaya checkpoints continuously. If you stop this run (or the PC
+# shuts down), just re-run launch_prod.sh: it continues the same chains from
+# the last checkpoint instead of restarting. Set DVCH_RESUME=false to force a
+# fresh start from scratch.
 # Foreground mode: DVCH_PROD_FG=1 blocks until the MCMC finishes (no nohup, no
 # backgrounding), so an orchestrator can run convergence diagnostics right after.
 # Default (unset/0) keeps the original background behaviour.
