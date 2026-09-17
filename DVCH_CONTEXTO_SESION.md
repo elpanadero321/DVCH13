@@ -184,8 +184,8 @@ Salidas: `dvch_camb_crosscheck.csv`, `figures/dvch_camb_crosscheck.png`.
 
 ### 5.7 Doble rendija (congruencia laboratorio)
 chi2_red estándar = 0.9617989 vs DVCH = 0.9658859 (C1).
-`dvch_double_slit_congruence.json`: chi2_red_QM=1.0644, chi2_red_DVCH=1.0621,
-Δchi2=−0.9143, **congruent=true** (DVCH indistinguible de QM a escala de laboratorio).
+`dvch_double_slit_congruence.json` (ahora generado por `dvch_double_slit.py`): chi2_red_QM=0.9617989, chi2_red_DVCH=0.9658859,
+Δchi2=+0.4087, **congruent=true** (DVCH indistinguible de QM a escala de laboratorio).
 
 ### 5.8 Preflight / readiness
 - Local OK: camb, cobaya, corner, emcee, getdist, matplotlib, mpi4py, numpy,

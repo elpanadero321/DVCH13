@@ -1254,7 +1254,7 @@ synthetic profile; it is not a confidence statement about Tonomura data.
 \subsection{Full late-time MCMC results}
 \label{subsec:full_mcmc_results}
 
-We implement a full late-time MCMC pipeline using the \texttt{emcee} ensemble sampler to constrain the DVCH parameter space with DESI DR1 BAO and cosmic chronometer data (43 data points in total). The analysis uses 24 walkers for 2000 steps with a burn-in of 800 steps, producing 1056 effective samples after thinning.
+We implement a full late-time MCMC pipeline using the \texttt{emcee} ensemble sampler to constrain the DVCH parameter space with DESI DR1 BAO and cosmic chronometer data (43 data points in total). The analysis uses 20 walkers for 26000 steps with a burn-in of 5000 steps, producing 12000 effective samples after thinning (thin = 35).
 
 The free parameters in our MCMC analysis are:
 \begin{itemize}
@@ -1275,10 +1275,10 @@ Posterior median and 68\%/95\% credible intervals (from \texttt{dvch\_mcmc\_full
 \toprule
 Parameter & Median & 68\% CI & 95\% CI \\
 \midrule
-$\Omega_m$ & 0.2953 & $0.2777-0.3140$ & $0.2598-0.3293$ \\
-$n$ & 0.2164 & $0.0829-0.3480$ & $0.0155-0.4764$ \\
-$\beta$ & 0.4824 & $0.1565-0.8285$ & $0.0300-0.9766$ \\
-$H_0$ & 68.38 & $67.24-69.48$ & $66.14-70.45$ \\
+$\Omega_m$ & 0.2949 & $0.2761-0.3130$ & $0.2563-0.3303$ \\
+$n$ & 0.2173 & $0.0923-0.3619$ & $0.0209-0.4987$ \\
+$\beta$ & 0.4862 & $0.1526-0.8344$ & $0.0228-0.9732$ \\
+$H_0$ & 68.32 & $67.17-69.41$ & $66.07-70.41$ \\
 \bottomrule
 \end{tabular}
 \end{minipage}
@@ -1286,13 +1286,13 @@ $H_0$ & 68.38 & $67.24-69.48$ & $66.14-70.45$ \\
 
 The reported convergence diagnostics (from \texttt{dvch\_mcmc\_full\_convergence.csv}) are:
 \begin{itemize}
-    \item Maximum Gelman-Rubin statistic: $\max(\widehat R) = 1.0938$ ($\beta$; $\Omega_m$ 1.0451, $n$ 1.0421, $H_0$ 1.0583)
-    \item Effective sample sizes: $N_{\rm eff} = [403, 458, 306, 551]$ for $[\Omega_m, n, \beta, H_0]$
-    \item Minimum effective sample size: $\min(N_{\rm eff}) = 306$ ($\beta$)
-    \item Acceptance fraction: 0.497
+    \item Maximum Gelman-Rubin statistic: $\max(\widehat R) = 1.0048$ ($\beta$; $\Omega_m$ 1.0023, $n$ 1.0019, $H_0$ 1.0016)
+    \item Effective sample sizes: $N_{\rm eff} = [5173, 5394, 3430, 5886]$ for $[\Omega_m, n, \beta, H_0]$
+    \item Minimum effective sample size: $\min(N_{\rm eff}) = 3430$ ($\beta$)
+    \item Acceptance fraction: 0.4927
 \end{itemize}
 
-These values do \emph{not} satisfy the adopted $\widehat R < 1.01$ criterion, so this chain is treated as a local late-time diagnostic rather than a fully converged production posterior. The evidence values recorded for this run are $\chi^2_{\rm best}=28.03$ for $n_{\rm data}=43$ and $k=4$ parameters, giving $\mathrm{AIC}=36.03$ and $\mathrm{BIC}=43.07$ (\texttt{dvch\_mcmc\_full\_evidence.csv}).
+These values satisfy the adopted convergence criteria, $\widehat R < 1.01$ and $N_{\rm eff} > 100$, for all four sampled parameters: the worst-mixed parameter is $\beta$, with $\widehat R = 1.0048$ and $N_{\rm eff} = 3430$, so the extended chain is treated as a converged late-time posterior rather than a merely local diagnostic. We emphasize that this is a background-only late-time fit (DESI DR1 BAO + cosmic chronometers, $n_{\rm data}=43$); it is not a full CMB analysis, and the DVCH-specific parameters $n$ and $\beta$ remain only weakly constrained by these data, as reflected in the broad credible intervals of Table~\ref{tab:dvch_mcmc_posteriors}. The evidence values recorded for this run are $\chi^2_{\rm best}=28.07$ for $n_{\rm data}=43$ and $k=4$ parameters, giving $\mathrm{AIC}=36.07$ and $\mathrm{BIC}=43.11$ (\texttt{dvch\_mcmc\_full\_evidence.csv}).
 
 \begin{center}
 \refstepcounter{figure}\label{fig:dvch_full_mcmc_corner}
@@ -1306,15 +1306,15 @@ These values do \emph{not} satisfy the adopted $\widehat R < 1.01$ criterion, so
 \refstepcounter{figure}\label{fig:dvch_full_mcmc_traces}
 \includegraphics[width=0.96\linewidth]{figures/dvch_full_mcmc_traces.png}
 \begin{minipage}{0.96\linewidth}\footnotesize
-\textbf{Figure~\thefigure.} MCMC trace plots showing the evolution of the four sampled parameters across the chain iterations. The $\Omega_m$ and $H_0$ traces are stationary after burn-in, whereas the $\beta$ trace shows a slow drift that is not fully mixed by the end of the chain --- consistent with its $\widehat R = 1.0938$ and low ESS, and the reason this run is treated as a diagnostic rather than a converged posterior.
+\textbf{Figure~\thefigure.} MCMC trace plots showing the evolution of the four sampled parameters across the chain iterations. The $\Omega_m$ and $H_0$ traces are stationary after burn-in, and the $\beta$ and $n$ traces, which were the slowest-mixing parameters in the shorter exploratory run, are now well mixed over the extended chain, with $\beta$ reaching $\widehat R = 1.0048$ and ESS $= 3430$ and $n$ reaching $\widehat R = 1.0019$ and ESS $= 5394$ --- consistent with all four parameters satisfying the adopted $\widehat R < 1.01$ and ESS $> 100$ criteria.
 \end{minipage}
 \end{center}
 
 Model comparison statistics for our analysis yield:
 \begin{itemize}
-    \item Best-fit chi-squared: $\chi^2 = 28.03$ (43 data points, $k=4$ parameters)
-    \item Akaike Information Criterion: $\mathrm{AIC} = 36.03$
-    \item Bayesian Information Criterion: $\mathrm{BIC} = 43.07$
+    \item Best-fit chi-squared: $\chi^2 = 28.07$ (43 data points, $k=4$ parameters)
+    \item Akaike Information Criterion: $\mathrm{AIC} = 36.07$
+    \item Bayesian Information Criterion: $\mathrm{BIC} = 43.11$
 \end{itemize}
 
 These information criteria provide a quantitative measure of model quality, balancing goodness-of-fit against model complexity.

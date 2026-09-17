@@ -156,9 +156,9 @@ if __name__ == "__main__":
 
     p0 = np.array([0.30, 0.09, 1.0e-4, 69.03])
 
-    n_walkers = 24
-    n_steps = 2000
-    n_burn = 800
+    n_walkers = 20
+    n_steps = 26000
+    n_burn = 5000
 
     rng = np.random.default_rng(20260827)
     pos = p0 + 1e-3 * rng.standard_normal((n_walkers, ndim))
@@ -170,7 +170,7 @@ if __name__ == "__main__":
 
     print(f"Running emcee: {n_walkers} walkers x {n_steps} steps (burn-in {n_burn})...")
     sampler = emcee.EnsembleSampler(n_walkers, ndim, log_posterior)
-    sampler.run_mcmc(pos, n_steps, progress=True)
+    sampler.run_mcmc(pos, n_steps, progress=False)
 
     try:
         tau = sampler.get_autocorr_time(quiet=True)

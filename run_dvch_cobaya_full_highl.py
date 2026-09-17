@@ -152,7 +152,7 @@ def build_info() -> dict:
         os.environ.get("DVCH_LEARN_PROPOSAL", "false").lower() == "true"
     )
     info["sampler"]["mcmc"]["Rminus1_stop"] = float(
-        os.environ.get("DVCH_RMINUS1_STOP", "100")
+        os.environ.get("DVCH_RMINUS1_STOP", "0.01")
     )
     if os.environ.get("DVCH_LEARN_RMINUS1_MAX"):
         info["sampler"]["mcmc"]["learn_proposal_Rminus1_max"] = float(

@@ -50,6 +50,10 @@ def _expand(values: np.ndarray, weights: np.ndarray | None) -> np.ndarray:
 
 def gelman_rubin(chains: list[np.ndarray]) -> np.ndarray:
     """Gelman-Rubin R-hat across chains (weight-expanded, equal length)."""
+    if len(chains) < 2:
+        raise SystemExit(
+            f"Gelman-Rubin requires >= 2 independent chains, got {len(chains)}."
+        )
     n = min(len(chain) for chain in chains)
     trimmed = np.asarray([chain[:n] for chain in chains], dtype=float)
     m = trimmed.shape[0]

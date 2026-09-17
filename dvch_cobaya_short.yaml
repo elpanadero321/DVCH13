@@ -31,5 +31,5 @@ sampler:
     max_samples: 12
     burn_in: 0
     learn_proposal: false
-    Rminus1_stop: 100
+    Rminus1_stop: 0.01
 output: dvch_planck_short_chain

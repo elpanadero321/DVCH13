@@ -107,8 +107,19 @@ python dvch_double_slit.py          || die "Fallo la prueba de congruencia doble
 # ---------------------------------------------------------------------------
 if [ "$SKIP_CMB" != "1" ]; then
   step "5/6  MCMC completo de Planck high-l (produccion)"
-  ./launch_prod.sh                  || die "Fallo el lanzamiento del MCMC (launch_prod.sh)."
-  python dvch_planck_chain_diagnostics.py || die "Diagnostico de convergencia fallo (R-hat/ESS)."
+  # Foreground: de lo contrario launch_prod.sh vuelve enseguida (nohup) y las
+  # cadenas aun no existen al ejecutar el diagnostico de convergencia.
+  DVCH_PROD_FG=1 ./launch_prod.sh   || die "Fallo el MCMC de Planck (launch_prod.sh)."
+  # Recoge las cadenas producidas por launch_prod.sh (DVCH_CHAIN_OUTPUT=dvch_prod):
+  # Cobaya escribe <prefix>.<n>.txt, una por cadena MPI.
+  chain_prefix="${DVCH_CHAIN_OUTPUT:-dvch_prod}"
+  shopt -s nullglob
+  chains=("$chain_prefix".*.txt)
+  shopt -u nullglob
+  if [ "${#chains[@]}" -lt 2 ]; then
+    die "Faltan cadenas para el diagnostico de convergencia: se esperaba >= 2 archivos '$chain_prefix.*.txt' (DVCH_CHAIN_OUTPUT), se encontraron ${#chains[@]}. Revisa dvch_prod_run.log y el espacio en disco."
+  fi
+  python dvch_planck_chain_diagnostics.py "${chains[@]}" || die "Diagnostico de convergencia fallo (R-hat/ESS)."
 else
   step "5/6  (SALTADO: MCMC de Planck no corre en modo solo-fondo)"
 fi
