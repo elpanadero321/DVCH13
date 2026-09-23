@@ -1,6 +1,10 @@
 # ============================================================
-# Dockerfile — DVCH MCMC full (4 cadenas x 2000, Planck 2018)
+# Dockerfile — DVCH MCMC definitiva (fase 3)
 # Para correr en CUALQUIER nube con un solo comando.
+#
+# Configuracion: covmat optimo congelado, learn_proposal=false,
+# Rminus1_stop=0.03, refs = medias posteriores, cadenas = nproc/4.
+# El reparto de hilos lo controla entrypoint.sh (no fijar OMP aqui).
 #
 # Requiere el bundle ya descomprimido junto a este Dockerfile,
 # o montarlo como volumen. Ver deploy/docker_run.sh
@@ -11,7 +15,6 @@
 FROM python:3.14-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
-ENV OMP_NUM_THREADS=1
 
 # gfortran runtime (libgfortran5) para CAMB y clik; OpenMPI para las cadenas.
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -26,7 +29,7 @@ COPY dvch_bundle_stage/ /opt/dvch/
 
 # deps Python. OJO: NO instalamos camb desde pip; usamos el CAMB del bundle.
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir numpy scipy pandas matplotlib getdist mpi4py pyyaml cobaya==3.6.2
+    pip install --no-cache-dir numpy scipy pandas matplotlib getdist mpi4py pyyaml cobaya==3.6.2 astropy
 
 # Verifica que CAMB parcheado y clik cargan ANTES de gastar horas de cadena.
 RUN . /opt/dvch/env_remote.sh && python3 -c "\

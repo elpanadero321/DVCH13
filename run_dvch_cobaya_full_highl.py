@@ -119,7 +119,9 @@ def build_info() -> dict:
     if check.shape != (expected,):
         raise ValueError(f"Unexpected clik vector shape {check.shape}, expected {expected}")
 
-    info = yaml.safe_load((ROOT / "dvch_cobaya_short.yaml").read_text())
+    info = yaml.safe_load(
+        (ROOT / os.environ.get("DVCH_SHORT_YAML", "dvch_cobaya_short.yaml")).read_text()
+    )
     info["likelihood"]["dvch_plik"]["external"] = planck_loglike
     base_names = (
         "H0", "ombh2", "omch2", "tau", "ln10As", "ns", "DVCH_n", "DVCH_beta"
@@ -158,6 +160,8 @@ def build_info() -> dict:
         info["sampler"]["mcmc"]["learn_proposal_Rminus1_max"] = float(
             os.environ["DVCH_LEARN_RMINUS1_MAX"]
         )
+    if os.environ.get("DVCH_LEARN_EVERY"):
+        info["sampler"]["mcmc"]["learn_every"] = os.environ["DVCH_LEARN_EVERY"]
     # Optional initial covariance matrix (regularized empirical covmat).
     covmat = os.environ.get("DVCH_COVMAT")
     if covmat:

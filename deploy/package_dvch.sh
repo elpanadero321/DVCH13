@@ -40,6 +40,20 @@ rsync -a --delete \
   --exclude '.pytest_cache/' \
   "$REPO"/ "$STAGE/repo"/
 
+# El covmat congelado (propuesta optima aprendida) NO coincide con el regexp
+# 'dvch_prod.*', asi que viaja en el bundle. Es el insumo critico de la fase 3:
+# sin el, la aceptacion cae y la corrida es ~10x mas lenta.
+if [[ -f "$REPO/dvch_prod_frozen.covmat" ]]; then
+    cp -f "$REPO/dvch_prod_frozen.covmat" "$STAGE/repo/dvch_prod_frozen.covmat"
+    echo "[pkg] covmat congelado incluido: dvch_prod_frozen.covmat"
+else
+    echo "[pkg] [AVISO] falta dvch_prod_frozen.covmat en el repo" >&2
+fi
+# YAML con refs = medias posteriores reales (solo para corridas frescas en
+# cloud; NO debe reemplazar a dvch_cobaya_short.yaml al resumir dvch_prod).
+cp -f "$REPO/deploy/dvch_cobaya_cloud.yaml" "$STAGE/repo/dvch_cobaya_cloud.yaml"
+echo "[pkg] yaml cloud incluido: dvch_cobaya_cloud.yaml"
+
 echo "[pkg] copiando CAMB parcheado (ya compilado: .so + build)"
 rsync -a --delete \
   --exclude '.git' \
@@ -64,7 +78,10 @@ export DVCH_CAMB_ROOT="${DVCH_BUNDLE_ROOT}/CAMB-master"
 export DVCH_CLIK_EGG="${DVCH_BUNDLE_ROOT}/clik/clik-egg"
 export DVCH_CLIK_LIB_DIR="${DVCH_BUNDLE_ROOT}/clik/lib"
 export LD_LIBRARY_PATH="${DVCH_CLIK_LIB_DIR}:${LD_LIBRARY_PATH:-}"
-export PYTHONPATH="${DVCH_CAMB_ROOT}:${PYTHONPATH:-}"
+# CRITICO: el egg clik debe ir PRIMERO en PYTHONPATH. Sin esto, python3.14
+# resuelve 'clik' como namespace package vacio (clik.__file__ = None) y
+# clik.clik no existe -> AttributeError al construir la likelihood.
+export PYTHONPATH="${DVCH_CLIK_EGG}:${DVCH_CAMB_ROOT}:${PYTHONPATH:-}"
 export DVCH_PLANCK_LIKELIHOOD="${DVCH_BUNDLE_ROOT}/planck-data/baseline/plc_3.0/hi_l/plik/plik_rd12_HM_v22b_TTTEEE.clik"
 export DVCH_PLANCK_LOWL="${DVCH_BUNDLE_ROOT}/planck-data/baseline/plc_3.0/low_l/commander/commander_dx12_v3_2_29.clik"
 export DVCH_PLANCK_LOWE="${DVCH_BUNDLE_ROOT}/planck-data/baseline/plc_3.0/low_l/simall/simall_100x143_offlike5_EE_Aplanck_B.clik"

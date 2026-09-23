@@ -1,0 +1,39 @@
+likelihood:
+  dvch_plik:
+    external: dvch_cobaya_planck.planck_loglike
+# Refs = medias/posteriores reales de las cadenas phase-1/2 (ultimo 50%):
+# las cadenas arranquen dentro del conjunto tipico y el burn-in sea minimo.
+# SOLO para corridas FRESCAS (cloud). No usar para resumir dvch_prod: rompe
+# la compatibilidad de info de Cobaya ("different content of [params:H0]").
+params:
+  H0:
+    prior: {min: 60, max: 75}
+    ref: {dist: norm, loc: 67.28, scale: 0.53}
+  ombh2:
+    prior: {min: 0.019, max: 0.026}
+    ref: {dist: norm, loc: 0.02238, scale: 0.00014}
+  omch2:
+    prior: {min: 0.09, max: 0.15}
+    ref: {dist: norm, loc: 0.1202, scale: 0.0012}
+  tau:
+    prior: {min: 0.03, max: 0.09}
+    ref: {dist: norm, loc: 0.0567, scale: 0.0081}
+  ln10As:
+    prior: {min: 2.8, max: 3.3}
+    ref: {dist: norm, loc: 3.0496, scale: 0.0152}
+  ns:
+    prior: {min: 0.90, max: 1.05}
+    ref: {dist: norm, loc: 0.9662, scale: 0.0035}
+  DVCH_n:
+    prior: {min: 0.01, max: 0.25}
+    ref: {dist: norm, loc: 0.073, scale: 0.049}
+  DVCH_beta:
+    prior: {min: 0, max: 0.001}
+    ref: {dist: norm, loc: 0.000499, scale: 0.000273}
+sampler:
+  mcmc:
+    max_samples: 12
+    burn_in: 0
+    learn_proposal: false
+    Rminus1_stop: 0.01
+output: dvch_planck_short_chain

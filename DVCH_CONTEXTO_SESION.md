@@ -324,148 +324,43 @@ El estado real es `prepared_not_run` / `blocked_on_external_deps`.
 
 ### 9.4 LO QUE SE DEBE HACER AL EJECUTAR (NO ejecutado aún)
 
-> Todos los comandos van dentro de **WSL2 Ubuntu**, no en PowerShell de Windows.
-> Requisitos: `gfortran`, `build-essential`, `libopenmpi-dev`, `openmpi-bin`,
-> `liblapack-dev`, `libfftw3-dev`.
+Todo en **WSL2 Ubuntu** (requisitos: `gfortran`, `build-essential`, `libopenmpi-dev`,
+`openmpi-bin`, `liblapack-dev`, `libfftw3-dev`). Los comandos exactos paso a paso están
+en **`README_INSTALL.md` §§3-4** y en `env.sh.example` — no se duplican aquí.
 
-**Paso 0 — Dependencias Python (WSL):**
-```bash
-pip install -r requirements-cmb.txt
-```
+Resumen: (0) `pip install -r requirements-cmb.txt`; (1) compilar CAMB patcheado con
+`camb_patch/DVCHModel.f90` (los 4 parches de `camb_patch/README_patch.md`) y verificar
+`p.DVCH_flag=True`; (2) descomprimir/compilar datos `.clik` + `libclik.so`; (3) crear
+`env.sh` desde `env.sh.example`; (4) smoke `dvch_planck_clik_smoke.py` (plik=-1172.47,
+lensing=-4.42); (5) `dvch_planck_preflight.py` (clik=OK, camb=OK); (6) cadena corta
+`run_dvch_cobaya_short.py`; (7) productiva `launch_prod.sh` (MPI 4 cadenas); (8)
+`dvch_planck_chain_diagnostics.py` (criterio R-hat<1.01 y ESS>100); (9) GetDist y
+registrar aquí solo resultados con ejecución real.
 
-**Paso 1 — Compilar CAMB patcheado con DVCH:**
-```bash
-git clone https://github.com/cmbant/CAMB.git
-cd CAMB
-cp /mnt/d/DVCH13-1/camb_patch/DVCHModel.f90 fortran/
-# Aplicar los 4 parches manuales según camb_patch/README_patch.md:
-#   - fortran/equations.f90 : use DVCHModel (x2) + bloque CDM DVCH
-#   - fortran/model.f90     : DVCH_flag, DVCH_n, DVCH_beta
-#   - fortran/Makefile_main : añadir DVCHModel a SOURCEFILES
-#   - camb/model.py         : exponer los 3 parámetros
-python setup.py build && python setup.py install
-# Verificar:
-python -c "import camb; p=camb.CAMBparams(); p.DVCH_flag=True; p.DVCH_n=0.2; p.DVCH_beta=1e-4; print('DVCH OK')"
-```
+### 9.5 Diagnóstico 2026-10-11 — la corrida SÍ arranca; muere por el covmat
 
-**Paso 2 — Obtener y compilar los datos Planck clik (licencia):**
-```bash
-tar -xzf COM_Likelihood_Code-v3.0_R3.01.tar.gz
-cd code/plc_3.0 && ./waf configure --install_all_deps && ./waf install
-# Produce: plc_3.0/lib/libclik.so, plc-3.1/*.clik, clik-3.1-py3.x-*.egg
-```
+> Relectura en disco de `dvch_prod_run.log` (286 líneas, corrida del 2026-09-05) y
+> `dvch_prod.progress`. **No se ejecutó física**; solo se corrige/afina §9.2–9.3.
 
-**Paso 3 — Crear `env.sh` desde la plantilla:**
-```bash
-cd /mnt/d/DVCH13-1
-cp env.sh.example env.sh
-# Editar env.sh con las rutas reales:
-#   DVCH_CAMB_ROOT        -> /ruta/a/CAMB
-#   DVCH_CLIK_EGG         -> /ruta/a/clik-3.1-py3.x-linux-x86_64.egg
-#   DVCH_PLANCK_LIKELIHOOD / _LOWL / _LOWE / _LENSING -> *.clik
-#   DVCH_CLIK_LIB_DIR     -> /ruta/a/plc_3.0/lib
-source env.sh
-```
+**Hallazgo principal:** la corrida productiva **no falla por dependencias externas**:
+arranca, calcula física real (clik valida `plik=-1172.47` con diff −4.34e-07, 4 rangos
+MPI inicializan CAMB-DVCH + likelihood externo, loglikes −1831/−1544/−1511/−1805 a
+**12.86 s/eval**) y **aborta a los ~33 s** porque `DVCH_COVMAT` compartía nombre con el
+prefijo de salida: la regex de limpieza de Cobaya (`dvch_prod[._]covmat$`) **borra** el
+covmat de entrada (`deleting files ['./dvch_prod.covmat']`) antes de leerlo →
+`*ERROR* Can't open covmat file 'dvch_prod.covmat'` → `prun:non-zero-exit`.
 
-**Paso 4 — Smoke test clik (1 evaluación, sin cadena):**
-```bash
-python dvch_planck_clik_smoke.py
-# Valores de self-check oficiales (README_INSTALL.md §11):
-#   High-l plik=-1172.47, Low-l TT commander=-11.6257,
-#   Low-l EE simall=-197.99, Lensing=-4.42, A_planck=1.000442
-```
+**Corrección a §9.2:** en esa corrida los datos `.clik` ( bajo
+`/mnt/d/DVCH-external/planck-data/baseline/plc_3.0/`) y el CAMB-DVCH compilado **sí
+estaban**; el único bloqueante activo fue el §9.3-4. El estado
+`blocked_on_external_deps` está desactualizado respecto a esa ruta.
 
-**Paso 5 — Preflight (read-only):**
-```bash
-python dvch_planck_preflight.py   # debe mostrar clik=OK, camb=OK
-```
+**Acción aplicada (solo lanzador, sin física):** `launch_prod.sh` (líneas 18–23) usa
+ahora `DVCH_COVMAT=dvch_prod_wide.covmat` separado de `DVCH_CHAIN_OUTPUT=dvch_prod`.
 
-**Paso 6 — Cadena corta (validar que arranca):**
-```bash
-python run_dvch_cobaya_short.py   # usa dvch_cobaya_short.yaml (12 samples)
-```
-
-**Paso 7 — Corrida productiva 4 cadenas MPI:**
-```bash
-# Corregir colisión de covmat (ver §9.3 punto 4) y lanzar:
-export DVCH_COVMAT=dvch_prod_wide.covmat
-export DVCH_CHAIN_OUTPUT=dvch_prod
-export DVCH_CHAIN_SEED=1
-nohup mpirun -np 4 python3 run_dvch_cobaya_full_highl.py > dvch_prod_run.log 2>&1 &
-# O usar el wrapper que fija LD_LIBRARY_PATH:
-#   bash run_dvch_cobaya_full_highl.sh
-# O el lanzador de producción:
-#   bash launch_prod.sh
-```
-
-**Paso 8 — Diagnóstico de convergencia (criterio del repo):**
-```bash
-python3 dvch_planck_chain_diagnostics.py \
-    dvch_prod.1.txt dvch_prod.2.txt dvch_prod.3.txt dvch_prod.4.txt
-# Criterio: R-hat < 1.01 y ESS > 100 para TODOS los parámetros.
-# Salida: dvch_planck_chain_diagnostics.csv
-```
-
-**Paso 9 — Post-proceso y evidencia:**
-```bash
-# Triangulares/estadísticas con GetDist sobre las cadenas convergidas.
-# Registrar en este archivo SOLO resultados con ejecución real (README_INSTALL.md §11).
-```
-
-### 9.5 Notas / trampas al ejecutar
-
-- El `camb` de PyPI **no sirve** para la corrida Planck (no tiene DVCH). Hay que
-  compilar el CAMB patcheado; el PyPI solo vale para el cross-check §5.6.
-- `libclik.so` debe estar en `LD_LIBRARY_PATH` **antes** de arrancar Python; los
-  wrappers `run_dvch_cobaya_full_highl.sh` y `launch_prod.sh` ya lo gestionan vía
-  `DVCH_CLIK_LIB_DIR`.
-- No dejar que `DVCH_COVMAT` y `DVCH_CHAIN_OUTPUT` compartan nombre (causa del
-  fallo de `dvch_prod_run.log`).
-- El criterio de convergencia del repo es **R-hat < 1.01**; las cadenas actuales
-  (`dvch_planck_chain_diagnostics.csv`, R-hat hasta 13.56) **no** lo cumplen.
-- No inventar posteriores ni convergencia: todo debe respaldarse con ejecución real.
-
-### 9.6 Estado de este archivo
-
-- Sección añadida el **2026-10-09** como registro de auditoría.
-- **No** se ejecutó ningún comando de física; **no** se tocaron scripts del pipeline.
-
-### 9.7 Diagnóstico 2026-10-11 — la corrida SÍ arranca; muere por el covmat
-
-> Relectura en disco de `dvch_prod_run.log` (286 líneas, corrida del 2026-09-05) y de
-> `dvch_prod.progress`. **No se ejecutó física**; este apartado solo corrige/afina §9.2–9.3.
-
-**Hallazgo principal:** la corrida productiva **no falla por dependencias externas**, sino
-que **arranca, calcula física real y aborta a los ~33 s** por la colisión de covmat.
-
-Evidencia directa del log:
-
-| Línea(s) de `dvch_prod_run.log` | Contenido | Lectura |
-|---|---|---|
-| 10–17 | `plik ... got -1172.47 expected -1172.47 (diff -4.34e-07)` | clik + datos `.clik` **presentes y validados** |
-| 27–37 | `Initialized external likelihood.` ×4 | CAMB-DVCH + likelihood externo OK en los 4 rangos MPI |
-| 252–268 | loglikes −1831.18 / −1543.77 / −1510.53 / −1804.99; coste **12.86 s/eval** | el sampler **evalúa de verdad**, con `DVCH_n`/`DVCH_beta` muestreados |
-| **26** | `From regexp 'dvch_prod[\._]covmat$' ... deleting files ['./dvch_prod.covmat']` | Cobaya **borra** el covmat de entrada |
-| **273** | `*ERROR* Can't open covmat file 'dvch_prod.covmat'.` → `prun:non-zero-exit` | MPI aborta y la cadena se detiene |
-
-**Causa raíz confirmada:** `DVCH_COVMAT` compartía nombre con el prefijo de salida
-(`dvch_prod`). La regex de limpieza de Cobaya (`dvch_prod[._]covmat$`) elimina el covmat
-de entrada antes de leerlo → `_load_covmat` falla → aborto MPI. Es el bloqueante §9.3-4.
-
-**Matiz que corrige §9.2:** el log del 2026-09-05 demuestra que en esa ejecución
-**sí** existían los datos Planck `.clik` (bajo `/mnt/d/DVCH-external/planck-data/baseline/plc_3.0/`)
-y **sí** se cargó clik + CAMB-DVCH con los 3 parámetros DVCH. Por tanto, para *esa*
-corrida los bloqueantes 1 (CAMB parcheado) y 2 (datos `.clik`) **estaban resueltos**;
-el único que mató el run fue el 4. El estado `blocked_on_external_deps` de §9.2/§9.1
-puede estar desactualizado respecto a la ruta `/mnt/d/DVCH-external/planck-data/`.
-
-**Acción aplicada (solo script de lanzamiento, sin física):** se corrigió
-`launch_prod.sh` (líneas 18–23) para usar `DVCH_COVMAT=dvch_prod_wide.covmat` separado
-de `DVCH_CHAIN_OUTPUT=dvch_prod`, con comentario que referencia este fallo.
-
-**Pendiente de verificar con ejecución real (no asumido):** que tras el fix la cadena
-pase de `_load_covmat`, arranque el muestreo y converja. Criterio del repo: R-hat < 1.01
-y ESS > 100. No se declara convergencia hasta tener cadenas reales.
+**Pendiente de verificar con ejecución real:** que tras el fix la cadena pase de
+`_load_covmat`, arranque el muestreo y converja (R-hat<1.01, ESS>100). No se declara
+convergencia sin cadenas reales.
 
 
 

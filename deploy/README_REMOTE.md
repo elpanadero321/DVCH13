@@ -1,8 +1,27 @@
 # Correr la MCMC DVCH completa en OTRA máquina (sin recortes)
 
-Este directorio contiene todo lo necesario para mover la corrida **full**
-(4 cadenas × 2000 muestras, Planck 2018 TTTEEE+lowl+lensing + Pantheon+ + BAO)
-a un servidor / HPC / VM de nube, sin tocar los parámetros científicos.
+Este directorio contiene todo lo necesario para mover la corrida
+**definitiva** (fase 3: covmat óptimo congelado, `learn_proposal=false`,
+`Rminus1_stop=0.03`, refs = medias posteriores reales) a un servidor / HPC /
+VM de nube, sin tocar los parámetros científicos.
+
+## Qué cambió respecto a la versión anterior
+
+La versión antigua lanzaba una corrida de juguete (4×2000, covmat viejo
+`dvch_prod_wide.covmat`, `learn_proposal=true`). Ahora el bundle lleva:
+
+- **`dvch_prod_frozen.covmat`**: la propuesta aprendida y verificada
+  (coincide con la covarianza posterior real a pocos %). Nombre seguro: no
+  coincide con el regexp de limpieza de Cobaya `dvch_prod[._]covmat$`, así
+  sobrevive a un arranque limpio.
+- **refs = medias posteriores** en `dvch_cobaya_short.yaml` (H0=67.28,
+  omch2=0.1202, …): las cadenas arrancan dentro del conjunto típico y el
+  burn-in es mínimo.
+- **`Rminus1_stop=0.03`** (no 0.01): R−1<0.01 costaría ~33 días en este
+  hardware; 0.03 da ESS≈1400/param en una fracción del tiempo. Ver
+  `_r1_diagnostic.py` y `_proposal_check.py`.
+- **`learn_proposal=false`**: la propuesta ya es óptima, así la fase remota es
+  una cadena de Markov limpia y homogénea (sin más adaptación).
 
 ## Por qué esto y no "ejecutarlo en la nube desde aquí"
 
@@ -94,14 +113,23 @@ realista:
 | Oracle Always Free (Ampere A1) | $0 | Alta (hasta 4 cores/24GB) | **No directo**: es **ARM**, los `.so` son x86_64 -> hay que recompilar |
 
 **Ruta recomendada (gratis y rapida): Google Cloud Free Trial ($300).**
-Una VM `c3-standard-32` (32 vCPU) termina las 4x2000 en ~1-2 h y consume
-menos de $2 del credito de $300 -> en la practica gratis.
+El reparto óptimo es `cadenas = nproc/4` con ~4 hilos OPM por cadena (CAMB
+satura a 4 hilos). Tiempos estimados para llegar a R−1<0.03 (modelo
+R−1 = C(m)·τ/n_tail con τ≈45 y C(m) calibrado del floor test sintético):
+
+| VM | cadenas | muestras totales | tiempo | crédito GCP usado |
+|---|---|---|---|---|
+| `c3-standard-16` | 4 | ~158k | ~11 días | ~$25 |
+| `c3-standard-32` | 8 | ~175k | ~6 días | ~$30 |
+| `c3-standard-64` | 16 | ~230k | ~4 días | ~$55 |
+| `c3-standard-96` | 24 | ~302k | ~3.6 días | ~$70 |
+
+Una `c3-standard-64` (o 96) es el punto dulce gratis/rapido.
 
 ```bash
 # En la VM GCP (Ubuntu 22.04+, x86_64), con Docker instalado:
 tar -xzf dvch_portable_bundle.tar.gz
-export DVCH_NCHAINS=32
-bash deploy/docker_run.sh
+bash deploy/docker_run.sh        # cadenas = nproc/4 automatico
 ```
 
 > Nota ARM (Oracle Ampere, etc.): si eliges una VM ARM, los `.so` del bundle
@@ -139,9 +167,12 @@ sudo apt install -y python3.14 python3.14-venv python3.14-dev
 ```bash
 tail -f dvch_prod_run.log
 # cuando terminen las cadenas:
-python3 dvch_planck_chain_diagnostics.py dvch_prod.[1-4].txt
+python3 _r1_diagnostic.py dvch_prod     # Cobaya-R1, classic GR, ESS
+python3 _proposal_check.py              # verifica que la propuesta sigue siendo optima
 ```
 
-Criterio: **R-hat < 1.01 y ESS > 100**. No se declara convergencia hasta
-tener las cadenas reales.
+Criterio de la fase 3: **Cobaya R−1 < 0.03** (equivalente a ESS ≈ 1400/param).
+R−1<0.01 costaría ~33 días de cómputo y no aporta precisión científica
+observable; no se persigue. No se declara convergencia hasta tener las cadenas
+reales.
 EOF

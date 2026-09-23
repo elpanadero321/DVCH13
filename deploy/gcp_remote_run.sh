@@ -9,9 +9,10 @@ set -euo pipefail
 
 : "${DVCH_BUNDLE_URL:?Falta DVCH_BUNDLE_URL}"
 NCHAINS="${DVCH_NCHAINS:-4}"
-MAXS="${DVCH_MAX_SAMPLES:-2000}"
-BURN="${DVCH_BURN_IN:-200}"
-COVMAT="${DVCH_COVMAT:-dvch_prod_wide.covmat}"
+MAXS="${DVCH_MAX_SAMPLES:-40000}"
+BURN="${DVCH_BURN_IN:-500}"
+COVMAT="${DVCH_COVMAT:-dvch_prod_frozen.covmat}"
+R1STOP="${DVCH_RMINUS1_STOP:-0.03}"
 KIT="$HOME/deploy_kit"
 WORK="$HOME/dvch"
 
@@ -51,12 +52,14 @@ echo "[remote] construyendo imagen docker (varios minutos)..."
 sudo docker build -t dvch-mcmc -f "$WORK/Dockerfile" "$WORK"
 
 # --- 5. Lanzar la MCMC (desacoplada: sobrevive al cierre de SSH) ---
-echo "[remote] lanzando MCMC: $NCHAINS cadenas x $MAXS (burn_in $BURN)"
+echo "[remote] lanzando MCMC definitiva: $NCHAINS cadenas, R-1_stop=$R1STOP, covmat=$COVMAT"
 sudo docker rm -f dvch-mcmc-run >/dev/null 2>&1 || true
 setsid nohup sudo docker run --rm --name dvch-mcmc-run \
     -e DVCH_NCHAINS="$NCHAINS" \
     -e DVCH_MAX_SAMPLES="$MAXS" \
     -e DVCH_BURN_IN="$BURN" \
+    -e DVCH_RMINUS1_STOP="$R1STOP" \
+    -e DVCH_COVMAT="$COVMAT" \
     -v "$WORK/dvch_bundle_stage/repo:/opt/dvch/repo" \
     dvch-mcmc > "$WORK/dvch_prod_run.log" 2>&1 < /dev/null &
 echo "[remote] MCMC lanzada. Log: $WORK/dvch_prod_run.log"

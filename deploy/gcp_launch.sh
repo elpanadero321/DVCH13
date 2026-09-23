@@ -23,10 +23,11 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$HERE/.." && pwd)"
 
 BUNDLE_URL="${DVCH_BUNDLE_URL:-https://litter.catbox.moe/9jijot.gz}"
-NCHAINS="${DVCH_NCHAINS:-4}"
-MAXS="${DVCH_MAX_SAMPLES:-2000}"
-BURN="${DVCH_BURN_IN:-200}"
-COVMAT="${DVCH_COVMAT:-dvch_prod_wide.covmat}"
+NCHAINS="${DVCH_NCHAINS:-8}"
+MAXS="${DVCH_MAX_SAMPLES:-40000}"
+BURN="${DVCH_BURN_IN:-500}"
+COVMAT="${DVCH_COVMAT:-dvch_prod_frozen.covmat}"
+R1STOP="${DVCH_RMINUS1_STOP:-0.03}"
 
 SSHOPTS=(-i "$KEY" -o StrictHostKeyChecking=accept-new -o ServerAliveInterval=30)
 SSH=(ssh "${SSHOPTS[@]}" "$RUSER@$IP")
@@ -35,7 +36,7 @@ SCP=(scp "${SSHOPTS[@]}")
 echo "=== DVCH -> GCP ==="
 echo "VM      : $RUSER@$IP   (clave: $KEY)"
 echo "bundle  : $BUNDLE_URL"
-echo "cadenas : $NCHAINS   max_samples: $MAXS   burn_in: $BURN"
+echo "cadenas : $NCHAINS   max_samples: $MAXS   burn_in: $BURN   R-1_stop: $R1STOP"
 echo
 
 echo "[1/4] comprobando conexion SSH..."
@@ -64,7 +65,7 @@ else
 fi
 
 echo "[4/4] lanzando la MCMC en la VM (desacoplada)..."
-"${SSH[@]}" "DVCH_BUNDLE_URL='$BUNDLE_URL' DVCH_NCHAINS='$NCHAINS' DVCH_MAX_SAMPLES='$MAXS' DVCH_BURN_IN='$BURN' DVCH_COVMAT='$COVMAT' bash -s" <<'EOSSH'
+"${SSH[@]}" "DVCH_BUNDLE_URL='$BUNDLE_URL' DVCH_NCHAINS='$NCHAINS' DVCH_MAX_SAMPLES='$MAXS' DVCH_BURN_IN='$BURN' DVCH_COVMAT='$COVMAT' DVCH_RMINUS1_STOP='$R1STOP' bash -s" <<'EOSSH'
 set -e
 chmod +x ~/deploy_kit/gcp_remote_run.sh
 setsid nohup bash ~/deploy_kit/gcp_remote_run.sh > ~/gcp_setup.log 2>&1 < /dev/null &

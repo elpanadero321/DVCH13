@@ -3,12 +3,18 @@
 # docker_run.sh — construye y lanza el contenedor DVCH en
 # cualquier nube con Docker. Un solo comando.
 #
+# Configuracion "definitiva" (fase 3): covmat optimo congelado,
+# learn_proposal=false, Rminus1_stop=0.03, refs = medias posteriores.
+# El reparto de hilos lo calcula entrypoint.sh (cadenas = nproc/4,
+# ~4 hilos OMP por cadena: CAMB satura a 4 hilos).
+#
 # Uso (en la maquina de nube, tras copiar el bundle + deploy/):
 #   tar -xzf dvch_portable_bundle.tar.gz
 #   bash deploy/docker_run.sh
 #
 # Variables opcionales:
-#   DVCH_NCHAINS=8   (default: nproc del host)
+#   DVCH_NCHAINS=8   (default: nproc/4)
+#   DVCH_RMINUS1_STOP=0.03
 # ============================================================
 set -euo pipefail
 
@@ -42,12 +48,17 @@ cp "$HERE/entrypoint.sh" "$CTX/dvch_bundle_stage/entrypoint.sh"
 echo "[docker] construyendo imagen dvch-mcmc"
 docker build -t dvch-mcmc -f "$CTX/Dockerfile.dvch" "$CTX"
 
-echo "[docker] lanzando MCMC FULL (sin recortes)"
+echo "[docker] lanzando MCMC definitiva (frozen covmat, R-1 stop 0.03)"
 docker run --rm -it \
     --name dvch-mcmc-run \
     -e DVCH_NCHAINS="${DVCH_NCHAINS:-}" \
-    -e DVCH_MAX_SAMPLES=2000 \
-    -e DVCH_BURN_IN=200 \
+    -e DVCH_MAX_SAMPLES="${DVCH_MAX_SAMPLES:-}" \
+    -e DVCH_BURN_IN="${DVCH_BURN_IN:-}" \
+    -e DVCH_LEARN_PROPOSAL="${DVCH_LEARN_PROPOSAL:-}" \
+    -e DVCH_RMINUS1_STOP="${DVCH_RMINUS1_STOP:-}" \
+    -e DVCH_COVMAT="${DVCH_COVMAT:-}" \
+    -e DVCH_CHAIN_SEED="${DVCH_CHAIN_SEED:-}" \
+    -e OMP_NUM_THREADS="${OMP_NUM_THREADS:-}" \
     -v "$CTX/dvch_bundle_stage/repo:/opt/dvch/repo" \
     dvch-mcmc
 
