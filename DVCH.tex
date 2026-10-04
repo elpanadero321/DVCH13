@@ -73,13 +73,13 @@
 
 \ifsnclass
 \author*[1]{Daniel Castro Pasten Benjamin}
-\email{daniel.castropasten6@gmail.com}
+\email{daniel.castropasten9@gmail.com}
 \affil[1]{Theoretical Cosmology / High Energy Physics Unit}
 \jyear{2026}
 \date{}
 \else
 \author{Daniel Castro Pasten Benjamin}
-\email{daniel.castropasten6@gmail.com}
+\email{daniel.castropasten9@gmail.com}
 \affiliation{Theoretical Cosmology / High Energy Physics Unit}
 \date{\today}
 \fi
@@ -1221,33 +1221,131 @@ and the horizon choice; it does not require assuming $Q$ has a particular sign.
 \subsection{Double-slit consistency test}
 \label{subsec:double_slit_test}
 
-To test the DVCH framework against quantum mechanical predictions in a laboratory setting, we implement a double-slit interference pattern simulation with the DVCH suppression factor. The standard quantum mechanical intensity pattern for double-slit interference is
+An earlier version of this subsection compared the standard double-slit intensity
 \begin{equation}
-I_{\rm QM}(x)=I_0\left[\frac{\sin\!\left(\pi d x/(\lambda L)\right)}{\pi d x/(\lambda L)}\right]^2,
+I_{\rm QM}(x)=I_0\left[\frac{\sin\!\left(\pi d x/(\lambda L)\right)}{\pi d x/(\lambda L)}\right]^2
 \end{equation}
-where $d$ is the slit separation, $\lambda$ is the wavelength, $L$ is the slit-to-screen distance, and $x$ is the position on the screen. In the DVCH-inspired laboratory limit, the leading modification is a multiplicative suppression of the overall amplitude,
+against a DVCH model obtained by multiplying it by a constant factor
+$1+\alpha Q/\mpl^2$, using a synthetic profile generated from $I_{\rm QM}$
+itself. That comparison is void, for three independent reasons that we now
+state explicitly because they constrain what any such test can achieve:
+(i)~a constant multiplicative factor is exactly degenerate with the flux
+normalisation $I_0$ and therefore does not alter the pattern shape at all;
+(ii)~generating the data from the very formula under test makes the comparison
+circular; and (iii), most importantly, a \emph{symmetric} double slit is blind
+to the closure, because both slits are milled through the same membrane and
+therefore sit at the same local matter density, so the closure predicts the
+\emph{same} effective vacuum modification on both arms and the differential
+phase cancels identically. The test reported below removes these three defects.
+
+\paragraph{Experimental basis.}
+We evaluate the closure with the real published parameters of the controlled
+single-electron double-slit of Bach et al.~\cite{Bach:2013}: 600~eV electrons
+(de Broglie wavelength $\lambda_{\rm dB}=50$~pm), two 62~nm slits with 272~nm
+centre-to-centre separation, a 30.5~cm propagation distance, milled through a
+100~nm silicon-nitride membrane coated with $\sim$2~nm of gold, with $\sim$6235
+detected electrons accumulated in the central five diffraction orders.
+
+\paragraph{Closure prediction at laboratory density.}
+The covariant closure~\eqref{eq:DVCH_covariant} is a function of the \emph{local}
+matter density and the \emph{local} curvature invariant, so it can be evaluated
+with laboratory rather than cosmological densities. With the mean cosmological
+matter density $\rho_{m0}=\Omm\Ecrit\simeq 2.68\times10^{-27}\,\mathrm{kg\,m^{-3}}$
+and $\rho_{\rm Si_3N_4}\simeq3.1\times10^{3}\,\mathrm{kg\,m^{-3}}$, the density
+ratio is $\rho_{\rm Si_3N_4}/\rho_{m0}\simeq1.2\times10^{30}$, and the closure
+predicts that the effective vacuum energy inside an ordinary solid is enhanced
+by
 \begin{equation}
-I_{\rm DVCH}(x)=I_0\left(1+\frac{\alpha Q}{\mpl^2}\right)
-\left[\frac{\sin\!\left(\pi d x/(\lambda L)\right)}{\pi d x/(\lambda L)}\right]^2,
-\qquad \frac{\alpha Q}{\mpl^2}\ll 1,
-\label{eq:double_slit_dvch}
+F_\rho\equiv\left(\frac{\rho_{\rm mat}}{\rho_{m0}}\right)^{n}
+\simeq\begin{cases}
+73 & n=0.062\ \text{(CMB-preliminary median)}\\
+4.1\times10^{6} & n=0.22\ \text{(late-time median)}
+\end{cases}
 \end{equation}
-so that the classical and DVCH curves remain indistinguishable at the laboratory scale unless a much larger suppression is introduced. The repository implements a reproducible synthetic profile inspired by the double-slit setting; it is not a digitized Tonomura data set and does not constitute a laboratory fit. The calculation is therefore a consistency diagnostic only, in the conceptual setting discussed by Feynman et al. \cite{Feynman:1965} and Landau \& Lifshitz \cite{Landau:1981}.
-For the simulated laboratory test, the reduced chi-squared is
+relative to the cosmological value. This is a genuine, falsifiable consequence
+of the closure, independent of any interference experiment: with $n>0$ the
+closure places the effective vacuum energy \emph{inside} matter, enhanced by one
+to six orders of magnitude, rather than uniformly in empty space.
+
+The curvature channel is ambiguous because the invariant
+$\mathcal{I}$ in~\eqref{eq:DVCH_covariant} is not fixed uniquely by the
+construction. With $\mathcal{I}\sim H^2$ a comoving laboratory still expands at
+$H_0$, giving $\mathcal{I}/M_{\rm DVCH}^2=\beta$ and a suppression factor
+$(1+\beta)^{-1}\simeq0.9995$. With the alternative choice
+$\mathcal{I}\sim(R_{\mu\nu\rho\sigma}R^{\mu\nu\rho\sigma})^{1/2}$, Earth's own
+curvature dominates over $H_0$ at the surface and gives
+$\mathcal{I}/M_{\rm DVCH}^2\simeq1.3\times10^{5}$, i.e.\ a suppression factor
+$\simeq7.5\times10^{-6}$. Both choices are reported rather than selected.
+
+\paragraph{Discriminating observable and result.}
+The observable that is not degenerate with alignment is the \emph{differential}
+fringe phase $\delta$ between two asymmetric configurations, with a dense mask
+adjacent to one arm versus the other; the alignment offset and the flux
+normalisation are common to both images and therefore cancel. Fitting the joint
+model against a Poisson error model derived from the reported electron count
+gives $|\delta|<0.20$~rad at 95\% confidence (shot-noise limited; see
+Fig.~\ref{fig:dvch_double_slit}). The only DVCH$\to$electron phase channel
+derivable from the theory without introducing new microphysics is the
+gravitational one, since $\rho_\Lambda$ gravitates by construction as a source
+of the Friedmann equation. Evaluated for a 600~eV electron traversing the
+membrane it gives $\delta_{\rm grav}\sim10^{-58}$~rad, i.e.\ utterly
+unobservable.
+
+Because the enhancement is measured relative to the cosmological mean density,
+even a good laboratory vacuum is dense by cosmological standards: at
+$10^{-9}$~mbar the residual gas gives $F_\rho\simeq8$ for $n=0.062$, so the
+chamber-vacuum offset must be subtracted from any differential observable. The
+relevant quantity is $\Delta F_\rho(n)=F_\rho(\mathrm{SiN})-F_\rho(\mathrm{vac})$,
+which is $65$ for $n=0.062$ and $4.1\times10^{6}$ for $n=0.22$.
+
+\paragraph{Direct constraint on the theory's own parameter.}
+Parametrising the not-yet-derived non-gravitational coupling as an effective de
+Broglie-wavelength shift
+$\delta=\zeta\,(2\pi t/\lambda_{\rm dB})\,\Delta F_\rho(n)$ acting over one
+membrane thickness $t$, the measured limit becomes a bound on $n$ itself, since
+$\Delta F_\rho(n)$ is parameter-free. For a natural $\mathcal{O}(1)$ laboratory
+coupling the double-slit requires
 \begin{equation}
-\chi^2_{\text{red}} = \frac{1}{N-p}\sum_{i=1}^{N}
-\left(\frac{I_i^{\rm obs}-I_i^{\rm th}}{\sigma_i}\right)^2,
-\qquad \text{computed directly from the synthetic profile},
-\label{eq:chi2_double_slit}
+n<4.4\times10^{-7}\qquad(\zeta=\mathcal{O}(1)),
 \end{equation}
-which should be interpreted only as a goodness-of-fit diagnostic for this
-synthetic profile; it is not a confidence statement about Tonomura data.
+which excludes the CMB-preliminary value $n=0.062$ by five orders of magnitude.
+Read the other way, the closure's own signal survives only if the laboratory
+coupling is unnaturally small:
+$|\zeta|<2.4\times10^{-7}$ for $n=0.062$ and $|\zeta|<3.8\times10^{-12}$ for
+$n=0.22$, i.e.\ 7--12 orders of magnitude below a natural value. The honest
+conclusion is that the closure cannot be a local field equation with an
+$\mathcal{O}(1)$ coupling at laboratory scales: it must be interpreted as a
+cosmological background relation, or it requires a screening mechanism at high
+local matter density.
+
+\paragraph{A discriminating design that measures $n$ directly.}
+The unknown coupling $\zeta$ is an overall factor common to every material, so
+\emph{ratios} of the differential phase between two materials depend only on $n$
+and $\zeta$ cancels exactly. Placing slabs of different materials behind one
+arm and referencing every measurement to silicon nitride, the predicted ratios
+$R_X=\Delta F_\rho(X)/\Delta F_\rho(\mathrm{SiN})$ move from $R_{\rm gas}=0.57$
+and $R_{\rm Au}=1.14$ at $n=0.062$ to $R_{\rm gas}=0.18$ and $R_{\rm Au}=1.50$
+at $n=0.22$: a gas-versus-gold contrast that changes by a factor of 2 to 8, far
+above any realistic systematic. A multi-material double-slit therefore measures
+$n$ with no dependence on the undetermined coupling.
+
+The repository implements this analysis in \texttt{dvch\_double\_slit.py}, in the
+conceptual setting discussed by Feynman et al.~\cite{Feynman:1965} and Landau \&
+Lifshitz~\cite{Landau:1981}.
 
 \begin{center}
 \refstepcounter{figure}\label{fig:dvch_double_slit}
 \includegraphics[width=0.96\linewidth]{figures/dvch_double_slit.png}
 \begin{minipage}{0.96\linewidth}\footnotesize
-\textbf{Figure~\thefigure.} \textbf{DVCH} double-slit interference comparison. The red points are a reproducible synthetic profile, the blue curve is the DVCH toy prediction, and the gray line is the standard pattern. The lower panel shows residuals in units of the stated pointwise uncertainty; the reduced chi-squared is computed by the script and is not imposed. The axes are labeled "Posici\'on $x$ (\textmu m), Intensidad $I(x)$ (W/m$^2$)".
+\textbf{Figure~\thefigure.} Corrected \textbf{DVCH} double-slit analysis, using
+the real Bach et al.~\cite{Bach:2013} geometry. Top: the two asymmetric
+configurations (mask adjacent to each arm) with the joint quantum-mechanical
+null and the maximum DVCH phase allowed at 95\%. Middle: profile likelihood in
+the differential phase $\delta$, with the 68/95/99.7\% thresholds; the closure
+is indistinguishable from quantum mechanics. Bottom: the closure prediction
+$F_\rho=(\rho_{\rm mat}/\rho_{m0})^n$ for silicon nitride and gold, with the
+CMB-preliminary and late-time values of $n$ marked; the resulting laboratory
+bounds on the coupling $\zeta$ are annotated.
 \end{minipage}
 \end{center}
 
@@ -2140,7 +2238,12 @@ $\sigma_8=0.80975$ at $H_0=67~\mathrm{km\,s^{-1}\,Mpc^{-1}}$ and a compiled
 DVCH spectrum smoke test. The automatically generated broad nuisance ranges are deliberately not used:
 they caused a zero-acceptance chain and are not official Planck priors.
 
-\textbf{Perspectiva futura:} Extender DVCH a escalas cuánticas para derivar formalmente la Ecuación~\eqref{eq:double_slit_dvch}.
+\textbf{Perspectiva futura:} Extender DVCH a escalas cuánticas para derivar
+formalmente el acoplamiento entre la modificaci\'on local de $\rho_\Lambda$
+predicha por la cerradura y la propagaci\'on de una part\'icula de laboratorio
+(el par\'ametro $\zeta$ de la Sec.~\ref{subsec:double_slit_test}), de modo que la
+cota $|\zeta|<2.2\times10^{-7}$ pueda convertirse en una restricci\'on directa
+sobre la teor\'ia en lugar de sobre un acoplamiento a\'un no derivado.
 
 \ifsnclass
 \bibliographystyle{sn-mathphys-num}

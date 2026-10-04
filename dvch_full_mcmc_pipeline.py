@@ -190,7 +190,7 @@ if __name__ == "__main__":
     split = np.zeros((m, half, ndim))
     for w in range(n_walkers):
         split[2*w] = chains_for_rhat[:half, w, :]
-        split[2*w+1] = chains_for_rhat[half:, w, :]
+        split[2*w+1] = chains_for_rhat[half:2*half, w, :]
 
     B = (half / (m - 1)) * np.sum(
         (split.mean(axis=1) - split.mean(axis=(0, 1)))**2, axis=0)

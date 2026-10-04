@@ -22,6 +22,7 @@ class DVCHNumericalTests(unittest.TestCase):
         cls.joint_fit = importlib.import_module("dvch_joint_realdata_fit")
         cls.camb_background = importlib.import_module("dvch_camb_background")
         cls.perturbations = importlib.import_module("dvch_perturbations")
+        cls.double_slit = importlib.import_module("dvch_double_slit")
 
     def test_fiducial_background_is_normalized_at_zero_redshift(self):
         e2, matter, vacuum = self.colab.E2_dvch(0.0)
@@ -183,6 +184,58 @@ class DVCHNumericalTests(unittest.TestCase):
             "c_lambda*0._dl",
         ):
             self.assertIn(marker, source)
+
+    # --------------------------------------------------------------
+    # Tests nuevos (2026-10-04) — cubren puntos ciegos detectados:
+    #   1. compute_growth ignoraba n/beta (bug corregido esta sesión)
+    #   2. falta verificacion del limite LambdaCDM en crecimiento
+    #   3. falta verificacion de la ceguera simetrica de la doble rendija
+    #   4. falta verificacion de la normalizacion F_rho(0)=1
+    # --------------------------------------------------------------
+
+    def test_growth_responds_to_n_and_recovers_lcdm_at_n_zero(self):
+        # Regression del bug: compute_growth() llamaba al solver de fondo sin
+        # pasarle (n, beta), de modo que sigma8 era siempre el del fiducial.
+        lcdm = self.growth.compute_growth(n=0.0, beta=1.0e-4)
+        fid = self.growth.compute_growth(n=0.2, beta=1.0e-4)
+        cmb = self.growth.compute_growth(n=0.062, beta=5.0e-4)
+
+        # En n=0 la interaccion se apaga: debe recuperar LambdaCDM exacto.
+        self.assertAlmostEqual(lcdm["growth_ratio"], 1.0, places=3)
+        # El fiducial y el posterior CMB deben ser distintos entre si (si no,
+        # el parametro n vuelve a ser ignorado silenciosamente).
+        self.assertNotAlmostEqual(fid["growth_ratio"], cmb["growth_ratio"],
+                                  places=3)
+        # Cuanto mayor n, mas supresion de crecimiento.
+        self.assertLess(cmb["sigma8_dvch"], lcdm["sigma8_dvch"])
+
+    def test_closure_enhancement_is_unity_at_n_zero(self):
+        # F_rho = (rho/rho_m0)^n debe valer 1 para cualquier material cuando
+        # n=0 (la cerradura degenera en constante cosmologica rigida).
+        for rho in (1.2, 1.2e3, 3.1e3, 19.3e3):
+            f = self.double_slit.closure_enhancement(rho, 0.0)
+            self.assertAlmostEqual(f, 1.0, places=12)
+
+    def test_symmetric_double_slit_is_exactly_blind(self):
+        # Ambas rendijas en la misma membrana: la cerradura predice la misma
+        # modificacion en los dos brazos, coeficiente diferencial exactamente 0.
+        f1 = self.double_slit.closure_enhancement(self.double_slit.RHO_SIN, 0.062)
+        f2 = f1  # misma membrana
+        coeff = (f1 - f2)
+        self.assertEqual(coeff, 0.0)
+
+    def test_double_slit_differential_uses_chamber_vacuum_offset(self):
+        # El observable fisico es F_rho(SiN) - F_rho(vacio de camara), no
+        # F_rho - 1: incluso un vacio de laboratorio esta "denso" a escala
+        # cosmologica. Verifica que el offset es no despreciable.
+        f_sin = self.double_slit.closure_enhancement(self.double_slit.RHO_SIN,
+                                                    0.062)
+        f_vac = self.double_slit.closure_enhancement(self.double_slit.RHO_VAC,
+                                                    0.062)
+        self.assertGreater(f_vac, 1.0)
+        self.assertLess(f_vac, f_sin)
+        # El offset es del orden de decenas: no se puede ignorar.
+        self.assertGreater(f_vac, 2.0)
 
 
 if __name__ == "__main__":

@@ -85,10 +85,11 @@ def solve_dvch_background_full(z_array, n=n_fid, beta=beta_fid):
     return z_array, Om_arr, OL_arr, E2_arr, E, Qtilde
 
 
-def compute_growth():
+def compute_growth(n=n_fid, beta=beta_fid):
     """Compute growth for DVCH and LCDM using full backgrounds."""
     z_bg = np.linspace(0, 100, 5000)
-    z_bg, Om_dvch, OL_dvch, E2_dvch, E_dvch, Qt_dvch = solve_dvch_background_full(z_bg)
+    z_bg, Om_dvch, OL_dvch, E2_dvch, E_dvch, Qt_dvch = solve_dvch_background_full(
+        z_bg, n=n, beta=beta)
 
     # Interpolation functions
     E_dvch_f = interp1d(z_bg, E_dvch, kind='cubic', fill_value='extrapolate')
