@@ -47,3 +47,8 @@ Thumbs.db
 
 # ---- Agent tooling (local) ----
 .kilo/
+
+# ---- Watchdog temporales (no subir) ----
+.ckpt_tmp.*/
+ckpt_backup/
+ckpt_backup_prev/
