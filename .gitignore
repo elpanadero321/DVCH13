@@ -22,10 +22,8 @@ build/
 *.synctex.gz
 *.toc
 # NOTE: *.log is covered by the Logs section below; DVCH.log is a LaTeX artifact.
-
 # ---- Logs ----
 *.log
-
 # ---- Cobaya / MCMC run outputs (regenerable from the pipeline) ----
 *.checkpoint
 *.progress
@@ -34,21 +32,48 @@ build/
 *.updated.dill_pickle
 *.input.yaml
 *.[0-9].txt
-
 # ---- Dependency archives / packaging (should not be tracked) ----
 pkgs/
 *.zip
 *.tar.gz
 DVCH_pipeline_portable.zip
-
 # ---- OS cruft ----
 .DS_Store
 Thumbs.db
-
 # ---- Agent tooling (local) ----
-.kilo/
 
 # ---- Watchdog temporales (no subir) ----
 .ckpt_tmp.*/
 ckpt_backup/
 ckpt_backup_prev/
+# ---- Artifacts de cadenas y caches (no subir) ----
+__pycache__/
+*.pyc
+.last_good_snapshot
+package-lock.json
+# ---- Agent tooling y editor local ----
+.kilo/
+.cursor/
+.qwen/
+.clinic/
+.vscode/
+.devcontainer/
+# ---- Watchdog / snapshot temporales ----
+# ---- Artifacts de cadenas anteriores (checkpoints, covmats muertos) ----
+dvch_prod_p1.covmat
+dvch_prod_wide.covmat
+dvch_prod_frozen.covmat
+dvch_prod_init.covmat
+dvch_prod_learned.covmat
+dvch_prod_widebeta_smoke.covmat
+dvch_test_blocking*
+dvch_posterior_refs*
+dvch_real_chain_dvch.npy
+dvch_real_chain_lcdm.npy
+dvch_planck_chain_a.*
+dvch_planck_chain_b.*
+dvch_planck_full_highl_chain.*
+dvch_planck_short_chain.*
+# ---- Backups / archivo historico ----
+backup_wideprior/
+_archive/
