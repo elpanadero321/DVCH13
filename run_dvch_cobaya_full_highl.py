@@ -162,6 +162,12 @@ def build_info() -> dict:
         )
     if os.environ.get("DVCH_LEARN_EVERY"):
         info["sampler"]["mcmc"]["learn_every"] = os.environ["DVCH_LEARN_EVERY"]
+    # Permite desactivar el blocking manual heredado del yaml base para que
+    # cobaya mida velocidades reales (measure_speeds) y aplique oversampling
+    # efectivo sobre los parametros rapidos (foreground/calibracion), que son
+    # los que dominan la no-convergencia multivariada.
+    if os.environ.get("DVCH_NO_BLOCKING", "").lower() in ("1", "true", "yes"):
+        info["sampler"]["mcmc"].pop("blocking", None)
     # Optional initial covariance matrix (regularized empirical covmat).
     covmat = os.environ.get("DVCH_COVMAT")
     if covmat:

@@ -24,8 +24,8 @@ params:
     prior: {min: 0.01, max: 0.25}
     ref: {dist: norm, loc: 0.09, scale: 0.01}
   DVCH_beta:
-    prior: {min: 0, max: 0.001}
-    ref: {dist: norm, loc: 0.0001, scale: 0.00002}
+    prior: {min: 0, max: 1.0}
+    ref: {dist: norm, loc: 0.4, scale: 0.1}
 sampler:
   mcmc:
     max_samples: 12
