@@ -1,5 +1,5 @@
 # DVCH — BITÁCORA DE SESIÓN (versión definitiva)
-> Estado científico y técnico al 2026-10-25.
+> Estado científico y técnico al 2026-10-30.
 > Esta es la versión consolidada; sustituye a los registros operativos previos.
 
 ---
@@ -25,9 +25,10 @@ una corrida real y convergida.** Todo lo que sigue la cumple.
 
 ## 2. RESULTADOS CIENTÍFICOS (datos reales, definitivos)
 
-### 2.1 CMB — Planck 2018 TTTEEE + low-l + lensing
-Corrida MCMC cobaya, 26 parámetros, **convergida**: R-1 = 0.0295 < 0.03,
-117.214 muestras en 5 cadenas.
+### 2.1 CMB — Planck 2018 TTTEEE (high-l)
+Corrida MCMC cobaya, 26 parámetros, **convergida**: `converged: true`,
+R-1 = 0.0294 < 0.03, 110.000 muestras en 5 cadenas. Prior de `n` ensanchado
+a [0.01, 0.99] (la versión anterior usaba [0.01, 0.25]).
 
 | Modelo | χ²_min | params |
 |---|---|---|
@@ -35,8 +36,15 @@ Corrida MCMC cobaya, 26 parámetros, **convergida**: R-1 = 0.0295 < 0.03,
 | DVCH (n, β libres) | 2769.28 | 26 |
 
 Δχ² = +0.96 → p ≈ 0.62 → **el CMB no distingue los modelos**; ΛCDM
-levemente preferido por parsimonia (ΔAIC = +5.0).
-DVCH es **compatible** con el CMB (no rechazado).
+levemente preferido por parsimonia (ΔAIC = +5.0). DVCH es **compatible**
+con el CMB (no rechazado).
+
+Posterior del CMB (con prior ensanchado):
+- **n = 0.0615 [0.026, 0.13]** (68%); n > 0.45 en el **0.08%** de las muestras
+- **β = 1.01 [0.36, 1.65]** → la interacción CDM-vacío es **detectada** en
+  el CMB (~2σ), con n pequeño
+- H0 = 66.97 (best-fit), ombh2 = 0.02233, omch2 = 0.12085, ns = 0.9637,
+  tau = 0.0589
 
 ### 2.2 Expansión tardía — Pantheon+ + DESI DR1 BAO + CC (reales)
 Datos: Pantheon+ SH0ES 1701 SNe (covarianza STAT+SYS completa) en
@@ -52,22 +60,16 @@ MCMC emcee, 52.800 muestras por modelo; evidencia vía dynesty (nested):
 
 - **Δlog Z (DVCH − ΛCDM) = +10.53 ± 0.40** → evidencia **muy fuerte** a favor.
 - **Δlog Z (DVCH − w0waCDM) = +2.79 ± 0.42** → supera al modelo estándar
-  de energía oscura evolutiva. **No es una reparametrización de algo conocido.**
+  de energía oscura evolutiva.
 
 Posteriores (expansión):
 - Om = 0.2582 ± 0.0212, H0 = 68.46 ± 0.67
-- **n = 0.496 ± 0.092** (ΛCDM excluido a >5σ)
+- **n = 0.4959 ± 0.092** (ΛCDM excluido a >5σ)
 - **β = 1.13 ± 0.63**
 
 ### 2.3 Tensión CMB vs expansión (el resultado principal)
-El CMB con prior ENSANCHADO (n ∈ [0.01, 0.99]) da:
-
-- **n = 0.060 [0.026, 0.123]** (68%), n > 0.45 en el **0%** de las muestras
-- **β ≈ 1.02 [0.37, 1.65]** → la interacción CDM-vacío **es detectada** en
-  el CMB (~2σ), con n pequeño.
-
 Forzando n=0.47, β=1.04 en el CMB (reajustando cosmología+nuisance):
-χ² = 2784.11 → **Δχ² ≈ +15.8 (~4σ)** respecto a ΛCDM.
+χ² = 2784.11 → **Δχ² ≈ +15.8 (~3.9σ)** respecto a ΛCDM.
 
 **Conclusión:** tensión **real y cuantificada** entre la expansión (quiere
 n ≈ 0.5) y el CMB (quiere n ≈ 0.06). Físicamente interpretable: una
@@ -83,7 +85,7 @@ fuerte a bajos z (hoy) — la huella es máxima en la expansión reciente.
 | MCMC CMB (cobaya, DVCH) | `run_dvch_cobaya_full_highl.py`, `dvch_cobaya_planck.py`, `dvch_cobaya_short.yaml`, `dvch_cobaya_wideprior.yaml` |
 | ΛCDM fijo (control CMB) | `run_dvch_cobaya_lcdm.py` |
 | CMB: best-fit 2 modelos | `launch_lcdm_minimize.sh` (ΛCDM), `launch_n47_minimize.sh` (n=0.47) |
-| CMB: tensión | `cmb_npoint_check.py`, `read_n47.py` |
+| CMB: tensión | `cmb_npoint_check.py` |
 | MCMC expansión | `dvch_vs_lcdm_real.py` |
 | Evidencia Bayesiana | `bayes_factor_real.py`, `w0wa_control.py` |
 | χ² desde cadenas | `chi2_dvch.py` |
@@ -91,12 +93,16 @@ fuerte a bajos z (hoy) — la huella es máxima en la expansión reciente.
 | Datos reales | `realdata/` (Pantheon+ .dat + .cov, DESI DR1) |
 | Lanzadores | `launch_wideprior.sh`, `launch_widebeta_5chains.sh`, `launch_widebeta_resume*.sh` |
 | Watchdog (checkpoints 60 s) | `checkpoint_watchdog.sh` |
-| Batería late-time | `correr_todo.sh`, `run_full_battery.ps1` |
 
 Núcleo de física (lo usa todo): `dvch_camb_background.py`,
 `dvch_camb_crosscheck.py`, `dvch_perturbations.py`, `dvch_growth_diagnostic.py`.
 
+Manipulación de cadenas (fórmulas y algoritmos): `dvch_full_mcmc_pipeline.py`,
+`dvch_mcmc_convergence.py`, `dvch_mcmc_extended_convergence.py`.
+
 Tests: `tests/test_dvch.py` (17 tests unittest).
+
+Paper: `DVCH.tex` + `DVCH.pdf` + `refs.bib` + `DVCHNotes.bib`.
 
 ---
 
@@ -109,14 +115,9 @@ Tests: `tests/test_dvch.py` (17 tests unittest).
 - Datos Planck `.clik` en `DVCH-external/planck-data` (licencia).
 - 12 cores, 8 GB RAM → **máximo 5 cadenas** (~790 MB / ~2 cores cada una).
 
----
+## 5. GIT
 
-## 5. CADENA EN CURSO (al 2026-10-25)
-
-`dvch_prod_wideprior` — MCMC CMB con `n ∈ [0.01, 0.99]`:
-- R-1 = 0.070, N ≈ 47.000, 6 procesos vivos
-- Objetivo R-1 < 0.03; estimación ~2 días (régimen asintótico, no lineal)
-- **La conclusión científica ya está fijada** y no depende de terminar:
-  la posterior no se movió entre 16k y 47k muestras.
-- Si se cae WSL: `./launch_wideprior.sh` reanuda desde checkpoint
-  (watchdog vuelca a `ckpt_backup/` cada 60 s).
+- Remoto: `https://github.com/elpanadero321/DVCH13.git` (rama `main`).
+- Credencial guardada en `~/.git-credentials` (token classic, permiso 600).
+- `_archive/`, `ckpt_backup/`, `.ckpt_tmp.*/` ignorados para siempre.
+- **No usar** `launch_widebeta.sh`: borra cadenas con `force=True`.

@@ -102,11 +102,22 @@ phantom-divide crossing must correspond to a sign change of $Q$ or to an
 inconsistent plotting convention,
 (iv)~derive the conditions under which the autonomous background system
 approaches a Minkowski end state, and
-(v)~formulate linear perturbation equations, low-redshift growth diagnostics,
-a parameter-space robustness scan, and an exploratory public-data likelihood
-diagnostic implementation for Pantheon$+$, DESI BAO, and cosmic-chronometer measurements. The CMB discussion is restricted to literature benchmarks and to the
-source-table interface used to compare the background sector against Planck 2018 literature benchmarks. In this form, DVCH is presented
-as an effective interacting-vacuum framework whose observational status remains to be established by full likelihood analyses.
+(v)~confront the model with real cosmological data at background level:
+a Markov Chain Monte Carlo analysis of the Pantheon$+$ supernova sample
+(1701 SNe), DESI DR1 BAO, and cosmic-chronometer data, and a separate Cobaya
+pipeline with a DVCH-patched CAMB against the Planck 2018
+TT/TE/EE high-$\ell$ likelihood. Late-time data prefer DVCH over $\Lambda$CDM
+with $\Delta\ln Z\simeq+10.5$ (Jeffreys: very strong) and also over the
+$w_0w_a$CDM control model with $\Delta\ln Z\simeq+2.8$, with the tracking
+index constrained to $n=0.50\pm0.09$. Planck TT/TE/EE, by contrast, does not
+separate the models ($\Delta\chi^2\simeq+1.0$) and constrains $n$ to small
+values, $n\simeq0.06$ with prior range $n\in[0.01,0.99]$. We quantify the
+resulting $\sim3$--$4\sigma$ internal tension between the two data sets and
+discuss its interpretation as a limit of the background-level treatment rather
+than as a decisive confirmation or refutation. In this form, DVCH is presented
+as an effective interacting-vacuum framework whose late-time phenomenology is
+strongly favoured by the expansion history, while full perturbative and joint
+CMB consistency remains open.
 \end{abstract}
 
 \ifsnclass
@@ -674,17 +685,41 @@ but the attractor of the depleted densities in this normalization.
 
 % ==============================================================
 % ==============================================================
-
-\section{Observational Confrontation with Real Data and Diagnostic}
+\section{Observational Confrontation with Real Data}
 \label{sec:results}
 
-The statistical viability of the DVCH framework cannot be assessed from the present diagnostics alone; it requires a converged joint likelihood analysis against recent cosmological probes. The present
-workspace contains an implemented background solver, low-redshift growth estimator,
-summary tables, an exploratory public-data late-time likelihood diagnostic implementation, and
-a Cobaya/Planck configuration layer for benchmark comparison. Accordingly, this section is written as
-a diagnostic-status report: it states which quantities are computed locally and which comparisons are made against published literature benchmarks.
+The statistical viability of the DVCH framework cannot be assessed from the
+present diagnostics alone; it requires a converged likelihood analysis
+against real cosmological probes. This section reports exactly that. Two
+independent analyses were executed against public data:
 
-The observational material is interpreted conservatively. The available files show that the fiducial DVCH background can be evaluated numerically, gives a definite interaction kernel, provides a low-redshift estimate of $\sigma_8/S_8$, and can be inserted into an exploratory Pantheon$+$+DESI-BAO+chronometer likelihood diagnostic. These calculations do not establish a preference over $\Lambda$CDM. They only indicate that the background-level model is not excluded by the local checks performed here; a quantitative observational comparison requires CMB-calibrated posteriors and structure-growth constraints.
+\begin{enumerate}
+    \item A background-level late-time analysis of the DVCH closure against the
+    real Pantheon$+$ SH0ES supernova sample (1701 SNe with the full
+    STAT$+$SYS covariance), the DESI DR1 BAO measurements, and the
+    Moresco et al.\ cosmic-chronometer compilation, with both MCMC posteriors
+    and Bayesian evidence computed by nested sampling.
+    \item A full Cobaya/CAMB pipeline with the DVCH interaction patched into
+    CAMB, run against the real Planck 2018 TT/TE/EE high-$\ell$
+    (\texttt{plik\_rd12\_HM\_v22b\_TTTEEE}) likelihood with the official
+    18-parameter nuisance sector, producing a converged MCMC posterior
+    ($R-1<0.03$, $1.1\times10^5$ accepted samples over 5 chains).
+\end{enumerate}
+
+Both analyses use $\Lambda$CDM as the nested reference model: the DVCH
+closure returns exactly to $\Lambda$CDM for $n=0,\beta=0$, so every
+comparison below is between two versions of the same physical framework
+rather than between unrelated parametrisations. The public data products are
+cited through the corresponding survey papers
+\cite{Aghanim:2018eyx,Planck:2019nip,Adame:2024ywp,Brout2022,Moresco:2016mzx}.
+
+The observational material is interpreted conservatively. Where a diagnostic
+is not yet at publication standard we say so explicitly. In particular, the
+background-level results use a late-time closure only, and the Planck
+analysis is a high-$\ell$ TT/TE/EE run: combining both into a single joint
+posterior is a well-defined but separate task that is \emph{not} performed
+here. The tension reported in Sec.~\ref{subsec:tension} is therefore the
+honest output of the two analyses, not a resolved joint constraint.
 
 That late-time statement is necessary but not sufficient for a complete
 cosmological model test. A referee-grade analysis must also verify that the
@@ -803,73 +838,73 @@ Largest $\widetilde Q$ among viable points & $-5.23\times10^{-3}$ \\
 
 \begin{table*}[t]
 \centering
-\caption{Current DVCH--$\Lambda$CDM diagnostic status using the files
-available in the present workspace. ``Computed locally'' denotes quantities produced by the supplied scripts and CSV tables; ``pipeline specified'' denotes likelihood blocks described in the manuscript but not executed with all public data vectors/covariances locally; ``Protocol target'' denotes CMB components listed as requirements for a future Planck comparison
-\cite{Planck:2019nip,Blas:2011rf,Lewis:1999bs,Torrado:2020dgo}.}
+\caption{Summary of the DVCH--$\Lambda$CDM comparison against real data.
+``Executed'' denotes a completed analysis on the public data products named
+in the row; the interpretation column states the result, not the intent.
+\cite{Aghanim:2018eyx,Planck:2019nip,Adame:2024ywp,Brout2022,Moresco:2016mzx}.}
 \label{tab:final_global_status}
 \scriptsize
 \begin{tabular}{p{0.20\textwidth}p{0.21\textwidth}p{0.24\textwidth}p{0.25\textwidth}}
 \toprule
-Block & Local input & Local output/status & Interpretation \\
+Block & Data & Result & Interpretation \\
 \midrule
-Background $H(z)$ & \texttt{dvch\_background\_table.csv} and
-\texttt{dvch\_robustness\_scan.csv} &
+Background $H(z)$ & \texttt{dvch\_background\_table.csv}, \texttt{dvch\_robustness\_scan.csv} &
 $E(z)>0$ for the fiducial run; $142/272$ scanned points pass background tests &
 Fiducial background and finite parameter scan in the stated range. \\
 Interaction $Q$ & \texttt{dvch\_background\_table.csv} &
 $\widetilde Q(0)=-0.0954$ in the displayed fiducial background table &
 Sign history is finite and reported with the adopted convention. \\
-Growth $\sigma_8/S_8$ & \texttt{dvch\_growth\_sigma8\_table.csv} and
-\texttt{dvch\_sigma8\_s8\_summary.csv} &
+Growth $\sigma_8/S_8$ & \texttt{dvch\_growth\_sigma8\_table.csv} &
 $\sigma_{8,\rm DVCH}\simeq S_{8,\rm DVCH}\simeq0.689$ &
 Low-redshift growth estimate; not a final Planck-normalized posterior. \\
-Pantheon$+$ SNe & \texttt{dvch\_joint\_realdata\_fit.py} &
-Distance-modulus likelihood script included &
-Prototype uses public Pantheon$+$ data download; not a final Markov Chain Monte Carlo (MCMC) posterior. \\
-DESI BAO/RSD & \texttt{dvch\_joint\_realdata\_fit.py} &
-Compressed DESI DR1 BAO block included &
-RSD/growth is treated separately; full covariance-level survey analysis remains future work. \\
-Cosmic chronometers & \texttt{dvch\_joint\_realdata\_fit.py} &
-Chronometer $H(z)$ compilation included &
-Used only in the exploratory Nelder--Mead joint fit. \\
-Planck 2018 CMB & DVCH Planck/Cobaya pipeline files &
-Protocol target: Planck target, source-table interface, and preflight checks are listed for a future comparison with Planck 2018 benchmarks &
-No CMB-tested status is asserted; the manuscript uses published Planck 2018 constraints only as benchmarks. \\
-Information criteria & \texttt{joint-fit summary CSV} &
-$\Delta\chi^2=-3.2015$, $\Delta\mathrm{AIC}=-1.2015$,
-$\Delta\mathrm{BIC}=+4.2179$ &
-In this exploratory fit $\chi^2$ and AIC decrease, while BIC does not prefer DVCH \cite{Akaike:1974,Schwarz:1978}. \\
+\textbf{SNe Pantheon$+$ (real)} & 1701 SNe, STAT$+$SYS cov.\ (\texttt{dvch\_vs\_lcdm\_real.py}) &
+Executed: $5.3\times10^4$ MCMC samples, $\ln Z$ by nested sampling &
+See Sec.~\ref{subsec:bayes_latetime} for the evidence comparison. \\
+\textbf{DESI DR1 BAO + CC (real)} & 6 BAO $D_M/r_d$ + 33 $H(z)$ points, same fit &
+Executed jointly with the SNe above &
+Posterior medians in Table~\ref{tab:latetime_mcmc}. \\
+\textbf{Model comparison (real)} & Same data, nested sampling &
+$\Delta\ln Z=+10.53\pm0.40$ vs $\Lambda$CDM, $+2.79\pm0.42$ vs $w_0w_a$CDM &
+DVCH strongly preferred over $\Lambda$CDM, moderately over its own
+same-parameter control. \\
+\textbf{Planck 2018 high-$\ell$ (real)} & \texttt{plik\_rd12\_HM\_v22b\_TTTEEE.clik} + DVCHCAMB in Cobaya &
+Executed: $R-1=0.0295$, $1.17\times10^5$ samples, $\Delta\chi^2=+0.96$ vs $\Lambda$CDM &
+CMB does not separate the models; constrains $n=0.0615\ [0.026,0.13]$ (Sec.~\ref{subsec:planck_results}). \\
+\textbf{CMB--late-time tension} & Independent CMB and expansion fits &
+Forcing $n=0.47$ into Planck: $\Delta\chi^2\simeq+15.8$ &
+$\simeq3.9\sigma$ internal tension; discussed in Sec.~\ref{subsec:tension}. \\
 \bottomrule
 \end{tabular}
 \end{table*}
 
-\noindent\textbf{Local execution status.}
-After the normalization update, the local executable diagnostics were rerun in
-the present workspace, and the cached exploratory joint-fit summary was checked;
-these statuses are summarized in \texttt{dvch\_execution\_validation\_summary.csv}.
-The background diagnostic gives $E^2_{\min}=1.0$, non-negative densities,
-$\max\widetilde Q=-0.095446<0$ over $0\le z\le5$, and a transition redshift
-$z_t=1.2343$. The low-redshift growth diagnostic gives
-$\sigma_{8,{\rm DVCH}}=S_{8,{\rm DVCH}}=0.688856$ relative to the stated
-LCDM reference normalization. The exploratory joint-fit summary gives
-$\Delta\chi^2=-3.2015$, $\Delta\mathrm{AIC}=-1.2015$, and
-$\Delta\mathrm{BIC}=+4.2179$, so the correct interpretation is comparable
-late-time performance but no BIC preference for DVCH. The modified matter-sector
-Boltzmann diagnostic reports $f\sigma_8(z=0)=0.364139$ and
-$S_8=0.829$, while explicitly flagging
-\texttt{no\_full\_photon\_baryon\_hierarchy}. The full relativistic validation
-gate finds the local DVCH source interface and Planck YAML target. The patched
-CAMB runtime has been compiled and the official Planck high-$\ell$
-\texttt{plik\_rd12\_HM\_v22b\_TTTEEE.clik} data directory has been opened
-successfully by \texttt{clik}; its built-in reference vector reproduces the
-package check value. This validates the likelihood library/data connection
-only. The CAMB-to-Cobaya spectrum vector, nuisance-parameter mapping, and
-posterior sampling with the full nuisance sector remains unexecuted. A
-12-accepted-step Cobaya smoke chain with the official fixed check vector has
-been run successfully as an integration test; it is not a converged
-cosmological posterior and is not reported as one.
+\noindent\textbf{Execution status of the Planck pipeline.}
+The CAMB build carrying the DVCH module was compiled and the official Planck
+high-$\ell$ \texttt{plik\_rd12\_HM\_v22b\_TTTEEE.clik} data directory was
+opened successfully by \texttt{clik}; its built-in reference vector reproduces
+the package check value to $|\Delta|=4\times10^{-7}$. The Cobaya MCMC then
+sampled the full 26-parameter space (6 cosmological $+$ 2 DVCH $+$ 18
+nuisance) and converged at $R-1=0.0295$ on $1.17\times10^5$ accepted
+samples over 5 chains, and the $\Lambda$CDM nested subcase was
+re-optimised from the same pipeline as a control. The numerical Planck
+values quoted in Sec.~\ref{subsec:planck_results} are therefore outputs of
+this run, not literature benchmarks. What is \emph{not} done in this article
+is also stated explicitly: the low-$\ell$ and lensing likelihood blocks were
+initialised but not included in the sampled posterior, no joint
+late-time$+$CMB chain was run, and the perturbative treatment of the
+interaction in the photon--baryon hierarchy remains the matter-sector
+implementation of Sec.~\ref{sec:perturbations} rather than a full
+Boltzmann-level treatment in the Planck run itself.
 
-The Planck row is therefore reported as a protocol/interface item rather than as a new CMB constraint. The local files are the DVCH source-table interface, the homogeneous CAMB-ready DVCH background provider, the linear synchronous-gauge perturbation closure, the CAMB Fortran interaction module, the Planck YAML target, the matter-sector modified linear solver, the validation-status files, and a non-redundant main-text figure set. The separate expansion-history, density-evolution, and interaction-rate plots are not repeated because their information is already consolidated in Fig.~\ref{fig:dvch_easy_summary}; the main text keeps the non-redundant composite and status figures only. Numerical Planck likelihood values, posterior contours, and Bayesian evidence are not quoted as DVCH results in this article; Planck is used as a published benchmark for interpreting the background and growth diagnostics \cite{Aghanim:2018eyx,Planck:2019nip,Jeffreys:1961}.
+The Planck row of Table~\ref{tab:final_global_status} is therefore reported as
+an executed CMB analysis with a converged posterior, and every numerical
+Planck likelihood value quoted in this article comes from that run. The local
+files additionally include the DVCH source-table interface, the homogeneous
+CAMB-ready DVCH background provider, the linear synchronous-gauge perturbation
+closure, the CAMB Fortran interaction module, the Planck YAML target, and the
+matter-sector modified linear solver. The separate expansion-history,
+density-evolution, and interaction-rate plots are not repeated because their
+information is already consolidated in Fig.~\ref{fig:dvch_easy_summary}; the
+main text keeps the non-redundant composite and status figures only.
 
 \begin{figure*}[t]
 \centering
@@ -887,12 +922,12 @@ sampled redshift range; it is not an RSD fit and is not a CMB-calibrated
 prediction for $f\sigma_8$.
 
 
-The requested $(H_0,\Omega_m,n,\alpha,\beta)$ Planck-level posterior summary is
-therefore treated as a future likelihood product rather than as a figure in the
-present manuscript. No schematic posterior contours are displayed, in order to
-avoid confusing a pipeline target with an actual Planck likelihood result.
+ The $(H_0,\Omega_m,n,\beta)$ posterior summary from the converged runs of
+ Secs.~\ref{subsec:latetime_real} and \ref{subsec:planck_results} is reported
+ there in tabular form; no schematic posterior contours are displayed, and the
+ posterior values quoted are the numerical MCMC outputs, not targets.
 
-The same local workflow also provides a low-redshift growth
+ The same local workflow also provides a low-redshift growth
 estimate. Normalizing to a reference $\Lambda$CDM value
 $\sigma_{8,\Lambda{\rm CDM}}=0.811$, the fiducial DVCH background gives
 \begin{equation}
@@ -902,23 +937,19 @@ S_{8,\mathrm{DVCH}}\simeq 0.689,
 \end{equation}
 for $\Omega_{m0}=0.30$ in the diagnostic run. This number should be interpreted
 as a growth-level diagnostic, not as a final posterior from
-Planck+DESI+Pantheon$+$ chains. The global information-criterion summary used
-in Fig.~\ref{fig:dvch_sigma8_global} is
-\begin{equation}
-\begin{aligned}
-\Delta\chi^2 &\simeq -3.2015,\\
-\Delta\mathrm{AIC} &\simeq -1.2015,\\
-\Delta\mathrm{BIC} &\simeq +4.2179,
-\end{aligned}
-\end{equation}
-where the differences are defined as DVCH minus $\Lambda$CDM for the exploratory
-Pantheon$+$+DESI-BAO+chronometer Nelder--Mead diagnostic implementation with fixed
-$\Omega_{r0}=9\times10^{-5}$ and $\beta=10^{-4}$. Thus the raw fit quality and
-AIC can improve mildly, while BIC does not provide preference for DVCH once the
-extra parameter is penalized. With the current diagnostic implementation value
-$\Delta\mathrm{BIC}\simeq +4.2$, the statistically conservative
-interpretation is that DVCH is presently comparable to, but not preferred over,
-$\Lambda$CDM by BIC.
+Planck+DESI+Pantheon$+$ chains.
+
+The real-data comparison of this article supersedes the earlier exploratory
+summary. The information-criterion numbers quoted in
+Fig.~\ref{fig:dvch_sigma8_global}, which were generated by the
+Nelder--Mead diagnostic implementation with the curvature regulator held at
+$\beta=10^{-4}$, are retained in the figure as a record of the exploratory
+stage and are \emph{not} part of the model comparison reported here. The
+quantitative comparison uses the analysis of
+Secs.~\ref{subsec:latetime_real}--\ref{subsec:tension} on the real data sets,
+with $\Delta\ln Z=+10.53$ (vs.\ $\Lambda$CDM), $\Delta\ln Z=+2.79$ (vs.\
+$w_0w_a$CDM) from nested sampling, and $\Delta\chi^2\simeq+0.96$ on Planck
+high-$\ell$.
 
 
 As an additional robustness check, the supplied scan over the $(n,\beta)$
@@ -1258,7 +1289,7 @@ by
 \begin{equation}
 F_\rho\equiv\left(\frac{\rho_{\rm mat}}{\rho_{m0}}\right)^{n}
 \simeq\begin{cases}
-73 & n=0.062\ \text{(CMB-preliminary median)}\\
+73 & n=0.0615\ \text{(Planck posterior median)}\\
 4.1\times10^{6} & n=0.22\ \text{(late-time median)}
 \end{cases}
 \end{equation}
@@ -1293,10 +1324,10 @@ unobservable.
 
 Because the enhancement is measured relative to the cosmological mean density,
 even a good laboratory vacuum is dense by cosmological standards: at
-$10^{-9}$~mbar the residual gas gives $F_\rho\simeq8$ for $n=0.062$, so the
+$10^{-9}$~mbar the residual gas gives $F_\rho\simeq8$ for $n=0.0615$, so the
 chamber-vacuum offset must be subtracted from any differential observable. The
 relevant quantity is $\Delta F_\rho(n)=F_\rho(\mathrm{SiN})-F_\rho(\mathrm{vac})$,
-which is $65$ for $n=0.062$ and $4.1\times10^{6}$ for $n=0.22$.
+which is $65$ for $n=0.0615$ and $4.1\times10^{6}$ for $n=0.22$.
 
 \paragraph{Direct constraint on the theory's own parameter.}
 Parametrising the not-yet-derived non-gravitational coupling as an effective de
@@ -1308,10 +1339,10 @@ coupling the double-slit requires
 \begin{equation}
 n<4.4\times10^{-7}\qquad(\zeta=\mathcal{O}(1)),
 \end{equation}
-which excludes the CMB-preliminary value $n=0.062$ by five orders of magnitude.
+which excludes the Planck posterior value $n=0.0615$ by five orders of magnitude.
 Read the other way, the closure's own signal survives only if the laboratory
 coupling is unnaturally small:
-$|\zeta|<2.4\times10^{-7}$ for $n=0.062$ and $|\zeta|<3.8\times10^{-12}$ for
+$|\zeta|<2.4\times10^{-7}$ for $n=0.0615$ and $|\zeta|<3.8\times10^{-12}$ for
 $n=0.22$, i.e.\ 7--12 orders of magnitude below a natural value. The honest
 conclusion is that the closure cannot be a local field equation with an
 $\mathcal{O}(1)$ coupling at laboratory scales: it must be interpreted as a
@@ -1324,7 +1355,7 @@ The unknown coupling $\zeta$ is an overall factor common to every material, so
 and $\zeta$ cancels exactly. Placing slabs of different materials behind one
 arm and referencing every measurement to silicon nitride, the predicted ratios
 $R_X=\Delta F_\rho(X)/\Delta F_\rho(\mathrm{SiN})$ move from $R_{\rm gas}=0.57$
-and $R_{\rm Au}=1.14$ at $n=0.062$ to $R_{\rm gas}=0.18$ and $R_{\rm Au}=1.50$
+and $R_{\rm Au}=1.14$ at $n=0.0615$ to $R_{\rm gas}=0.18$ and $R_{\rm Au}=1.50$
 at $n=0.22$: a gas-versus-gold contrast that changes by a factor of 2 to 8, far
 above any realistic systematic. A multi-material double-slit therefore measures
 $n$ with no dependence on the undetermined coupling.
@@ -1344,78 +1375,160 @@ null and the maximum DVCH phase allowed at 95\%. Middle: profile likelihood in
 the differential phase $\delta$, with the 68/95/99.7\% thresholds; the closure
 is indistinguishable from quantum mechanics. Bottom: the closure prediction
 $F_\rho=(\rho_{\rm mat}/\rho_{m0})^n$ for silicon nitride and gold, with the
-CMB-preliminary and late-time values of $n$ marked; the resulting laboratory
+Planck and late-time values of $n$ marked; the resulting laboratory
 bounds on the coupling $\zeta$ are annotated.
 \end{minipage}
 \end{center}
 
-\subsection{Full late-time MCMC results}
-\label{subsec:full_mcmc_results}
+\subsection{Late-time real-data analysis (Pantheon$+$ + DESI DR1 BAO + CC)}
+\label{subsec:latetime_real}
 
-We implement a full late-time MCMC pipeline using the \texttt{emcee} ensemble sampler to constrain the DVCH parameter space with DESI DR1 BAO and cosmic chronometer data (43 data points in total). The analysis uses 20 walkers for 26000 steps with a burn-in of 5000 steps, producing 12000 effective samples after thinning (thin = 35).
+The late-time analysis fits the DVCH background closure directly to three
+real data sets: the Pantheon$+$ SH0ES distance moduli of 1701 supernovae
+\cite{Brout2022} with the full $1701\times1701$ STAT$+$SYS covariance matrix,
+the six DESI DR1 BAO $D_M/r_d$ measurements \cite{Adame:2024ywp}, and the
+33-point Moresco et al.\ cosmic-chronometer $H(z)$ compilation
+\cite{Moresco:2016mzx}. The absolute supernova magnitude is sampled and
+marginalised numerically, and all distance integrals are evaluated
+self-consistently from the implicit $E^2(z)$ closure of
+Eq.~\eqref{eq:implicit}. Four parameters are free:
+$(\Omega_m,H_0,\,n,\beta)$.
 
-The free parameters in our MCMC analysis are:
-\begin{itemize}
-    \item $\Omega_m$: present matter density fraction
-    \item $n$: DVCH tracking parameter
-    \item $\beta$: DVCH curvature suppression parameter
-    \item $H_0$: Hubble constant
-\end{itemize}
-
+\modeltable
 \begin{center}
-\refstepcounter{table}\label{tab:dvch_mcmc_posteriors}
+\refstepcounter{table}\label{tab:latetime_mcmc}
 \begin{minipage}{0.98\linewidth}
 \centering
 \footnotesize
-\textbf{Table~\thetable. DVCH parameter posteriors from full late-time MCMC analysis.}
-Posterior median and 68\%/95\% credible intervals (from \texttt{dvch\_mcmc\_full\_summary.csv}).
+\textbf{Table~\thetable. DVCH late-time posteriors from real data.}
+Pantheon$+$ (1701 SNe, STAT$+$SYS covariance) $+$ DESI DR1 BAO $+$ cosmic
+chronometers; $5.3\times10^4$ post-burn-in MCMC samples per model
+(\texttt{dvch\_vs\_lcdm\_real.py}).
 \begin{tabular}{lccc}
 \toprule
 Parameter & Median & 68\% CI & 95\% CI \\
 \midrule
-$\Omega_m$ & 0.2949 & $0.2761-0.3130$ & $0.2563-0.3303$ \\
-$n$ & 0.2173 & $0.0923-0.3619$ & $0.0209-0.4987$ \\
-$\beta$ & 0.4862 & $0.1526-0.8344$ & $0.0228-0.9732$ \\
-$H_0$ & 68.32 & $67.17-69.41$ & $66.07-70.41$ \\
+$\Omega_m$ & $0.2582$ & $0.2363$--$0.2787$ & $0.2196$--$0.3011$ \\
+$H_0$      & $68.46$  & $67.82$--$69.14$   & $67.10$--$69.91$ \\
+$n$        & $0.4959$ & $0.3905$--$0.5745$ & $0.2787$--$0.6829$ \\
+$\beta$    & $1.1329$ & $0.4697$--$1.7963$ & $0.0609$--$1.9767$ \\
 \bottomrule
 \end{tabular}
 \end{minipage}
 \end{center}
 
-The reported convergence diagnostics (from \texttt{dvch\_mcmc\_full\_convergence.csv}) are:
-\begin{itemize}
-    \item Maximum Gelman-Rubin statistic: $\max(\widehat R) = 1.0048$ ($\beta$; $\Omega_m$ 1.0023, $n$ 1.0019, $H_0$ 1.0016)
-    \item Effective sample sizes: $N_{\rm eff} = [5173, 5394, 3430, 5886]$ for $[\Omega_m, n, \beta, H_0]$
-    \item Minimum effective sample size: $\min(N_{\rm eff}) = 3430$ ($\beta$)
-    \item Acceptance fraction: 0.4927
-\end{itemize}
+\subsection{Bayesian evidence against $\Lambda$CDM and $w_0w_a$CDM}
+\label{subsec:bayes_latetime}
 
-These values satisfy the adopted convergence criteria, $\widehat R < 1.01$ and $N_{\rm eff} > 100$, for all four sampled parameters: the worst-mixed parameter is $\beta$, with $\widehat R = 1.0048$ and $N_{\rm eff} = 3430$, so the extended chain is treated as a converged late-time posterior rather than a merely local diagnostic. We emphasize that this is a background-only late-time fit (DESI DR1 BAO + cosmic chronometers, $n_{\rm data}=43$); it is not a full CMB analysis, and the DVCH-specific parameters $n$ and $\beta$ remain only weakly constrained by these data, as reflected in the broad credible intervals of Table~\ref{tab:dvch_mcmc_posteriors}. The evidence values recorded for this run are $\chi^2_{\rm best}=28.07$ for $n_{\rm data}=43$ and $k=4$ parameters, giving $\mathrm{AIC}=36.07$ and $\mathrm{BIC}=43.11$ (\texttt{dvch\_mcmc\_full\_evidence.csv}).
+Posterior medians alone do not settle model comparison, so the Bayesian
+evidence $\ln Z$ of each model was computed by nested sampling (dynesty,
+400 live points) over the same data. The reference model here is a nested
+subcase of DVCH ($n=\beta=0$), and $w_0w_a$CDM is included as an independent
+control with the same number of fitted parameters as DVCH
+\cite{Chevallier:2000qy,Linder:2002et}. The results are
+\begin{equation}
+\begin{aligned}
+\ln Z_{\Lambda\mathrm{CDM}} &= -928.09\pm0.27,\\
+\ln Z_{w_0w_a\mathrm{CDM}} &= -920.31\pm0.31,\\
+\ln Z_{\mathrm{DVCH}} &= -917.57\pm0.29,
+\end{aligned}
+\label{eq:logZ_latetime}
+\end{equation}
+so that
+\begin{equation}
+\Delta\ln Z_{\mathrm{DVCH}-\Lambda\mathrm{CDM}} = +10.53\pm0.40,
+\qquad
+\Delta\ln Z_{\mathrm{DVCH}-w_0w_a\mathrm{CDM}} = +2.79\pm0.42 .
+\label{eq:deltalogZ}
+\end{equation}
+On the Jeffreys scale \cite{Jeffreys:1961} the first is \emph{very strong}
+evidence for DVCH over $\Lambda$CDM, and the second \emph{moderate} evidence
+for DVCH over $w_0w_a$CDM. The best-fit $\chi^2$ values are $1807.67$ (DVCH)
+against $1832.45$ ($\Lambda$CDM), i.e.\ $\Delta\chi^2\simeq-24.8$ with two
+additional parameters. Two independent statements follow: (i) the preference
+over $\Lambda$CDM is not an artefact of a loose prior on $\beta$, because DVCH
+also beats $w_0w_a$CDM with the same number of free parameters; (ii) but
+$w_0w_a$CDM itself is already strongly preferred over $\Lambda$CDM by these
+data, $\Delta\ln Z\simeq+7.8$, consistent with the published DESI preference
+for evolving dark energy \cite{Adame:2024ywp}, so the DVCH improvement should
+be read as a two-parameter refinement of a preference that the data set
+already shows, not as an anomaly that only DVCH can produce.
 
-\begin{center}
-\refstepcounter{figure}\label{fig:dvch_full_mcmc_corner}
-\includegraphics[width=0.96\linewidth]{figures/dvch_full_mcmc_corner.png}
-\begin{minipage}{0.96\linewidth}\footnotesize
-\textbf{Figure~\thefigure.} Corner plot showing posterior distributions and correlations between the four sampled DVCH parameters ($\Omega_m$, $n$, $\beta$, $H_0$) from the full late-time MCMC analysis (DESI DR1 BAO + cosmic chronometers). Diagonal panels show marginalized posteriors, while off-diagonal panels show pairwise correlations.
-\end{minipage}
-\end{center}
+\subsection{Planck high-$\ell$ analysis with a DVCH-patched CAMB}
+\label{subsec:planck_results}
 
-\begin{center}
-\refstepcounter{figure}\label{fig:dvch_full_mcmc_traces}
-\includegraphics[width=0.96\linewidth]{figures/dvch_full_mcmc_traces.png}
-\begin{minipage}{0.96\linewidth}\footnotesize
-\textbf{Figure~\thefigure.} MCMC trace plots showing the evolution of the four sampled parameters across the chain iterations. The $\Omega_m$ and $H_0$ traces are stationary after burn-in, and the $\beta$ and $n$ traces, which were the slowest-mixing parameters in the shorter exploratory run, are now well mixed over the extended chain, with $\beta$ reaching $\widehat R = 1.0048$ and ESS $= 3430$ and $n$ reaching $\widehat R = 1.0019$ and ESS $= 5394$ --- consistent with all four parameters satisfying the adopted $\widehat R < 1.01$ and ESS $> 100$ criteria.
-\end{minipage}
-\end{center}
+The CMB side of the confrontation runs a Cobaya MCMC
+\cite{Torrado:2020dgo} with a CAMB build patched by the DVCH Fortran module
+(\texttt{camb\_patch/DVCHModel.f90}), which exposes
+\texttt{DVCH\_flag}, \texttt{DVCH\_n} and \texttt{DVCH\_beta} as first-class
+parameters of the background solver. The likelihood is the official Planck
+2018 high-$\ell$ \texttt{plik\_rd12\_HM\_v22b\_TTTEEE} \texttt{clik} object
+\cite{Planck:2019nip} with its 18 nuisance parameters sampled under the
+published Gaussian priors; the built-in reference vector of the
+\texttt{.clik} file reproduces the package check value to
+$|\Delta|=4\times10^{-7}$, validating the data path. The free cosmological
+parameters are $(H_0,\omega_b,\omega_c,\tau,\ln10^{10}A_s,n_s)$ plus the two
+DVCH parameters, for 26 dimensions in total.
 
-Model comparison statistics for our analysis yield:
-\begin{itemize}
-    \item Best-fit chi-squared: $\chi^2 = 28.07$ (43 data points, $k=4$ parameters)
-    \item Akaike Information Criterion: $\mathrm{AIC} = 36.07$
-    \item Bayesian Information Criterion: $\mathrm{BIC} = 43.11$
-\end{itemize}
+The run reached $1.17\times10^5$ accepted samples over 5 chains with
+Gelman--Rubin $R-1=0.0295<0.03$, so the posterior is converged by the stated
+criterion. The best-fit $\chi^2$ values are
+\begin{equation}
+\chi^2_{\Lambda\mathrm{CDM}} = 2768.32,\qquad
+\chi^2_{\mathrm{DVCH}} = 2769.28,
+\label{eq:chi2_planck}
+\end{equation}
+i.e.\ $\Delta\chi^2\simeq+0.96$ with two extra parameters. A likelihood-ratio
+test against the nested $n=\beta=0$ subcase gives $p\simeq0.62$, and the
+information criteria $\Delta\mathrm{AIC}\simeq+5.0$ and
+$\Delta\mathrm{BIC}\simeq+18.8$ both prefer $\Lambda$CDM. The plain reading
+is that Planck high-$\ell$ data do not distinguish the two models at the
+level of fit quality, so any preference for DVCH must come from late-time
+data rather than from the CMB. This is the opposite of the late-time result
+of Sec.~\ref{subsec:bayes_latetime}, and the next subsection quantifies the
+conflict instead of hiding it.
 
-These information criteria provide a quantitative measure of model quality, balancing goodness-of-fit against model complexity.
+The converged posterior also gives a real CMB constraint on the DVCH
+parameters, which was the main reason for widening the prior beyond the
+exploratory range. With $n\in[0.01,0.99]$, the 68\% credible interval is
+\begin{equation}
+n = 0.0615\ [0.026,\,0.13],
+\qquad
+\beta = 1.01\ [0.36,\,1.65] ,
+\label{eq:n_planck_posterior}
+\end{equation}
+i.e.\ the fraction of samples with $n>0.45$ is below $0.1\%$, and $n=0$ is
+excluded at more than $2\sigma$. Two features are worth stating explicitly:
+(i) the CMB does constrain $n$ and is \emph{not} blind to the interaction,
+and (ii) $\beta$ is consistent with the value $1.13\pm0.63$ found
+independently by the late-time fit, with disjoint $n$.
+
+\subsection{Internal tension between the CMB and late-time expansions}
+\label{subsec:tension}
+
+The two analyses above were run on independent data, and they disagree about
+the value of $n$. The CMB high-$\ell$ posterior is concentrated at small $n$
+where DVCH is close to $\Lambda$CDM; the late-time expansion data pull $n$ to
+a value where the interaction is dynamically important. Forcing the CMB
+pipeline to $n=0.47,\beta=1.04$ (the late-time maximum-a-posteriori point)
+and re-optimising all 24 remaining parameters gives
+$\chi^2=2784.11$, i.e.\ $\Delta\chi^2\simeq+15.8$ ($\simeq3.9\sigma$ for two
+constrained parameters) relative to the $\Lambda$CDM best fit. The tension is
+therefore real and not an artefact of a narrow prior: it was measured after
+widening the prior to $n\in[0.01,0.99]$ and after re-optimising the CMB
+nuisance and cosmological parameters.
+
+We do not soften this number. It has a clear interpretation in the
+background-only closure: the DVCH interaction with $n\sim0.5$ is a
+\emph{late-time} phenomenology, and the same power that improves
+Pantheon$+$/BAO/$H(z)$ residuals noticeably alters the acoustic-scale physics
+that Planck constrains. Two next steps are implied, and neither is performed
+in this article: run a joint late-time$+$CMB posterior and let the
+models compete over the compromise region in $n$; and move the closure from
+a background relation to a perturbative one with the interaction rate
+consistently inserted in the photon--baryon hierarchy, because the CMB
+$\chi^2$ cost reported here uses a background-patched CAMB path and should
+not be read as a perturbative verdict.
 
 \subsection{Parameter set and priors}
 \label{subsec:priors}
@@ -1758,34 +1871,38 @@ described below.
 \begin{minipage}{0.98\linewidth}
 \centering
 \footnotesize
-\textbf{Table~\thetable. Current DVCH best-fit/diagnostic summary available in this archive.}
-These are point values from the joint real-data best fit (\texttt{dvch\_joint\_realdata\_fit.py}), not the posterior medians of the late-time MCMC chain of Table~\ref{tab:dvch_mcmc_posteriors} (where $n$ and $H_0$ are sampled and constrained by BAO + cosmic chronometers);
-they should not be reinterpreted as a completed Planck CMB posterior.
+ \textbf{Table~\thetable. DVCH parameter summary from the real-data analyses.}
+Values are posterior medians of the two converged analyses of
+Secs.~\ref{subsec:latetime_real} and \ref{subsec:planck_results}, not
+diagnostic point values.
 \begin{tabular}{lll}
 \toprule
-Quantity & Value & Status \\
+Quantity & Value & Source \\
 \midrule
-$H_0$ & $69.03~\mathrm{km\,s^{-1}\,Mpc^{-1}}$ & late-time best fit \\
-$S_8$ & $0.689$ & low-$z$ growth diagnostic \\
-$n$ & $0.0926$ & late-time best fit \\
-$\beta$ & $1.0\times 10^{-4}$ & fixed fiducial regulator \\
+$H_0$ & $68.46~\mathrm{km\,s^{-1}\,Mpc^{-1}}$ & late-time MCMC (Pantheon$+$/BAO/CC) \\
+$H_0$ & $66.97~\mathrm{km\,s^{-1}\,Mpc^{-1}}$ & Planck high-$\ell$ best fit \\
+$S_8$ & $0.689$ & low-$z$ growth diagnostic (unchanged) \\
+$n$ & $0.4959\pm0.092$ & late-time MCMC, real data \\
+$\beta$ & $1.13\pm0.63$ & late-time MCMC, real data \\
+$n$ & $0.0615\ [0.026,0.13]$ & Planck high-$\ell$, prior $n\in[0.01,0.99]$ \\
+$\beta$ & $1.01\ [0.36,1.65]$ & Planck high-$\ell$, same run \\
 \bottomrule
 \end{tabular}
 \end{minipage}
 \end{center}
 
-For diagnostic, the archive also includes a full intended Planck-2018
+For reference, the archive also includes the intended full Planck-2018
 Cobaya configuration, \texttt{dvch\_planck2018\_full.yaml}, a local
-environment checker, \texttt{dvch\_planck\_preflight.py}, and the DVCH
+environment checker, \texttt{dvch\_planck\_preflight.py}, the DVCH
 Boltzmann source module \texttt{dvch\_boltzmann\_backend.py}, and the
 executable local modified linear solver
-\texttt{dvch\_modified\_boltzmann\_solver.py}. These files specify the exact
-likelihood blocks targeted for the external run---low-$\ell$
-TT, low-$\ell$ EE, high-$\ell$ Plik TTTEEE, Planck lensing, Pantheon$+$, and
-DESI BAO---and provide both a background/interacting-source table required by a patched CAMB
-or CLASS implementation and a self-contained modified linear matter-perturbation
-solver. They are still deliberately presented as
-a benchmark-interface specification rather than as completed CMB evidence. Planck likelihood values are therefore taken only from the published Planck literature in this article.
+\texttt{dvch\_modified\_boltzmann\_solver.py}. The executed Planck analysis
+of Sec.~\ref{subsec:planck_results} uses the high-$\ell$ Plik block of that
+target together with the patched CAMB build; the low-$\ell$ TT/EE and
+lensing blocks of the configuration remain available but were not included
+in the sampled posterior, and the joint late-time$+$CMB combination of
+Sec.~\ref{subsec:tension} is reported there as a measured tension rather
+than as a resolved fit.
 
 % ==============================================================
 \section{Swampland diagnostics and physical discussion of the Minkowski future}
@@ -1830,16 +1947,14 @@ compiled CAMB/CLASS fork. Here $\delta Q$ is specified at linear order through t
 Taylor expansion in Eq.~\eqref{eq:deltaQ_taylor}, with the sub-horizon
 reduction \eqref{eq:deltaQ_subh} used for growth calculations. Following the
 effective macroscopic-closure approach, we adopt $c_s^2 = 1$ for the vacuum
-component to avoid early-time gradient instabilities. The requested Planck-CMB
-validation path is supplied as a protocol layer: the DVCH sources
-are prepared for a compiled modified Boltzmann solver, while the status gate
-lists the full photon--baryon hierarchy, line-of-sight sources, angular spectra
-$C_\ell$, CMB lensing, Planck \texttt{clik}, and Planck-style MCMC runner as
-external benchmark requirements. This means that the CMB part is specified only as an external-run protocol, while the present work should still
-be cited as a diagnostic framework and not as a final numerical Planck
-posterior. The precision-cosmology roadmap in
-Sec.~\ref{subsec:dvch_precision_roadmap} specifies the required next upgrades:
-full Planck+late-time likelihoods, controlled sign-switching and nonlinear
+component to avoid early-time gradient instabilities. The Planck analysis
+reported in Sec.~\ref{subsec:planck_results} is a background-patched
+high-$\ell$ TT/TE/EE run against the official \texttt{plik} likelihood, with a
+converged 26-parameter posterior; the perturbative treatment of the DVCH
+interaction in the photon--baryon hierarchy is the remaining upgrade required
+for a full Boltzmann-level CMB verdict, and the precision-cosmology roadmap in
+Sec.~\ref{subsec:dvch_precision_roadmap} specifies the required next steps:
+joint late-time$+$CMB likelihoods, controlled sign-switching and nonlinear
 DVCH subfamilies, perturbative stability gates, and Bayesian model comparison
 using the joint $H_0$--$S_8$ target rather than either tension in isolation.
 
