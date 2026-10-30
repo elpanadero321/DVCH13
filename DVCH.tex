@@ -107,9 +107,12 @@ a Markov Chain Monte Carlo analysis of the Pantheon$+$ supernova sample
 (1701 SNe), DESI DR1 BAO, and cosmic-chronometer data, and a separate Cobaya
 pipeline with a DVCH-patched CAMB against the Planck 2018
 TT/TE/EE high-$\ell$ likelihood. Late-time data prefer DVCH over $\Lambda$CDM
-with $\Delta\ln Z\simeq+10.5$ (Jeffreys: very strong) and also over the
-$w_0w_a$CDM control model with $\Delta\ln Z\simeq+2.8$, with the tracking
-index constrained to $n=0.50\pm0.09$. Planck TT/TE/EE, by contrast, does not
+with $\Delta\ln Z\simeq+10.5$ (Jeffreys: very strong); against the
+$w_0w_a$CDM control model the raw difference is $\Delta\ln Z\simeq+2.8$ but
+$+2.3$ of it is a prior-volume (Occam) term, and the prior-independent
+best-fit comparison gives $\Delta\chi^2=+0.5$, i.e.\ the two models fit these
+data equally well. The DVCH tracking index is constrained to
+$n=0.50\pm0.09$. Planck TT/TE/EE, by contrast, does not
 separate the models ($\Delta\chi^2\simeq+1.0$) and constrains $n$ to small
 values, $n\simeq0.06$ with prior range $n\in[0.01,0.99]$. We quantify the
 resulting $\sim3$--$4\sigma$ internal tension between the two data sets and
@@ -864,9 +867,11 @@ See Sec.~\ref{subsec:bayes_latetime} for the evidence comparison. \\
 Executed jointly with the SNe above &
 Posterior medians in Table~\ref{tab:latetime_mcmc}. \\
 \textbf{Model comparison (real)} & Same data, nested sampling &
-$\Delta\ln Z=+10.53\pm0.40$ vs $\Lambda$CDM, $+2.79\pm0.42$ vs $w_0w_a$CDM &
-DVCH strongly preferred over $\Lambda$CDM, moderately over its own
-same-parameter control. \\
+$\Delta\ln Z=+10.53\pm0.40$ vs $\Lambda$CDM, $+2.79\pm0.42$ vs $w_0w_a$CDM
+(of which $+2.32$ is an Occam/prior-volume term; the prior-independent
+$\Delta\chi^2_{\rm fit}=+0.49$, i.e.\ both fit equally well) &
+DVCH strongly preferred over $\Lambda$CDM; equivalent in fit quality to its
+same-parameter control once prior volumes are equalised. \\
 \textbf{Planck 2018 high-$\ell$ (real)} & \texttt{plik\_rd12\_HM\_v22b\_TTTEEE.clik} + DVCHCAMB in Cobaya &
 Executed: $R-1=0.0295$, $1.17\times10^5$ samples, $\Delta\chi^2=+0.96$ vs $\Lambda$CDM &
 CMB does not separate the models; constrains $n=0.0615\ [0.026,0.13]$ (Sec.~\ref{subsec:planck_results}). \\
@@ -948,8 +953,9 @@ stage and are \emph{not} part of the model comparison reported here. The
 quantitative comparison uses the analysis of
 Secs.~\ref{subsec:latetime_real}--\ref{subsec:tension} on the real data sets,
 with $\Delta\ln Z=+10.53$ (vs.\ $\Lambda$CDM), $\Delta\ln Z=+2.79$ (vs.\
-$w_0w_a$CDM) from nested sampling, and $\Delta\chi^2\simeq+0.96$ on Planck
-high-$\ell$.
+$w_0w_a$CDM, of which $+2.32$ is prior volume; the prior-independent
+$\Delta\chi^2_{\rm fit}=+0.49$ shows both fit equally well) from nested
+sampling, and $\Delta\chi^2\simeq+0.96$ on Planck
 
 
 As an additional robustness check, the supplied scan over the $(n,\beta)$
@@ -1442,17 +1448,45 @@ so that
 \label{eq:deltalogZ}
 \end{equation}
 On the Jeffreys scale \cite{Jeffreys:1961} the first is \emph{very strong}
-evidence for DVCH over $\Lambda$CDM, and the second \emph{moderate} evidence
-for DVCH over $w_0w_a$CDM. The best-fit $\chi^2$ values are $1807.67$ (DVCH)
-against $1832.45$ ($\Lambda$CDM), i.e.\ $\Delta\chi^2\simeq-24.8$ with two
-additional parameters. Two independent statements follow: (i) the preference
-over $\Lambda$CDM is not an artefact of a loose prior on $\beta$, because DVCH
-also beats $w_0w_a$CDM with the same number of free parameters; (ii) but
-$w_0w_a$CDM itself is already strongly preferred over $\Lambda$CDM by these
-data, $\Delta\ln Z\simeq+7.8$, consistent with the published DESI preference
-for evolving dark energy \cite{Adame:2024ywp}, so the DVCH improvement should
-be read as a two-parameter refinement of a preference that the data set
-already shows, not as an anomaly that only DVCH can produce.
+evidence for DVCH over $\Lambda$CDM. The second is best read with care, and
+we therefore separate it into its two contributions before interpreting it.
+
+\noindent\textbf{Decomposition of the $w_0w_a$CDM difference.}\quad
+The $\Delta\ln Z$ of Eq.~\eqref{eq:deltalogZ} is a prior-dependent quantity:
+it contains both the fit quality and the Occam factor of the adopted prior
+volumes. The priors used here are $n\in[0.01,0.99]$, $\beta\in[0,2]$ for DVCH
+(volume $1.96$) and $w_0\in[-3,1]$, $w_a\in[-3,2]$ for $w_0w_a$CDM (volume
+$20$), so the Occam term alone contributes $\ln(20/1.96)=+2.32$ to the
+difference, i.e.\ more than $80\%$ of the measured $+2.79$. The genuinely
+fit-driven part is therefore
+\begin{equation}
+\Delta\ln Z_{\mathrm{DVCH}-w_0w_a\mathrm{CDM}}\big|_{\rm Occam-stripped}
+\simeq +0.47\pm0.42 ,
+\label{eq:occam_stripped}
+\end{equation}
+consistent with zero. To remove the prior dependence entirely we compare the
+best-fit $\chi^2$ values, which are prior-independent. The minimisation of
+$w_0w_a$CDM on the same data gives $\chi^2_{\min}=1807.18$, against
+$\chi^2_{\min}=1807.67$ for DVCH and $1832.45$ for $\Lambda$CDM:
+\begin{equation}
+\Delta\chi^2_{\mathrm{DVCH}-w_0w_a\mathrm{CDM}} = +0.49 ,
+\label{eq:chi2_w0wa}
+\end{equation}
+i.e.\ the two models fit these data equally well once the prior volumes are
+equalised, and both fit better than $\Lambda$CDM by
+$\simeq-25$. We conclude that the honest reading is: DVCH is strongly
+preferred over $\Lambda$CDM by the late-time data, and is statistically
+equivalent to $w_0w_a$CDM in quality of fit. The comparison against
+$w_0w_a$CDM is included precisely to make this explicit: $w_0w_a$CDM itself
+is already strongly preferred over $\Lambda$CDM by these data,
+$\Delta\ln Z\simeq+7.8$, consistent with the published DESI preference for
+evolving dark energy \cite{Adame:2024ywp}, so the DVCH result is a
+two-parameter refinement of a preference that the data set already shows,
+not an anomaly that only DVCH can produce. Reporting the $\Delta\ln Z$
+against $w_0w_a$CDM without the Occam decomposition of
+Eq.~\eqref{eq:occam_stripped}, or without the prior-independent
+$\chi^2$ comparison of Eq.~\eqref{eq:chi2_w0wa}, would overstate the
+result, and we deliberately do not do it.
 
 \subsection{Planck high-$\ell$ analysis with a DVCH-patched CAMB}
 \label{subsec:planck_results}
