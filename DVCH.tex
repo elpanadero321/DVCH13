@@ -961,8 +961,38 @@ prediction for $f\sigma_8$.
 
  The $(H_0,\Omega_m,n,\beta)$ posterior summary from the converged runs of
  Secs.~\ref{subsec:latetime_real} and \ref{subsec:planck_results} is reported
- there in tabular form; no schematic posterior contours are displayed, and the
+ there in tabular form; the posteriors of the late-time MCMC are shown as
+ corner plots in Fig.~\ref{fig:dvch_latetime_corner}, and the model evidence
+ comparison is shown in Fig.~\ref{fig:dvch_model_comparison}. All
  posterior values quoted are the numerical MCMC outputs, not targets.
+
+\begin{center}
+\refstepcounter{figure}\label{fig:dvch_latetime_corner}
+\includegraphics[width=0.96\linewidth]{figures/dvch_latetime_corner.png}
+\begin{minipage}{0.96\linewidth}\footnotesize
+\textbf{Figure~\thefigure.} Late-time posteriors of $\Omega_m$, $H_0$,
+$M$, $n$ and $\beta$ on real data (Pantheon$+$ 1701 SNe with the full
+STAT$+$SYS covariance, DESI DR1 BAO, cosmic chronometers), from the
+$5.3\times10^4$-sample MCMCs of Sec.~\ref{subsec:latetime_real}. Blue:
+$\Lambda$CDM nested subcase ($n=\beta=0$). Orange: DVCH. Diagonals show
+the marginal posteriors; off-diagonals show the joint DVCH samples. The
+DVCH tracking index is constrained to $n=0.496\pm0.092$, clearly away from
+zero.
+\end{minipage}
+\end{center}
+
+\begin{center}
+\refstepcounter{figure}\label{fig:dvch_model_comparison}
+\includegraphics[width=0.85\linewidth]{figures/dvch_model_comparison.png}
+\begin{minipage}{0.9\linewidth}\footnotesize
+\textbf{Figure~\thefigure.} Bayesian evidence $\ln Z$ of the three models on
+the same real data (nested sampling, 400 live points): $\Lambda$CDM,
+$w_0w_a$CDM control, and DVCH. DVCH is very strongly preferred over
+$\Lambda$CDM ($\Delta\ln Z=+10.53\pm0.40$); the difference against
+$w_0w_a$CDM is dominated by the prior-volume (Occam) term, see
+Eq.~\eqref{eq:occam_stripped} and Eq.~\eqref{eq:chi2_w0wa}.
+\end{minipage}
+\end{center}
 
  The same local workflow also provides a low-redshift growth
 estimate. Normalizing to a reference $\Lambda$CDM value
