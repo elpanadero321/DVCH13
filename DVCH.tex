@@ -769,7 +769,7 @@ posteriors and structure-growth constraints \cite{Adame:2024ywp,Brout2022}.
 
 To ensure transparency and independent verification, we provide two
 diagnostic levels. The first is a self-contained, background-only Colab
-diagnostic implementation, \texttt{DVCH\_easy\_colab.ipynb}, accompanied by the plain Python
+diagnostic implementation, realized as the plain Python
 script \texttt{dvch\_colab\_simple.py}. This route requires only standard
 Python packages, evaluates the implicit DVCH background, writes
 \texttt{dvch\_background\_table.csv}, and produces the diagnostic summary figure
@@ -1833,7 +1833,7 @@ but fails Planck calibration, should not be advertised as a successful DVCH
 solution.
 
 The easiest complete route is therefore: (i) run
-\texttt{DVCH\_easy\_colab.ipynb} or \texttt{python dvch\_colab\_simple.py} to
+\texttt{python dvch\_colab\_simple.py} to
 reproduce the background table and figures; (ii) use the generated CSV file to
 inspect $E(z)$, $H(z)$, $\Omega_m(z)$, $\Omega_\Lambda(z)$, and
 $\widetilde Q(z)$; and (iii) only after this background validation, move to the
@@ -2108,8 +2108,8 @@ publicly available from the corresponding survey collaborations (Planck,
 Pantheon$+$, DESI BAO/RSD, and cosmic chronometers).
 
 \textbf{Code Availability}\quad The supplementary archive accompanying this manuscript contains the files used for the present analysis. The archive contains the
-self-contained files \texttt{DVCH\_easy\_colab.ipynb},
-\texttt{dvch\_colab\_simple.py}, \texttt{dvch\_background\_table.csv}, \texttt{dvch\_execution\_validation\_summary.csv}, the
+self-contained background diagnostic script \texttt{dvch\_colab\_simple.py},
+its output \texttt{dvch\_background\_table.csv}, the
 figures in \texttt{figures/}, including \texttt{dvch\_results\_with\_numbers.png},
 \texttt{dvch\_sigma8\_global\_comparison.png}, and
 \texttt{dvch\_realdata\_diagnostics.png}, and
@@ -2117,22 +2117,29 @@ figures in \texttt{figures/}, including \texttt{dvch\_results\_with\_numbers.png
 \texttt{dvch\_robustness\_scan.csv} and
 \texttt{dvch\_robustness\_summary.csv}, the growth summaries
 \texttt{dvch\_growth\_sigma8\_table.csv} and
-\texttt{dvch\_sigma8\_s8\_summary.csv}, the exploratory public-data joint-fit
-diagnostic implementation \texttt{dvch\_joint\_realdata\_fit.py} with summary
-\texttt{dvch\_joint\_realdata\_fit\_summary.csv}, and the advanced Cobaya
-diagnostic implementation \texttt{dvch\_theory.py}+\texttt{dvch\_cobaya.yaml}, together
+\texttt{dvch\_sigma8\_s8\_summary.csv}, the late-time real-data analysis
+\texttt{dvch\_vs\_lcdm\_real.py} with
+\texttt{dvch\_joint\_realdata\_fit\_summary.csv}, the Bayesian-evidence
+scripts \texttt{bayes\_factor\_real.py} and \texttt{w0wa\_control.py} that
+reproduce the $\ln Z$ values of Eq.~\eqref{eq:logZ_latetime} and the
+$\chi^2$ comparison of Eq.~\eqref{eq:chi2_w0wa}, the nested-reference
+runners \texttt{run\_dvch\_cobaya\_full\_highl.py} and
+\texttt{run\_dvch\_cobaya\_lcdm.py} together with
+\texttt{dvch\_cobaya\_planck.py} used for the Planck high-$\ell$ analysis of
+Sec.~\ref{subsec:planck_results}, the advanced Cobaya diagnostic implementation
+\texttt{dvch\_theory.py}+\texttt{dvch\_cobaya.yaml}, together
 with the Planck preflight target \texttt{dvch\_planck2018\_full.yaml},
 checker \texttt{dvch\_planck\_preflight.py}, Boltzmann-source module
-\texttt{dvch\_boltzmann\_backend.py}, and integration notes
-\texttt{dvch\_class\_integration\_notes.md}, the relativistic perturbation preflight/status script
+\texttt{dvch\_boltzmann\_backend.py}, the relativistic perturbation preflight/status script
 \texttt{dvch\_relativistic\_perturbation\_validation.py} with JSON/CSV/PNG
 status outputs, the executable modified linear solver
 \texttt{dvch\_modified\_boltzmann\_solver.py}, and its outputs
 \texttt{dvch\_boltzmann\_modified\_background.csv},
 \texttt{dvch\_boltzmann\_modified\_growth.csv},
 \texttt{dvch\_boltzmann\_modified\_matter\_power.csv}, and
-\texttt{dvch\_boltzmann\_modified\_summary.csv}, and the figure
-\texttt{figures/dvch\_modified\_boltzmann\_solver.png}.
+\texttt{dvch\_boltzmann\_modified\_summary.csv}, the figure
+\texttt{figures/dvch\_modified\_boltzmann\_solver.png}, and the real
+Pantheon$+$ distance and covariance files in \texttt{realdata/}.
 
 \textbf{Use of Artificial Intelligence Tools}\quad This work made extensive
 use of large language model (AI) assistants for code implementation,

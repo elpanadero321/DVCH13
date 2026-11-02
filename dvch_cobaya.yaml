@@ -1,0 +1,104 @@
+theory:
+  classy:
+    path: null
+    stop_at_error: true
+    ignore_obsolete: true
+    extra_args:
+      output: tCl,pCl,lCl,mPk
+      lensing: 'yes'
+      non linear: hmcode
+      l_max_scalars: 3500
+      P_k_max_h/Mpc: 5.0
+      z_pk: 0 0.5 1 2
+      N_ncdm: 1
+      m_ncdm: 0.06
+      N_ur: 2.0328
+      dvch_model: tracking_curvature_suppressed_vacuum
+      dvch_use_exact_q: 'yes'
+likelihood:
+  planck_2018_highl_plik.TTTEEE: {}
+  planck_2018_lowl.TT_clik: {}
+  planck_2018_lowl.EE_clik: {}
+  planck_2018_lensing.clik: {}
+  sn.pantheonplus: {}
+  bao.sixdf_2011_bao: {}
+  bao.sdss_dr7_mgs: {}
+  bao.sdss_dr12_consensus_bao: {}
+  bao.desi_2024_bao_all: {}
+params:
+  omega_b:
+    prior:
+      min: 0.02
+      max: 0.0245
+    ref: 0.02237
+    proposal: 0.0001
+    latex: \omega_b
+  omega_cdm:
+    prior:
+      min: 0.09
+      max: 0.14
+    ref: 0.1199
+    proposal: 0.0015
+    latex: \omega_{\rm cdm}
+  H0:
+    prior:
+      min: 60.0
+      max: 80.0
+    ref: 69.0
+    proposal: 0.8
+    latex: H_0
+  A_s:
+    prior:
+      min: 1.5e-09
+      max: 2.8e-09
+    ref: 2.1e-09
+    proposal: 5.0e-11
+    latex: A_s
+  n_s:
+    prior:
+      min: 0.92
+      max: 1.02
+    ref: 0.965
+    proposal: 0.004
+    latex: n_s
+  tau_reio:
+    prior:
+      min: 0.01
+      max: 0.12
+    ref: 0.054
+    proposal: 0.007
+    latex: \tau_{\rm reio}
+  dvch_n:
+    prior:
+      min: 0.01
+      max: 0.4
+    ref: 0.18
+    proposal: 0.015
+    latex: n_{\rm DVCH}
+  log10_dvch_beta:
+    prior:
+      min: -6.0
+      max: -2.0
+    ref: -4.0
+    proposal: 0.12
+    drop: true
+    latex: \log_{10}\beta_{\rm DVCH}
+  dvch_beta:
+    value: 'lambda log10_dvch_beta: 10**log10_dvch_beta'
+    latex: \beta_{\rm DVCH}
+  S8:
+    derived: 'lambda sigma8, Omega_m: sigma8*(Omega_m/0.3)**0.5'
+    latex: S_8
+sampler:
+  mcmc:
+    drag: true
+    learn_proposal: true
+    learn_proposal_Rminus1_max: 2.0
+    learn_every: 40d
+    max_tries: 80d
+    oversample_power: 0.4
+    proposal_scale: 1.9
+    Rminus1_stop: 0.02
+    Rminus1_cl_stop: 0.02
+    max_samples: 120000
+output: chains\dvch_full
