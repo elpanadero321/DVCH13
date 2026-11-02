@@ -39,10 +39,8 @@ INCLUDE_FILES = [
     "dvch_growth_diagnostic.py",
     # Runners
     "run_dvch_cobaya_full_highl.py",
-    "run_dvch_cobaya_full_highl.sh",
-    "run_dvch_cobaya_short.py",
-    "launch_prod.sh",
-    # Configs
+        "run_dvch_cobaya_short.py",
+        # Configs
     "dvch_cobaya_short.yaml",
     "dvch_planck2018_full.yaml",
     "env.sh.example",

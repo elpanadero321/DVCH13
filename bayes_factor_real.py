@@ -17,10 +17,14 @@ BOUNDS = {"lcdm": [(0.10, 0.50), (60.0, 80.0), (-25.0, -18.0)],
           "dvch": [(0.10, 0.50), (60.0, 80.0), (-25.0, -18.0),
                    (0.01, 0.99), (0.0, 2.0)]}
 
+_HERE = os.path.dirname(os.path.abspath(__file__))
+_CACHES = os.path.join(_HERE, "realdata")
+
+
 for model in ["lcdm", "dvch"]:
-    if model == "lcdm" and os.path.exists("logz_lcdm_cache.txt"):
+    if model == "lcdm" and os.path.exists(os.path.join(_CACHES, "logz_lcdm_cache.txt")):
         globals()["logz_lcdm"] = [float(x) for x in
-                                  open("logz_lcdm_cache.txt").read().split()]
+                                  open(os.path.join(_CACHES, "logz_lcdm_cache.txt")).read().split()]
         print(f"\nLCDM (cache): log Z = {logz_lcdm[0]:.3f} +/- {logz_lcdm[1]:.3f}")
         continue
     ndim = len(BOUNDS[model])
@@ -49,7 +53,7 @@ for model in ["lcdm", "dvch"]:
 
     globals()[f"logz_{model}"] = [logz, logz_err]
     if model == "lcdm":
-        with open("logz_lcdm_cache.txt", "w") as fh:
+        with open(os.path.join(_CACHES, "logz_lcdm_cache.txt"), "w") as fh:
             fh.write(f"{logz} {logz_err}")
 
 print("\n=== VEREDICTO ===")
