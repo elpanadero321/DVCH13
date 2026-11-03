@@ -2138,7 +2138,13 @@ status outputs, the executable modified linear solver
 \texttt{dvch\_boltzmann\_modified\_matter\_power.csv}, and
 \texttt{dvch\_boltzmann\_modified\_summary.csv}, the figure
 \texttt{figures/dvch\_modified\_boltzmann\_solver.png}, and the real
-Pantheon$+$ distance and covariance files in \texttt{realdata/}.
+Pantheon$+$ distance and covariance files in \texttt{realdata/}. The
+converged Planck MCMC chains of Sec.~\ref{subsec:planck_results} are
+distributed in downsampled form (10{,}000 samples per run, columns include
+weights, $-\ln$~posterior, $\chi^2$, the cosmological parameters and
+$DVCH_n$, $DVCH_\beta$) in \texttt{chains/chain\_summary.csv}, sufficient to
+reproduce the posterior medians, credible intervals, and $\chi^2$ comparison
+quoted in the text.
 
 \textbf{Use of Artificial Intelligence Tools}\quad This work made extensive
 use of large language model (AI) assistants for code implementation,
