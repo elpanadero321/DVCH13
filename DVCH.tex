@@ -906,7 +906,7 @@ DVCH strongly preferred over $\Lambda$CDM; equivalent in fit quality to its
 same-parameter control once prior volumes are equalised. \\
 \textbf{Planck 2018 high-$\ell$ (real)} & \texttt{plik\_rd12\_HM\_v22b\_TTTEEE.clik} + DVCHCAMB in Cobaya &
 Executed: $R-1=0.0295$, $1.17\times10^5$ samples, $\Delta\chi^2=+0.96$ vs $\Lambda$CDM &
-CMB does not separate the models; constrains $n=0.0615\ [0.026,0.13]$ (Sec.~\ref{subsec:planck_results}). \\
+CMB does not separate the models; with widened prior $n\in[0.01,0.99]$ constrains $n=0.063\ [0.026,0.13]$ (Sec.~\ref{subsec:planck_results}). \\
 \textbf{CMB--late-time tension} & Independent CMB and expansion fits &
 Forcing $n=0.47$ into Planck: $\Delta\chi^2\simeq+15.8$ &
 $\simeq3.9\sigma$ internal tension; discussed in Sec.~\ref{subsec:tension}. \\
@@ -1360,7 +1360,7 @@ by
 \begin{equation}
 F_\rho\equiv\left(\frac{\rho_{\rm mat}}{\rho_{m0}}\right)^{n}
 \simeq\begin{cases}
-73 & n=0.0615\ \text{(Planck posterior median)}\\
+73 & n=0.062\ \text{(Planck posterior median)}\\
 4.1\times10^{6} & n=0.22\ \text{(late-time median)}
 \end{cases}
 \end{equation}
@@ -1395,10 +1395,10 @@ unobservable.
 
 Because the enhancement is measured relative to the cosmological mean density,
 even a good laboratory vacuum is dense by cosmological standards: at
-$10^{-9}$~mbar the residual gas gives $F_\rho\simeq8$ for $n=0.0615$, so the
+$10^{-9}$~mbar the residual gas gives $F_\rho\simeq8$ for $n=0.062$, so the
 chamber-vacuum offset must be subtracted from any differential observable. The
 relevant quantity is $\Delta F_\rho(n)=F_\rho(\mathrm{SiN})-F_\rho(\mathrm{vac})$,
-which is $65$ for $n=0.0615$ and $4.1\times10^{6}$ for $n=0.22$.
+which is $65$ for $n=0.062$ and $4.1\times10^{6}$ for $n=0.22$.
 
 \paragraph{Direct constraint on the theory's own parameter.}
 Parametrising the not-yet-derived non-gravitational coupling as an effective de
@@ -1410,10 +1410,10 @@ coupling the double-slit requires
 \begin{equation}
 n<4.4\times10^{-7}\qquad(\zeta=\mathcal{O}(1)),
 \end{equation}
-which excludes the Planck posterior value $n=0.0615$ by five orders of magnitude.
+which excludes the Planck posterior value $n=0.062$ by five orders of magnitude.
 Read the other way, the closure's own signal survives only if the laboratory
 coupling is unnaturally small:
-$|\zeta|<2.4\times10^{-7}$ for $n=0.0615$ and $|\zeta|<3.8\times10^{-12}$ for
+$|\zeta|<2.4\times10^{-7}$ for $n=0.062$ and $|\zeta|<3.8\times10^{-12}$ for
 $n=0.22$, i.e.\ 7--12 orders of magnitude below a natural value. The honest
 conclusion is that the closure cannot be a local field equation with an
 $\mathcal{O}(1)$ coupling at laboratory scales: it must be interpreted as a
@@ -1426,7 +1426,7 @@ The unknown coupling $\zeta$ is an overall factor common to every material, so
 and $\zeta$ cancels exactly. Placing slabs of different materials behind one
 arm and referencing every measurement to silicon nitride, the predicted ratios
 $R_X=\Delta F_\rho(X)/\Delta F_\rho(\mathrm{SiN})$ move from $R_{\rm gas}=0.57$
-and $R_{\rm Au}=1.14$ at $n=0.0615$ to $R_{\rm gas}=0.18$ and $R_{\rm Au}=1.50$
+and $R_{\rm Au}=1.14$ at $n=0.062$ to $R_{\rm gas}=0.18$ and $R_{\rm Au}=1.50$
 at $n=0.22$: a gas-versus-gold contrast that changes by a factor of 2 to 8, far
 above any realistic systematic. A multi-material double-slit therefore measures
 $n$ with no dependence on the undetermined coupling.
@@ -1581,26 +1581,34 @@ i.e.\ $\Delta\chi^2\simeq+0.96$ with two extra parameters. A likelihood-ratio
 test against the nested $n=\beta=0$ subcase gives $p\simeq0.62$, and the
 information criteria $\Delta\mathrm{AIC}\simeq+5.0$ and
 $\Delta\mathrm{BIC}\simeq+18.8$ both prefer $\Lambda$CDM. The plain reading
-is that Planck high-$\ell$ data do not distinguish the two models at the
-level of fit quality, so any preference for DVCH must come from late-time
-data rather than from the CMB. This is the opposite of the late-time result
-of Sec.~\ref{subsec:bayes_latetime}, and the next subsection quantifies the
+is that Planck high-$\ell$ data do not distinguish the two models at the level
+of fit quality, so any preference for DVCH must come from late-time data
+rather than from the CMB. This is the opposite of the late-time result of
+Sec.~\ref{subsec:bayes_latetime}, and the next subsection quantifies the
 conflict instead of hiding it.
 
-The converged posterior also gives a real CMB constraint on the DVCH
-parameters, which was the main reason for widening the prior beyond the
-original $n\in[0.01,0.25]$ run. With $n\in[0.01,0.99]$, the 68\% credible interval is
+\paragraph{Second run with a widened prior.}
+The first run used the exploratory prior $n\in[0.01,0.25]$, which cannot
+probe the region $n\sim0.5$ favoured by the late-time data. To test whether
+the CMB excludes large $n$ or merely failed to explore it, a second
+independent 26-parameter run was performed with the widened prior
+$n\in[0.01,0.99]$ ($\beta$ unchanged). It collected $1.07\times10^5$ accepted
+samples over 5 chains and converged to $R-1=0.0294<0.03$. Its posterior gives
+a real CMB constraint on the DVCH parameters. The 68\% credible intervals are
 \begin{equation}
-n = 0.0615\ [0.026,\,0.13],
+n = 0.063\ [0.026,\,0.13],
 \qquad
-\beta = 1.01\ [0.36,\,1.65] ,
+\beta = 1.00\ [0.35,\,1.65] ,
 \label{eq:n_planck_posterior}
 \end{equation}
-i.e.\ the fraction of samples with $n>0.45$ is below $0.1\%$, and $n=0$ is
-excluded at more than $2\sigma$. Two features are worth stating explicitly:
-(i) the CMB does constrain $n$ and is \emph{not} blind to the interaction,
-and (ii) $\beta$ is consistent with the value $1.13\pm0.63$ found
-independently by the late-time fit, with disjoint $n$.
+i.e.\ only $0.11\%$ of the samples have $n>0.45$, and the 95\% interval
+$n\in[0.013,\,0.256]$ excludes $n=0$ at roughly the $2\sigma$ level. Two
+features are worth stating explicitly:
+(i) the CMB does constrain $n$ and is \emph{not} blind to the interaction even
+with a prior wide enough to reach $n\simeq1$, and (ii) $\beta$ is consistent
+with the value $1.13\pm0.63$ found independently by the late-time fit, while
+the preferred values of $n$ in the two data sets are disjoint
+(Sec.~\ref{subsec:tension}).
 
 \subsection{Internal tension between the CMB and late-time expansions}
 \label{subsec:tension}
@@ -2005,8 +2013,8 @@ $H_0$ & $66.97~\mathrm{km\,s^{-1}\,Mpc^{-1}}$ & Planck high-$\ell$ best fit \\
 $S_8$ & $0.745$ & low-$z$ growth diagnostic \\
 $n$ & $0.4959\pm0.092$ & late-time MCMC, real data \\
 $\beta$ & $1.13\pm0.63$ & late-time MCMC, real data \\
-$n$ & $0.0615\ [0.026,0.13]$ & Planck high-$\ell$, prior $n\in[0.01,0.99]$ \\
-$\beta$ & $1.01\ [0.36,1.65]$ & Planck high-$\ell$, same run \\
+$n$ & $0.063\ [0.026,0.13]$ & Planck high-$\ell$, widened prior $n\in[0.01,0.99]$ \\
+$\beta$ & $1.00\ [0.35,1.65]$ & Planck high-$\ell$, same run \\
 \bottomrule
 \end{tabular}
 \end{minipage}
@@ -2475,7 +2483,7 @@ convergence:
     \item the Planck 2018 high-$\ell$ TTTEEE Cobaya run with the DVCH-patched
     CAMB, converged at $R-1=0.0295$ over $1.17\times10^5$ accepted samples in
     5 chains, giving the $\chi^2$ comparison against $\Lambda$CDM and the
-    posterior constraint $n=0.0615\,[0.026,0.13]$, $\beta=1.01\,[0.36,1.65]$.
+    posterior constraint $n=0.062\,[0.026,0.13]$, $\beta=1.01\,[0.36,1.65]$.
 \end{itemize}
 The SimAll EE binary is present but cannot be loaded by the compiled clik
 library because its \texttt{simall} plugin symbol is absent, so the low-$\ell$
