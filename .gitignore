@@ -77,3 +77,5 @@ dvch_planck_short_chain.*
 # ---- Backups / archivo historico ----
 backup_wideprior/
 _archive/
+last_clean.sh
+truly_last.sh
