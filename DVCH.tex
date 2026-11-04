@@ -158,7 +158,7 @@ perturbative prescriptions, and clear numerical implementability.
 \subsection*{Validation framework for DVCH}
 \label{subsec:scope_revision}
 
-This work records a set of consistency checks for DVCH models, combining the covariant action-based motivation, the macroscopic background closure, the exact interaction kernel, the autonomous-system stability analysis, and the structure-growth diagnostic. The components treated here are the covariant motivation, the background closure, the exact interaction kernel, the global stability analysis, the sub-horizon growth calculation, the $(n,\beta)$ background robustness scan, a release-time public-data likelihood analysis, and a Confrontation of the closure against the real Planck 2018 high-$\ell$ likelihood with a DVCH-patched CAMB in Cobaya. The repository also includes a passing suite of 17 automated numerical regression tests for these local calculations. The suite checks normalization, finite and positive background solutions, interaction and growth outputs, likelihood behavior, MCMC diagnostic formulas, source-table generation, error handling, preflight reporting, and the presence of generated MCMC diagnostics. It is a local regression suite for the consistency of the implementation itself.
+This work records a set of consistency checks for DVCH models, combining the covariant action-based motivation, the macroscopic background closure, the exact interaction kernel, the autonomous-system stability analysis, and the structure-growth diagnostic. The components treated here are the covariant motivation, the background closure, the exact interaction kernel, the global stability analysis, the sub-horizon growth calculation, the $(n,\beta)$ background robustness scan, a real-data late-time likelihood analysis, and a confrontation of the closure against the real Planck 2018 high-$\ell$ likelihood with a DVCH-patched CAMB in Cobaya. The repository also includes a passing suite of 21 automated numerical regression tests for these local calculations. The suite checks normalization, finite and positive background solutions, interaction and growth outputs, likelihood behavior, MCMC diagnostic formulas, source-table generation, error handling, preflight reporting, and the presence of generated MCMC diagnostics. It is a local regression suite for the consistency of the implementation itself.
 
 The CMB/Planck requirements are represented explicitly in the diagnostic
 package: a DVCH background/source-table interface for CLASS/CAMB-style backend checks \cite{Blas:2011rf,Lewis:1999bs}, the photon--baryon/CMB
@@ -738,7 +738,7 @@ independent analyses were executed against public data:
     CAMB, run against the real Planck 2018 TT/TE/EE high-$\ell$
     (\texttt{plik\_rd12\_HM\_v22b\_TTTEEE}) likelihood with the official
     18-parameter nuisance sector, producing a converged MCMC posterior
-    ($R-1<0.03$, $1.1\times10^5$ accepted samples over 5 chains).
+    ($R-1<0.03$, $1.17\times10^5$ accepted samples over 5 chains).
 \end{enumerate}
 
 Both analyses use $\Lambda$CDM as the nested reference model: the DVCH
@@ -1360,7 +1360,7 @@ by
 \begin{equation}
 F_\rho\equiv\left(\frac{\rho_{\rm mat}}{\rho_{m0}}\right)^{n}
 \simeq\begin{cases}
-73 & n=0.062\ \text{(Planck posterior median)}\\
+73 & n=0.063\ \text{(Planck posterior median)}\\
 4.1\times10^{6} & n=0.22\ \text{(late-time median)}
 \end{cases}
 \end{equation}
@@ -1395,10 +1395,10 @@ unobservable.
 
 Because the enhancement is measured relative to the cosmological mean density,
 even a good laboratory vacuum is dense by cosmological standards: at
-$10^{-9}$~mbar the residual gas gives $F_\rho\simeq8$ for $n=0.062$, so the
+$10^{-9}$~mbar the residual gas gives $F_\rho\simeq8$ for $n=0.063$, so the
 chamber-vacuum offset must be subtracted from any differential observable. The
 relevant quantity is $\Delta F_\rho(n)=F_\rho(\mathrm{SiN})-F_\rho(\mathrm{vac})$,
-which is $65$ for $n=0.062$ and $4.1\times10^{6}$ for $n=0.22$.
+which is $65$ for $n=0.063$ and $4.1\times10^{6}$ for $n=0.22$.
 
 \paragraph{Direct constraint on the theory's own parameter.}
 Parametrising the not-yet-derived non-gravitational coupling as an effective de
@@ -1410,10 +1410,10 @@ coupling the double-slit requires
 \begin{equation}
 n<4.4\times10^{-7}\qquad(\zeta=\mathcal{O}(1)),
 \end{equation}
-which excludes the Planck posterior value $n=0.062$ by five orders of magnitude.
+which excludes the Planck posterior value $n=0.063$ by five orders of magnitude.
 Read the other way, the closure's own signal survives only if the laboratory
 coupling is unnaturally small:
-$|\zeta|<2.4\times10^{-7}$ for $n=0.062$ and $|\zeta|<3.8\times10^{-12}$ for
+$|\zeta|<2.4\times10^{-7}$ for $n=0.063$ and $|\zeta|<3.8\times10^{-12}$ for
 $n=0.22$, i.e.\ 7--12 orders of magnitude below a natural value. The honest
 conclusion is that the closure cannot be a local field equation with an
 $\mathcal{O}(1)$ coupling at laboratory scales: it must be interpreted as a
@@ -1426,7 +1426,7 @@ The unknown coupling $\zeta$ is an overall factor common to every material, so
 and $\zeta$ cancels exactly. Placing slabs of different materials behind one
 arm and referencing every measurement to silicon nitride, the predicted ratios
 $R_X=\Delta F_\rho(X)/\Delta F_\rho(\mathrm{SiN})$ move from $R_{\rm gas}=0.57$
-and $R_{\rm Au}=1.14$ at $n=0.062$ to $R_{\rm gas}=0.18$ and $R_{\rm Au}=1.50$
+and $R_{\rm Au}=1.14$ at $n=0.063$ to $R_{\rm gas}=0.18$ and $R_{\rm Au}=1.50$
 at $n=0.22$: a gas-versus-gold contrast that changes by a factor of 2 to 8, far
 above any realistic systematic. A multi-material double-slit therefore measures
 $n$ with no dependence on the undetermined coupling.
@@ -2483,7 +2483,7 @@ convergence:
     \item the Planck 2018 high-$\ell$ TTTEEE Cobaya run with the DVCH-patched
     CAMB, converged at $R-1=0.0295$ over $1.17\times10^5$ accepted samples in
     5 chains, giving the $\chi^2$ comparison against $\Lambda$CDM and the
-    posterior constraint $n=0.062\,[0.026,0.13]$, $\beta=1.01\,[0.36,1.65]$.
+    posterior constraint $n=0.063\,[0.026,0.13]$, $\beta=1.00\,[0.35,1.65]$.
 \end{itemize}
 The SimAll EE binary is present but cannot be loaded by the compiled clik
 library because its \texttt{simall} plugin symbol is absent, so the low-$\ell$
