@@ -77,8 +77,8 @@ MPC = 3.0856775814913673e22  # m
 H0_KMS = 67.27           # km/s/Mpc
 OMEGA_M = 0.3151
 OMEGA_L = 1.0 - OMEGA_M
-N_CMB = 0.062            # DVCH_n, CMB-preliminary median
-N_LATE = 0.22            # DVCH_n, late-time CC+BAO median
+N_CMB = 0.063            # DVCH_n, CMB-preliminary median
+N_LATE = 0.4959            # DVCH_n, late-time CC+BAO median
 BETA_CMB = 5.0e-4        # DVCH_beta, CMB-preliminary median
 
 H0 = H0_KMS * 1.0e3 / MPC                # s^-1

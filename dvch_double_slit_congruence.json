@@ -14,20 +14,20 @@
     "rho_m0_kg_m3": 2.6783408145884357e-27,
     "rho_L0_kg_m3": 5.8216300346290695e-27,
     "rho_SiN_over_rho_m0": 1.1574329835526768e+30,
-    "F_rho_SiN_n0.062": 73.10325973998697,
-    "F_rho_SiN_n0.22": 4111204.5749446796,
+    "F_rho_SiN_n0.062": 78.34300735857293,
+    "F_rho_SiN_n0.22": 810004803190667.6,
     "curvature_factor_expansion": 0.9995002498750625,
     "curvature_factor_kretschmann": 7.491404726317604e-06,
     "note": "F_rho >> 1 means the closure places the effective vacuum energy INSIDE solids, enhanced by 1-6 orders of magnitude"
   },
   "symmetric_blindness": {
-    "F_rho_arm1": 73.10325973998697,
-    "F_rho_arm2": 73.10325973998697,
+    "F_rho_arm1": 78.34300735857293,
+    "F_rho_arm2": 78.34300735857293,
     "differential_coefficient": 0.0,
     "delta_symmetric_is_zero": true,
-    "chi2_I0_u0": 75.55409695222735,
+    "chi2_I0_u0": 75.55409695222734,
     "chi2_I0_u0_delta": 72.7005786954227,
-    "dchi2_freeing_delta": 2.853518256804648,
+    "dchi2_freeing_delta": 2.853518256804634,
     "blind": true,
     "reason": "both slits sit in the same membrane, so the local rho_m and hence the closure prediction are identical on both arms and the differential phase cancels identically"
   },
@@ -39,7 +39,7 @@
     ],
     "interval_95_rad": [
       -0.1983673741864168,
-      0.07114676300738311
+      0.07114676300738267
     ],
     "delta_max95_rad": 0.1983673741864168,
     "n_bins": 120,
@@ -48,24 +48,24 @@
   },
   "gravitational_channel": {
     "n_0.062": {
-      "drho_L_kg_m3": 4.197585024969691e-25,
-      "delta_grav_rad": 1.0466382604777125e-58
+      "drho_L_kg_m3": 4.502623746072053e-25,
+      "delta_grav_rad": 1.1226975170582811e-58
     },
     "n_0.22": {
-      "drho_L_kg_m3": 2.393390621037235e-20,
-      "delta_grav_rad": 5.96775093618067e-54
+      "drho_L_kg_m3": 4.715548290448593e-12,
+      "delta_grav_rad": 1.1757887524742643e-45
     }
   },
   "coupling_bound": {
     "parametrisation": "delta = zeta * (2 pi t/lambda_dB) * (F_rho(X) - F_rho(vac))",
     "chamber_vacuum_density_kg_m3": 1.2089810017271159e-12,
-    "F_rho_vacuum_n0.062": 8.101815062889623,
-    "differential_SiN_n0.062": 65.00144467709734,
-    "differential_SiN_n0.22": 4109529.625126198,
-    "zeta_max_n0.062": 2.4284958824193397e-07,
-    "zeta_max_n0.22": 3.8412118940447316e-12,
-    "orders_of_magnitude_excluded_n0.062": 6.614662628548398,
-    "orders_of_magnitude_excluded_n0.22": 11.415531735043587
+    "F_rho_vacuum_n0.062": 8.379862239535676,
+    "differential_SiN_n0.062": 69.96314511903725,
+    "differential_SiN_n0.22": 810004784689755.1,
+    "zeta_max_n0.062": 2.256269932991995e-07,
+    "zeta_max_n0.22": 1.9488247937955168e-20,
+    "orders_of_magnitude_excluded_n0.062": 6.646608943963479,
+    "orders_of_magnitude_excluded_n0.22": 19.710227203729033
   },
   "constraint_on_n": {
     "description": "for an assumed lab coupling zeta, the largest allowed n (the theory's own parameter) set by the double-slit",
@@ -76,33 +76,33 @@
       "1e-09": 0.13974828303863196,
       "1e-12": 0.23943819442557732
     },
-    "zeta_required_for_n0.062": 2.4284958824193397e-07,
-    "zeta_required_for_n0.22": 3.8412118940447316e-12,
-    "n_excluded_orders_of_magnitude_at_zeta_1": 5.144129771327468
+    "zeta_required_for_n0.062": 2.256269932991995e-07,
+    "zeta_required_for_n0.22": 1.9488247937955168e-20,
+    "n_excluded_orders_of_magnitude_at_zeta_1": 5.151078631282796
   },
   "multimaterial_design": {
     "description": "ratios of differential phases between materials depend only on n; the unknown coupling zeta cancels exactly",
     "reference_material": "Si3N4",
     "ratios": {
       "gas cell (STP)": {
-        "0.062": 0.5663284341089213,
-        "0.22": 0.17721463485080316
+        "0.063": 0.5628203176156502,
+        "0.4959": 0.020318855306828712
       },
       "Si": {
-        "0.062": 0.9802361667553977,
-        "0.22": 0.9390013593872616
+        "0.063": 0.9800071222614319,
+        "0.4959": 0.8677868881946696
       },
       "Al": {
-        "0.062": 0.9903826204594395,
-        "0.22": 0.9699728640813124
+        "0.063": 0.9902704498757695,
+        "0.4959": 0.933613764022138
       },
       "Au": {
-        "0.062": 1.1350209794065464,
-        "0.22": 1.4954836243547234
+        "0.063": 1.1367325630717877,
+        "0.4959": 2.4765186989959456
       }
     },
-    "gas_vs_gold_contrast_n0.062": 2.0041744525726024,
-    "gas_vs_gold_contrast_n0.22": 8.438826881390296
+    "gas_vs_gold_contrast_n0.062": 2.0197077601737576,
+    "gas_vs_gold_contrast_n0.22": 121.88278628883405
   },
   "legacy_v1_reference": {
     "chi2_red_QM": 0.9752859447864443,
@@ -110,6 +110,6 @@
   },
   "conclusion": {
     "tests_theory": false,
-    "verdict": "v1 test (constant amplitude correction) is VOID: the correction is\ndegenerate with the flux normalisation, the data were generated from the\nmodel under test, and a symmetric double slit is blind to the closure\nbecause the theory predicts identically zero signal on both arms.\n\nv2 result: evaluated with the real Bach et al. 2013 geometry, the DVCH\nclosure predicts that the effective vacuum energy inside an ordinary\nsilicon-nitride solid is enhanced by F_rho = (rho/rho_m0)^n = 73.1 (n=0.062) to 4.11e+06 (n=0.22)\nrelative to the cosmological value (and even a good lab vacuum is\nenhanced by 8.1, so the\nchamber-vacuum offset must be subtracted from any observable).\n\nDIRECT CONSTRAINT ON THE THEORY: because F_rho(n) is parameter-free, the\nmeasured bound |delta| < 0.198 rad bounds n itself.  For a\nnatural O(1) laboratory coupling it requires\nn < 4.4e-07, which excludes the CMB-preliminary value\nn=0.062 by 5 orders of magnitude.  The\nCMB value survives only if |zeta| < 2.4e-07 and the late-time value\nonly if |zeta| < 3.8e-12, i.e. 7-12 orders below a natural coupling.\n\nThe only phase coupling derivable from the theory without new microphysics\nis the gravitational one, which gives delta ~ 1.0e-58 rad,\nutterly unobservable; so the double-slit cannot test the closure through\nany channel currently derived from the theory.  What it does provide is\nthe laboratory bound above, plus a discriminating DESIGN: ratios of the\ndifferential phase between materials depend only on n and cancel the\nunknown coupling exactly, with a gas-vs-gold contrast that changes by a\nfactor 2.0 (n=0.062) to 8.4 (n=0.22).\n\nNet conclusion for the paper: the closure cannot be a local field\nequation with an O(1) coupling at laboratory scales; it must be read as a\ncosmological background relation or require a screening mechanism at high\nlocal matter density."
+    "verdict": "v1 test (constant amplitude correction) is VOID: the correction is\ndegenerate with the flux normalisation, the data were generated from the\nmodel under test, and a symmetric double slit is blind to the closure\nbecause the theory predicts identically zero signal on both arms.\n\nv2 result: evaluated with the real Bach et al. 2013 geometry, the DVCH\nclosure predicts that the effective vacuum energy inside an ordinary\nsilicon-nitride solid is enhanced by F_rho = (rho/rho_m0)^n = 78.3 (n=0.063) to 8.1e+14 (n=0.4959)\nrelative to the cosmological value (and even a good lab vacuum is\nenhanced by 8.4, so the\nchamber-vacuum offset must be subtracted from any observable).\n\nDIRECT CONSTRAINT ON THE THEORY: because F_rho(n) is parameter-free, the\nmeasured bound |delta| < 0.198 rad bounds n itself.  For a\nnatural O(1) laboratory coupling it requires\nn < 4.4e-07, which excludes the CMB-preliminary value\nn=0.063 by 5 orders of magnitude.  The\nCMB value survives only if |zeta| < 2.3e-07 and the late-time value\nonly if |zeta| < 1.9e-20, i.e. 7-12 orders below a natural coupling.\n\nThe only phase coupling derivable from the theory without new microphysics\nis the gravitational one, which gives delta ~ 1.1e-58 rad,\nutterly unobservable; so the double-slit cannot test the closure through\nany channel currently derived from the theory.  What it does provide is\nthe laboratory bound above, plus a discriminating DESIGN: ratios of the\ndifferential phase between materials depend only on n and cancel the\nunknown coupling exactly, with a gas-vs-gold contrast that changes by a\nfactor 2.0 (n=0.063) to 121.9 (n=0.4959).\n\nNet conclusion for the paper: the closure cannot be a local field\nequation with an O(1) coupling at laboratory scales; it must be read as a\ncosmological background relation or require a screening mechanism at high\nlocal matter density."
   }
 }

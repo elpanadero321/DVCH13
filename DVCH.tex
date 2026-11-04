@@ -861,12 +861,12 @@ perturbative/CMB viability remains part of the validation checklist.}
 Diagnostic & Result \\
 \midrule
 Grid size & $272$ parameter points \\
-Viable background points & $142$ \\
-Viable fraction & $0.522$ \\
+Viable background points & $150$ \\
+Viable fraction & $0.551$ \\
 Scanned range in $n$ & $0.05\le n\le0.45$ \\
 Scanned range in $\beta$ & $10^{-6}\le\beta\le10^{-1}$ \\
-Median $z_t$ among viable points & $1.211$ \\
-Largest $\widetilde Q$ among viable points & $-5.23\times10^{-3}$ \\
+Median $z_t$ among viable points & $1.251$ \\
+Largest $\widetilde Q$ among viable points & $-3.12\times10^{-2}$ \\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -1360,8 +1360,8 @@ by
 \begin{equation}
 F_\rho\equiv\left(\frac{\rho_{\rm mat}}{\rho_{m0}}\right)^{n}
 \simeq\begin{cases}
-73 & n=0.063\ \text{(Planck posterior median)}\\
-4.1\times10^{6} & n=0.22\ \text{(late-time median)}
+78 & n=0.063\ \text{(Planck posterior median)}\\
+8.1\times10^{14} & n=0.4959\ \text{(late-time posterior median)}
 \end{cases}
 \end{equation}
 relative to the cosmological value. This is a genuine, falsifiable consequence
@@ -1398,7 +1398,7 @@ even a good laboratory vacuum is dense by cosmological standards: at
 $10^{-9}$~mbar the residual gas gives $F_\rho\simeq8$ for $n=0.063$, so the
 chamber-vacuum offset must be subtracted from any differential observable. The
 relevant quantity is $\Delta F_\rho(n)=F_\rho(\mathrm{SiN})-F_\rho(\mathrm{vac})$,
-which is $65$ for $n=0.063$ and $4.1\times10^{6}$ for $n=0.22$.
+which is $70$ for $n=0.063$ and $8.1\times10^{14}$ for $n=0.4959$.
 
 \paragraph{Direct constraint on the theory's own parameter.}
 Parametrising the not-yet-derived non-gravitational coupling as an effective de
@@ -1413,8 +1413,8 @@ n<4.4\times10^{-7}\qquad(\zeta=\mathcal{O}(1)),
 which excludes the Planck posterior value $n=0.063$ by five orders of magnitude.
 Read the other way, the closure's own signal survives only if the laboratory
 coupling is unnaturally small:
-$|\zeta|<2.4\times10^{-7}$ for $n=0.063$ and $|\zeta|<3.8\times10^{-12}$ for
-$n=0.22$, i.e.\ 7--12 orders of magnitude below a natural value. The honest
+$|\zeta|<2.3\times10^{-7}$ for $n=0.063$ and $|\zeta|<1.9\times10^{-20}$ for
+$n=0.4959$, i.e.\ 7--20 orders of magnitude below a natural value. The honest
 conclusion is that the closure cannot be a local field equation with an
 $\mathcal{O}(1)$ coupling at laboratory scales: it must be interpreted as a
 cosmological background relation, or it requires a screening mechanism at high
@@ -1426,8 +1426,9 @@ The unknown coupling $\zeta$ is an overall factor common to every material, so
 and $\zeta$ cancels exactly. Placing slabs of different materials behind one
 arm and referencing every measurement to silicon nitride, the predicted ratios
 $R_X=\Delta F_\rho(X)/\Delta F_\rho(\mathrm{SiN})$ move from $R_{\rm gas}=0.57$
-and $R_{\rm Au}=1.14$ at $n=0.063$ to $R_{\rm gas}=0.18$ and $R_{\rm Au}=1.50$
-at $n=0.22$: a gas-versus-gold contrast that changes by a factor of 2 to 8, far
+and $R_{\rm Au}=1.14$ at $n=0.063$ to $R_{\rm gas}=0.4$ and $R_{\rm Au}=1.5$
+at $n=0.4959$: a gas-versus-gold contrast that changes by a factor of $2$ to
+$\sim\!10^{2}$, far
 above any realistic systematic. A multi-material double-slit therefore measures
 $n$ with no dependence on the undetermined coupling.
 
@@ -2204,8 +2205,12 @@ coordinate $z$:
 \end{itemize}
 
 The stability of this method is guaranteed as long as the curvature coupling
-$\beta$ remains in the perturbative regime ($\beta < 1$), a condition that is
-satisfied across relevant cosmological epochs.
+$\beta$ remains in the perturbative regime ($\beta < 1$). We note as a caveat
+that the late-time fit reported in Sec.~\ref{subsec:latetime_real} returns a
+posterior median $\beta=1.13$, marginally outside that regime, so the numerical
+convergence of the iteration must be monitored empirically in that case; this is
+why the code applies the fixed-point iteration with a convergence check at every
+evaluation.
 
 \section{Analytical Derivation of the Energy Exchange Rate}
 \label{app:exact_Q}
@@ -2513,7 +2518,7 @@ they caused a zero-acceptance chain and are not official Planck priors.
 formalmente el acoplamiento entre la modificaci\'on local de $\rho_\Lambda$
 predicha por la cerradura y la propagaci\'on de una part\'icula de laboratorio
 (el par\'ametro $\zeta$ de la Sec.~\ref{subsec:double_slit_test}), de modo que la
-cota $|\zeta|<2.2\times10^{-7}$ pueda convertirse en una restricci\'on directa
+cota $|\zeta|<2.3\times10^{-7}$ pueda convertirse en una restricci\'on directa
 sobre la teor\'ia en lugar de sobre un acoplamiento a\'un no derivado.
 
 \ifsnclass
