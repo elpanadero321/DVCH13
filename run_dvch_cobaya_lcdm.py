@@ -190,6 +190,26 @@ def build_info() -> dict:
     if {"ksz_norm", "A_sz"}.issubset(set(names)):
         info.setdefault("prior", {})["SZ"] = OFFICIAL_EXTRA_PRIOR_SZ
 
+    # Punto de arranque opcional desde un .minimum conocido.
+    ref_file = os.environ.get("DVCH_REF_MIN")
+    if ref_file and os.path.exists(ref_file):
+        refs = {}
+        for line in open(ref_file):
+            parts = line.split()
+            if len(parts) >= 3 and parts[0].isdigit():
+                try:
+                    refs[parts[2]] = float(parts[1])
+                except ValueError:
+                    continue
+        for name, value in refs.items():
+            if name in info["params"] and isinstance(
+                    info["params"].get(name), dict) and "prior" in info["params"][name]:
+                info["params"][name]["ref"] = {
+                    "dist": "norm", "loc": value,
+                    "scale": max(abs(value) * 0.02, 1e-4),
+                }
+        print(f"[ref] arrancando desde {ref_file}")
+
     mode = os.environ.get("DVCH_MODE", "minimize")
     if mode == "minimize":
         info["sampler"] = {"minimize": {

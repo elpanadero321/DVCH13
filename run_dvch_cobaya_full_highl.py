@@ -160,6 +160,19 @@ OFFICIAL_FIXED = {
 }
 
 
+def _parse_minimum_ref(path):
+    """Cobaya .minimum -> {param: value} de los parametros muestreados."""
+    refs = {}
+    for line in open(path):
+        parts = line.split()
+        if len(parts) >= 3 and parts[0].isdigit():
+            try:
+                refs[parts[2]] = float(parts[1])
+            except ValueError:
+                continue
+    return refs
+
+
 def build_info() -> dict:
     import clik  # type: ignore
     import clik.hpy as hpy  # type: ignore
@@ -205,6 +218,28 @@ def build_info() -> dict:
     # Prior oficial SZ (ksz_norm + 1.6*A_sz)
     if {"ksz_norm", "A_sz"}.issubset(set(names)):
         info.setdefault("prior", {})["SZ"] = OFFICIAL_EXTRA_PRIOR_SZ
+
+    # Punto de arranque opcional: un .minimum de cobaya conocido (p. ej. el
+    # mejor ajuste de LCDM). Acelera muchisimo la primera corrida del
+    # minimizador al no empezar desde un punto aleatorio.
+    ref_file = os.environ.get("DVCH_REF_MIN")
+    if ref_file and os.path.exists(ref_file):
+        for name, value in _parse_minimum_ref(ref_file).items():
+            if name in info["params"] and isinstance(
+                    info["params"][name], dict) and "prior" in info["params"][name]:
+                info["params"][name]["ref"] = {
+                    "dist": "norm", "loc": value,
+                    "scale": max(abs(value) * 0.02, 1e-4),
+                }
+        print(f"[ref] arrancando desde {ref_file}")
+    if os.environ.get("DVCH_REF_N") and "DVCH_n" in info["params"]:
+        info["params"]["DVCH_n"]["ref"] = {
+            "dist": "norm", "loc": float(os.environ["DVCH_REF_N"]),
+            "scale": 0.05}
+    if os.environ.get("DVCH_REF_BETA") and "DVCH_beta" in info["params"]:
+        info["params"]["DVCH_beta"]["ref"] = {
+            "dist": "norm", "loc": float(os.environ["DVCH_REF_BETA"]),
+            "scale": 0.1}
     if os.environ.get("DVCH_MODE", "mcmc") == "minimize":
         # Minimizador (MAP): para el libro de contabilidad del modelo
         # anidado (chi2_min de DVCH debe ser <= el de LCDM).

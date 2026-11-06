@@ -132,24 +132,39 @@ Además: la corrida se detuvo en R−1 = 0.03 (el paper pide < 0.01), las
 cadenas de producción no están en el repo (solo `chains/chain_summary.csv`
 reducido).
 
-**Chequeo de punto fijo con el best-fit tardío corregido**
-(`cmb_npoint_check.py`, leído automáticamente del CSV; mismo pipeline:
-TTTEEE + lowl + lowE + lensing, nuisance en check_param, cosmología del
-minimizador ΛCDM):
-- χ²(ΛCDM) = 2772.82
-- χ²(DVCH n=0.518, β=1.104) = 2798.61 → **Δχ² = +25.79** (punto fijo,
-  sin re-optimizar).
+**Tensión CMB vs expansión:** el número anterior (≈3.9σ forzando n=0.47)
+está **retirado**: el punto forzado venía del ajuste con datos erróneos,
+15.8/2 dof son 3.6σ (no 3.9) y debe medirse contra el mínimo de DVCH.
+`cmb_npoint_check.py` lee ahora el best-fit tardío del CSV.
 
-Este número se reporta en el paper como el coste del término de
-perturbación del CDM a los (n, β) preferidos por la expansión, **no**
-como una tensión del cierre de fondo.
+**MINIMIZADORES OFICIALES COMPLETADOS (2026-11-06).** Con el sector
+nuisance oficial libre (priors de cobaya planck_2018_highl_plik) y
+`ignore_prior=true`, cobaya BOBYQA, dos multi-starts cada uno
+(`launch_dvch_free_minimize.sh`, `launch_lcdm_minimize.sh` arrancando
+desde `dvch_lcdm_min.minimum`):
+
+| Modelo | chi2_min (likelihood) |
+|---|---|
+| LCDM | 2766.81 |
+| DVCH (n, β libres) | 2766.10 (n=0.01 **en el borde del prior**, β=0.37) |
+
+**Δχ² = −0.71 (2 dof) → p ≈ 0.70**: el CMB no mejora con la
+interacción. Esto resuelve el problema de contabilidad (el +0.96
+anterior era un límite de la cadena, no un mínimo). Ver
+`cmb_minimize_compare.py` y `model_comparison.py`.
+
+**Perfil de punto fijo χ²(n, β)** (`cmb_npoint_profile.py` →
+`dvch_cmb_npoint_profile.csv`): a la cosmología+nuisance del mejor ajuste
+ΛCDM, el coste crece suavemente con n y casi no depende de β:
+n=0.1 → +3.8, n=0.2 → +8.5, n=0.5175 → +26, n=0.99 → +45.
 
 ### 3.4 Lo que NO está hecho
 - **Parchear el sector de background de CAMB** para integrar la
   conservación CDM-vacío (trabajo Fortran en `dtauda`/DarkEnergy; el
   parche actual no lo hace). Sin esto no hay análisis CMB del modelo.
-- Repetir el MCMC de Planck con nuisance oficial libre, R−1 < 0.01 y
-  cadenas distribuidas; minimizador para DVCH.
+- MCMC de Planck con nuisance oficial libre hasta R−1 < 0.01 y cadenas
+  distribuidas (el runner ya está corregido; los minimizadores sí están
+  hechos).
 - Ajuste conjunto CMB + tardío.
 
 ---
