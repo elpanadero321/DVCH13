@@ -1700,7 +1700,13 @@ counts $k_{\Lambda\mathrm{CDM}}=24$, $k_{\mathrm{DVCH}}=26$ used for the
 information criteria refer to this partly fixed configuration.
 
 The run reached $1.17\times10^5$ accepted samples over 5 chains with
-Gelman--Rubin $R-1=0.0295$. The $\chi^2$ levels available are
+Gelman--Rubin $R-1=0.0295$. (The runner has since been corrected to free
+the full official nuisance sector with the published priors, copied from
+the cobaya \texttt{planck\_2018\_highl\_plik} definition, including the
+uniform priors on $A_{\rm cib}^{217}$, $A_{\rm sz}$, $ksz\_norm$,
+$\xi_{\rm sz}^{\rm cib}$, $ps\_A^*$ and the $\xi_{\rm SZ}$ prior
+$ksz\_norm+1.6\,A_{\rm sz}\sim N(9.5,3)$; the numbers quoted here refer to
+the earlier partly fixed configuration.) The $\chi^2$ levels available are
 \begin{equation}
 \chi^2_{\Lambda\mathrm{CDM}} = 2768.32\ (\text{minimiser}),\qquad
 \chi^2_{\mathrm{DVCH}} = 2769.28\ (\text{chain minimum}),

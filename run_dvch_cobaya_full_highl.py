@@ -6,21 +6,24 @@ produced an invalid zero-acceptance chain.  This runner applies the official
 recommended Gaussian priors where Planck publishes them and keeps the
 remaining nuisance fields at the official check point.
 
-DESVIACIONES DEL BASELINE DE PLANCK (deben corregirse antes de cualquier
-comparacion CMB publica, ver SESSION_LOG.txt):
-  * Los siguientes nuisance estan FIJOS (al valor de check_param o a 1):
-    ``A_cib_217``, ``A_sz``, ``ps_A_100_100``, ``ps_A_143_143``,
-    ``ps_A_143_217``, ``ps_A_217_217``, ``ksz_norm``, ``xi_sz_cib`` y
-    ``A_planck``.  En el baseline de Planck 2018 (plik TTTEEE) son libres
-    con priors oficiales.  Fijarlos cambia el numero de parametros libres
-    (k_LCDM = 24 / k_DVCH = 26 que usa model_comparison.py) y la
-    interpretacion del LRT.
+CONFIGURACION (actualizada 2026-11-06 al baseline oficial de Planck 2018,
+copiada de la definicion de cobaya planck_2018_highl_plik):
+  * Nuisance libres con priors oficiales: gal545_*, galf_*, calib_100T,
+    calib_217T, A_planck (Gaussianos) y A_cib_217, xi_sz_cib, A_sz,
+    ksz_norm, ps_A_* (uniformes), mas el prior adicional SZ
+    (ksz_norm + 1.6*A_sz ~ N(9.5, 3)).
+  * Fijos (oficialmente): cib_index, galf indexes, calib_*P, A_sbpx_* y
+    A_cnoise_e2e_*.
   * low-ℓ (commander), low-ℓ EE (simall) y lensing son OPCIONALES: si las
     variables de entorno ``DVCH_PLANCK_LOWL``, ``DVCH_PLANCK_LOWE`` o
     ``DVCH_PLANCK_LENSING`` estan definidas, dvch_cobaya_planck.py las suma
     al chi2.  Si se quiere un analisis "solo high-ℓ", dejalas sin definir.
     (La corrida existente las tenia definidas en env.sh: el chi2 ~2768
     corresponde a TTTEEE + lowl + lowE, no a plik TTTEEE solo.)
+
+AVISO FUNDAMENTAL: el parche de CAMB deja el fondo identico a LCDM
+(``dvch_camb_patch_check.py``); este runner muestrea el termino de
+perturbacion del CDM, no la cerradura de fondo del paper.
 """
 
 from __future__ import annotations
@@ -92,7 +95,7 @@ else:
 
 sys.path.insert(0, str(EGG))
 
-OFFICIAL_PRIORS = {
+OFFICIAL_PRIORS_NORM = {
     "gal545_A_100": (8.6, 2.0),
     "gal545_A_143": (10.6, 2.0),
     "gal545_A_143_217": (23.5, 8.5),
@@ -111,10 +114,30 @@ OFFICIAL_PRIORS = {
     "galf_TE_A_217": (1.938, 0.54),
     "calib_100T": (1.0002, 0.0007),
     "calib_217T": (0.99805, 0.00065),
+    "A_planck": (1.0, 0.0025),
 }
 
+# Priors uniformes oficiales (cobaya planck_2018_highl_plik/params_TT.yaml):
+# (min, max, ref_loc, ref_scale)
+OFFICIAL_PRIORS_UNIFORM = {
+    "A_cib_217": (0.0, 200.0, 67.0, 10.0),
+    "xi_sz_cib": (0.0, 1.0, 0.0, 0.1),
+    "A_sz": (0.0, 10.0, 7.0, 2.0),
+    "ksz_norm": (0.0, 10.0, 0.0, 3.0),
+    "ps_A_100_100": (0.0, 400.0, 257.0, 24.0),
+    "ps_A_143_143": (0.0, 400.0, 47.0, 10.0),
+    "ps_A_143_217": (0.0, 400.0, 40.0, 12.0),
+    "ps_A_217_217": (0.0, 400.0, 104.0, 13.0),
+}
+
+# Prior adicional oficial SZ (cobaya prior_SZ.yaml):
+#   stats.norm.logpdf(ksz_norm + 1.6*A_sz, loc=9.5, scale=3.0)
+OFFICIAL_EXTRA_PRIOR_SZ = (
+    "lambda ksz_norm, A_sz: stats.norm.logpdf(ksz_norm+1.6*A_sz, "
+    "loc=9.5, scale=3.0)"
+)
+
 OFFICIAL_FIXED = {
-    "A_planck": 1.000442,
     "cib_index": -1.3,
     "galf_EE_index": -2.4,
     "galf_TE_index": -2.4,
@@ -163,48 +186,65 @@ def build_info() -> dict:
     )
     for index, name in enumerate(names):
         value = float(check[7527 + index])
-        if name in OFFICIAL_PRIORS:
-            loc, scale = OFFICIAL_PRIORS[name]
+        if name in OFFICIAL_PRIORS_NORM:
+            loc, scale = OFFICIAL_PRIORS_NORM[name]
             info["params"][name] = {
                 "prior": {"dist": "norm", "loc": loc, "scale": scale},
                 "ref": {"dist": "norm", "loc": loc, "scale": scale},
+            }
+        elif name in OFFICIAL_PRIORS_UNIFORM:
+            lo, hi, ref_loc, ref_scale = OFFICIAL_PRIORS_UNIFORM[name]
+            info["params"][name] = {
+                "prior": {"dist": "uniform", "min": lo, "max": hi},
+                "ref": {"dist": "norm", "loc": ref_loc, "scale": ref_scale},
             }
         elif name in OFFICIAL_FIXED:
             info["params"][name] = {"value": OFFICIAL_FIXED[name]}
         else:
             info["params"][name] = {"value": value}
-    info["sampler"]["mcmc"]["max_samples"] = int(
-        os.environ.get("DVCH_MAX_SAMPLES", "32")
-    )
-    info["sampler"]["mcmc"]["burn_in"] = float(
-        os.environ.get("DVCH_BURN_IN", "0")
-    )
-    info["sampler"]["mcmc"]["learn_proposal"] = (
-        os.environ.get("DVCH_LEARN_PROPOSAL", "false").lower() == "true"
-    )
-    info["sampler"]["mcmc"]["Rminus1_stop"] = float(
-        os.environ.get("DVCH_RMINUS1_STOP", "0.01")
-    )
-    if os.environ.get("DVCH_LEARN_RMINUS1_MAX"):
-        info["sampler"]["mcmc"]["learn_proposal_Rminus1_max"] = float(
-            os.environ["DVCH_LEARN_RMINUS1_MAX"]
+    # Prior oficial SZ (ksz_norm + 1.6*A_sz)
+    if {"ksz_norm", "A_sz"}.issubset(set(names)):
+        info.setdefault("prior", {})["SZ"] = OFFICIAL_EXTRA_PRIOR_SZ
+    if os.environ.get("DVCH_MODE", "mcmc") == "minimize":
+        # Minimizador (MAP): para el libro de contabilidad del modelo
+        # anidado (chi2_min de DVCH debe ser <= el de LCDM).
+        info["sampler"] = {"minimize": {
+            "ignore_prior": os.environ.get(
+                "DVCH_IGNORE_PRIOR", "true").lower() == "true",
+        }}
+    else:
+        info["sampler"]["mcmc"]["max_samples"] = int(
+            os.environ.get("DVCH_MAX_SAMPLES", "32")
         )
-    if os.environ.get("DVCH_LEARN_EVERY"):
-        info["sampler"]["mcmc"]["learn_every"] = os.environ["DVCH_LEARN_EVERY"]
-    # Permite desactivar el blocking manual heredado del yaml base para que
-    # cobaya mida velocidades reales (measure_speeds) y aplique oversampling
-    # efectivo sobre los parametros rapidos (foreground/calibracion), que son
-    # los que dominan la no-convergencia multivariada.
-    if os.environ.get("DVCH_NO_BLOCKING", "").lower() in ("1", "true", "yes"):
-        info["sampler"]["mcmc"].pop("blocking", None)
-    # Optional initial covariance matrix (regularized empirical covmat).
-    covmat = os.environ.get("DVCH_COVMAT")
-    if covmat:
-        info["sampler"]["mcmc"]["covmat"] = covmat
+        info["sampler"]["mcmc"]["burn_in"] = float(
+            os.environ.get("DVCH_BURN_IN", "0")
+        )
+        info["sampler"]["mcmc"]["learn_proposal"] = (
+            os.environ.get("DVCH_LEARN_PROPOSAL", "false").lower() == "true"
+        )
+        info["sampler"]["mcmc"]["Rminus1_stop"] = float(
+            os.environ.get("DVCH_RMINUS1_STOP", "0.01")
+        )
+        if os.environ.get("DVCH_LEARN_RMINUS1_MAX"):
+            info["sampler"]["mcmc"]["learn_proposal_Rminus1_max"] = float(
+                os.environ["DVCH_LEARN_RMINUS1_MAX"]
+            )
+        if os.environ.get("DVCH_LEARN_EVERY"):
+            info["sampler"]["mcmc"]["learn_every"] = os.environ["DVCH_LEARN_EVERY"]
+        # Permite desactivar el blocking manual heredado del yaml base para que
+        # cobaya mida velocidades reales (measure_speeds) y aplique oversampling
+        # efectivo sobre los parametros rapidos (foreground/calibracion), que son
+        # los que dominan la no-convergencia multivariada.
+        if os.environ.get("DVCH_NO_BLOCKING", "").lower() in ("1", "true", "yes"):
+            info["sampler"]["mcmc"].pop("blocking", None)
+        # Optional initial covariance matrix (regularized empirical covmat).
+        covmat = os.environ.get("DVCH_COVMAT")
+        if covmat:
+            info["sampler"]["mcmc"]["covmat"] = covmat
     info["output"] = os.environ.get(
         "DVCH_CHAIN_OUTPUT", "dvch_planck_full_highl_chain"
     )
-    if os.environ.get("DVCH_CHAIN_SEED"):
+    if os.environ.get("DVCH_CHAIN_SEED") and "mcmc" in info["sampler"]:
         info["sampler"]["mcmc"]["seed"] = int(os.environ["DVCH_CHAIN_SEED"])
     return info
 
@@ -213,4 +253,4 @@ if __name__ == "__main__":
     debug = os.environ.get("DVCH_DEBUG", "false").lower() == "true"
     resume = os.environ.get("DVCH_RESUME", "true").strip().lower() in ("1", "true", "yes")
     info, _ = run(build_info(), debug=debug, resume=resume, force=not resume)
-    print("Full high-l nuisance smoke chain completed:", info["output"])
+    print("Full high-l chain completed:", info["output"])
