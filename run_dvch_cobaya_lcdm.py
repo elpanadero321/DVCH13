@@ -192,7 +192,10 @@ def build_info() -> dict:
 
     mode = os.environ.get("DVCH_MODE", "minimize")
     if mode == "minimize":
-        info["sampler"] = {"minimize": {}}
+        info["sampler"] = {"minimize": {
+            "ignore_prior": os.environ.get(
+                "DVCH_IGNORE_PRIOR", "true").lower() == "true",
+        }}
     else:
         info["sampler"] = {"mcmc": {
             "max_samples": int(os.environ.get("DVCH_MAX_SAMPLES", "32")),
