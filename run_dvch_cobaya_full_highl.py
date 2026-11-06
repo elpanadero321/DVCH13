@@ -5,6 +5,22 @@ point, not a prior definition.  Sampling those fields with synthetic bounds
 produced an invalid zero-acceptance chain.  This runner applies the official
 recommended Gaussian priors where Planck publishes them and keeps the
 remaining nuisance fields at the official check point.
+
+DESVIACIONES DEL BASELINE DE PLANCK (deben corregirse antes de cualquier
+comparacion CMB publica, ver SESSION_LOG.txt):
+  * Los siguientes nuisance estan FIJOS (al valor de check_param o a 1):
+    ``A_cib_217``, ``A_sz``, ``ps_A_100_100``, ``ps_A_143_143``,
+    ``ps_A_143_217``, ``ps_A_217_217``, ``ksz_norm``, ``xi_sz_cib`` y
+    ``A_planck``.  En el baseline de Planck 2018 (plik TTTEEE) son libres
+    con priors oficiales.  Fijarlos cambia el numero de parametros libres
+    (k_LCDM = 24 / k_DVCH = 26 que usa model_comparison.py) y la
+    interpretacion del LRT.
+  * low-ℓ (commander), low-ℓ EE (simall) y lensing son OPCIONALES: si las
+    variables de entorno ``DVCH_PLANCK_LOWL``, ``DVCH_PLANCK_LOWE`` o
+    ``DVCH_PLANCK_LENSING`` estan definidas, dvch_cobaya_planck.py las suma
+    al chi2.  Si se quiere un analisis "solo high-ℓ", dejalas sin definir.
+    (La corrida existente las tenia definidas en env.sh: el chi2 ~2768
+    corresponde a TTTEEE + lowl + lowE, no a plik TTTEEE solo.)
 """
 
 from __future__ import annotations
@@ -32,9 +48,15 @@ _REQUIRED_ENV = {
     "DVCH_CAMB_ROOT": "root directory of the patched CAMB checkout",
     "DVCH_CLIK_EGG": "path to the clik Python egg (clik-3.1-py3.x-*.egg)",
     "DVCH_PLANCK_LIKELIHOOD": "path to plik_rd12_HM_v22b_TTTEEE.clik",
-    "DVCH_PLANCK_LOWL": "path to commander_dx12_v3_2_29.clik",
-    "DVCH_PLANCK_LOWE": "path to simall_100x143_offlike5_EE_Aplanck_B.clik",
-    "DVCH_PLANCK_LENSING": "path to smicadx12_..._consext8.clik_lensing",
+    "LD_LIBRARY_PATH": "directory containing libclik.so (plc-3.1/lib)",
+}
+
+# Opcionales: si estan definidas, dvch_cobaya_planck.py las suma al chi2.
+# Para un analisis "solo high-ℓ" hay que dejarlas sin definir en env.sh.
+_OPTIONAL_ENV = {
+    "DVCH_PLANCK_LOWL": "commander_dx12_v3_2_29.clik (low-ℓ TT)",
+    "DVCH_PLANCK_LOWE": "simall_100x143_offlike5_EE_Aplanck_B.clik (low-ℓ EE)",
+    "DVCH_PLANCK_LENSING": "smicadx12_..._consext8.clik_lensing (lensing)",
 }
 
 _missing = [k for k in _REQUIRED_ENV if not os.environ.get(k)]
@@ -52,14 +74,21 @@ EGG = Path(os.environ["DVCH_CLIK_EGG"])
 # The dynamic linker resolves that name against LD_LIBRARY_PATH, which must be
 # set BEFORE the Python process starts (setting os.environ here is too late).
 # The Waf build (which includes SimAll) installs libclik.so under plc-3.1/lib.
-# Run via the wrapper `run_dvch_cobaya_full_highl.sh`, or export it yourself:
+# Run via the wrapper `launch_wideprior.sh`, or export it yourself:
 #   export LD_LIBRARY_PATH=/path/to/plc-3.1/lib
 if not os.environ.get("LD_LIBRARY_PATH"):
     raise SystemExit(
         "LD_LIBRARY_PATH is not set. It must point to the directory containing "
-        "libclik.so (e.g. /path/to/plc-3.1/lib). Run via "
-        "run_dvch_cobaya_full_highl.sh or export it in the shell."
+        "libclik.so (e.g. /path/to/plc-3.1/lib). Run via launch_wideprior.sh "
+        "or export it in the shell."
     )
+
+_extra = {k: os.environ[k] for k in _OPTIONAL_ENV if os.environ.get(k)}
+if _extra:
+    print("AVISO: bloques adicionales activados (se suman al chi2): "
+          + ", ".join(_extra))
+else:
+    print("Configuracion: solo high-ℓ (plik TTTEEE).")
 
 sys.path.insert(0, str(EGG))
 

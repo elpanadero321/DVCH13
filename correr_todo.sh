@@ -101,7 +101,8 @@ step "4/6  Bateria de validacion (fondo, CC+BAO, crecimiento, cross-check)"
 python -m pytest tests/ -q          || die "Fallaron tests unitarios."
 python dvch_camb_crosscheck.py      || die "Fallo el cross-check con CAMB."
 python dvch_growth_diagnostic.py    || die "Fallo el diagnostico de crecimiento/sigma8."
-python dvch_joint_realdata_fit.py   || die "Fallo el ajuste conjunto CC+BAO."
+python dvch_vs_lcdm_real.py       || die "Fallo el ajuste tardio (Pantheon+/DESI/CC)."
+python dvch_realdata_diagnostics.py || die "Fallo el diagnostico del best-fit."
 python dvch_double_slit.py          || die "Fallo la prueba de congruencia doble rendija."
 
 # ---------------------------------------------------------------------------
