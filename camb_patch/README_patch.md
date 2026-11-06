@@ -1,129 +1,69 @@
 # Parche DVCH para CAMB
 
-Este parche añade la física DVCH (interacción CDM-vacío con índice de tracking `n` y supresión de curvatura `beta`) al CAMB estándar. Consiste en **5 cambios** sobre un clon limpio de CAMB.
+Este parche añade la física DVCH (interacción CDM-vacío con índice de
+tracking `n` y supresión de curvatura `beta`) al CAMB estándar. Son **6
+cambios** sobre un clon limpio de CAMB 2.0.4:
 
-> **ALCANCE (verificado 2026-11-06).** Este parche **solo modifica la
-> ecuación de perturbación del CDM**. El fondo (`dtauda`) no se toca: el
-> CAMB parcheado produce una expansión $H(z)$ **idéntica a ΛCDM** con
-> `DVCH_flag=True` para cualquier $(n,\beta)$ (verificado con
-> `dvch_camb_patch_check.py`; desviación 0.0 en $0\le z\le 3$ y la edad
-> del universo sin cambios). Por lo tanto un análisis de Planck hecho con
-> este CAMB compara ΛCDM-fondo + fuente de perturbación DVCH, **no** la
-> cerradura de fondo del paper (donde la materia evoluciona con la
-> ecuación de conservación CDM-vacío). Implementar el fondo DVCH
-> requiere un parche al sector de background de CAMB, aún no hecho.
+## 1. `fortran/DVCHModel.f90` (nuevo, reemplazable)
+Módulo con:
+- **Fondo** (`DVCHBackground`, `DVCHMatterFraction`): integra la
+  ecuación de conservación CDM-vacío con RK4 en `u = ln(1+z)` desde
+  `z=0` (donde `x = Om(z)/Om0 = 1`), guarda `ln x` en una tabla
+  (paso 0.02, hasta `u = 26`) y resuelve la cerradura implícita
+  `U = x^n (1+beta)/(1 + beta E2)` como raíz positiva de una cuadrática.
+  La tabla se construye una vez por modelo dentro de una sección
+  crítica de OpenMP (CAMB es paralelo sobre `k`); las consultas son de
+  solo lectura. Salida: `dvch_x = rho_m/(rho_m0 a^-3)` (densidad de
+  materia relativa a la escala estándar) y `u_frac = Om_vac/Om_vac0`.
+  **Verificación** (`dvch_camb_patch_check.py` / `dvch_camb_patch_verify.py`):
+  `E^2(z)` del CAMB coincide con la integración independiente (DOP853)
+  a < 8e-4 para `(n, beta) = (0.2, 1e-4), (0.42, 0.53), (0.52, 1.10),
+  (0.8, 1.5)`.
+- **Perturbaciones** (`DVCHInteraction`): fuente de interacción para la
+  ecuación del CDM (clausura de vacío en su marco de reposo).
 
-## Archivos del parche
+## 2. `fortran/equations.f90`
+- `dtauda` (función externa): si `DVCH_flag`, `grhov_t = grhov * U(a) * a^2`
+  en vez de `DarkEnergy%BackgroundDensityAndPressure`.
+- `derivs` y `derivsv` (mod `GaugeInterface`): `grhob_t`, `grhoc_t`
+  multiplicadas por `dvch_x` y `grhov_t = grhov * U * a^2`, con
+  `w_dark_energy_t = -1`.
+- `use DVCHModel` (ya presente).
 
-- `DVCHModel.f90` — módulo Fortran **nuevo** (copiar a `fortran/`).
+## 3. `fortran/results.f90`
+- `module results` usa `DVCHModel`.
+- `grho_no_de`: la materia `(grhoc + grhob)*a` se multiplica por
+  `DVCHMatterFraction`.
+- `CAMBdata_GetBackgroundDensities` y `DarkEnergyStressEnergy`: filas de
+  materia y DE parcheadas (para que las salidas de python sean
+  consistentes).
 
-## Cambios manuales (4 archivos)
+## 4. `fortran/model.f90`
+Declara `DVCH_flag`, `DVCH_n`, `DVCH_beta` en `CAMBparams` (ya existente).
 
-### 1. `fortran/equations.f90` — añadir `use DVCHModel` (2 lugares)
+## 5. `fortran/Makefile_main`
+`DVCHModel` en `SOURCEFILES` (ya existente).
 
-**Lugar A** — en la función `dtauda` (al inicio del archivo), después de `use DarkEnergyInterface`:
-
-```fortran
-    function dtauda(this, a)
-    use results
-    use DarkEnergyInterface
-    use DVCHModel          ! <-- AÑADIR ESTA LÍNEA
-    implicit none
-```
-
-**Lugar B** — en el módulo `GaugeInterface`, después de `use MassiveNu`:
-
-```fortran
-    module GaugeInterface
-    use precision
-    use results
-    use MassiveNu
-    use DVCHModel          ! <-- AÑADIR ESTA LÍNEA
-    use DarkEnergyInterface
-```
-
-### 2. `fortran/equations.f90` — añadir el bloque DVCH en la ecuación CDM
-
-Busca la sección `! CDM equation of motion` (alrededor de la línea 2445). El código original es:
-
-```fortran
-    ! CDM equation of motion
-    clxcdot = -k*z
-    ayprime(ix_clxc) = clxcdot
-```
-
-Reemplázalo por:
-
-```fortran
-    ! CDM equation of motion
-    clxcdot = -k*z
-    if (State%CP%DVCH_flag) then
-        ! Use the instantaneous CAMB background fractions. The vacuum
-        ! perturbation is zero in the adopted vacuum rest frame.
-        dvch_E = sqrt(grho/(State%grhocrit*a2))
-        dvch_om_m = grhoc_t/grho
-        dvch_om_l = grhov_t/grho
-        dvch_om_r = (grhog_t + grhor_t)/grho
-        dvch_delta_E = 0._dl
-        call DVCHInteraction(dvch_E, dvch_om_m, dvch_om_l, dvch_om_r, clxc, &
-            dvch_delta_E, State%CP%DVCH_n, State%CP%DVCH_beta, &
-            dvch_qtilde, dvch_delta_qtilde)
-        clxcdot = clxcdot + 3._dl*adotoa*dvch_qtilde/(dvch_E*dvch_om_m)*clxc &
-            - 3._dl*adotoa*dvch_delta_qtilde/(dvch_E*dvch_om_m)
-    end if
-    ayprime(ix_clxc) = clxcdot
-```
-
-> **Nota:** Las variables locales `dvch_*` deben declararse en la subrutina que contiene la ecuación CDM (la subrutina `derivs`/`dtauda` de perturbaciones). Busca la sección de declaraciones de variables locales (después de `real(dl) dgrho_de, dgq_de, cs2_de`) y añade:
-> ```fortran
->     real(dl) dvch_qtilde, dvch_delta_qtilde, dvch_E
->     real(dl) dvch_om_m, dvch_om_l, dvch_om_r, dvch_delta_E
-> ```
-
-### 3. `fortran/model.f90` — añadir los 3 parámetros
-
-Busca la sección de parámetros del modelo (alrededor de la línea 145). Añade después de los parámetros de densidad:
-
-```fortran
-        logical :: DVCH_flag = .false. ! Enable the DVCH CDM perturbation closure
-        real(dl) :: DVCH_n = 0.2_dl
-        real(dl) :: DVCH_beta = 1.e-4_dl
-```
-
-### 4. `fortran/Makefile_main` — añadir `DVCHModel` a `SOURCEFILES`
-
-Busca la línea `SOURCEFILES = ...` (alrededor de la línea 35). Añade `DVCHModel` a la lista:
-
-```makefile
-SOURCEFILES      = constants config classes MathUtils RungeKuttaDP45 DarkAge21cm DVCHModel \
-```
-
-### 5. `camb/model.py` — exponer los 3 parámetros a Python
-
-Busca la lista de parámetros (alrededor de la línea 333, después de `("H0", ...)`). Añade:
-
-```python
-        ("DVCH_flag", c_bool, "Enable the DVCH CDM perturbation closure"),
-        ("DVCH_n", c_double, "DVCH tracking index"),
-        ("DVCH_beta", c_double, "DVCH curvature suppression parameter"),
-```
-
----
-
-## Compilar
-
+## 6. Compilación
 ```bash
-cd CAMB
-python setup.py build
-python setup.py install
-# o en modo desarrollo:
-pip install -e .
+export FORUTILSPATH=<path a forutils>   # p. ej. /mnt/d/DVCH-external/forutils
+cd fortran && make python PYCAMB_OUTPUT_DIR=../camb/
 ```
 
-## Verificar
+## Aplicación automática
+`python3 _apply_camb_background_patch.py [CAMB_ROOT]` aplica los cambios
+2 y 3 (idempotente) y copia `camb_patch/DVCHModel.f90`.
 
-```bash
-python -c "import camb; p=camb.CAMBparams(); p.set_cosmology(H0=67.5, ombh2=0.022, omch2=0.12); p.DVCH_flag=True; p.DVCH_n=0.2; p.DVCH_beta=1e-4; print('DVCH OK')"
-```
-
-Si no hay error, el parche está correctamente aplicado.
+## Alcance y límites
+- La materia que participa en la interacción es CDM **+ bariones**
+  (definición de "materia" del cierre, igual que en el análisis tardío);
+  los neutrinos se conservan aparte (se tratan como radiación en la
+  cerradura, aproximación <0.1% en `E^2`).
+- El sector de perturbaciones usa la clausura de vacío-en-su-marco de
+  reposo (perturbación del vacío = 0); una tratamiento perturbativo
+  completo (δQ invariante de gauge, velocidad del sonido del vacío)
+  sigue siendo trabajo abierto, como dice el paper.
+- Fuera del rango numérico (p. ej. `n > 0.2` con la cosmología de
+  Planck a parámetros fijos) la integración de fuentes de CAMB puede no
+  converger; los puntos de verificación en `cmb_npoint_profile.py` lo
+  manejan.
