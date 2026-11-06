@@ -89,6 +89,15 @@ print(f"  LCDM (n=0,     beta=0)    : chi2 = {c0:.2f}")
 c1 = chi2_cmb(COSMO_LCDM, n_fix, beta_fix)
 print(f"  DVCH (n={n_fix:.3f}, beta={beta_fix:.3f}): chi2 = {c1:.2f}")
 print(f"  delta chi2 = {c1 - c0:+.2f}")
-print("\nNota: este es un chequeo de punto fijo. La tension se debe medir")
-print("contra el minimo de DVCH reajustando cosmologia+nuisance, no contra")
-print("el de LCDM (ver launch_n47_minimize.sh).")
+
+import pandas as pd  # noqa: E402
+pd.DataFrame([{
+    "n": n_fix, "beta": beta_fix, "chi2_lcdm": c0, "chi2_dvch_fixed_point": c1,
+    "delta_chi2": c1 - c0,
+}]).to_csv("dvch_cmb_npoint_check.csv", index=False)
+print("\nWrote dvch_cmb_npoint_check.csv")
+
+print("\nNota: este es un chequeo de punto fijo. Ademas, el CAMB parcheado")
+print("deja el fondo identico a LCDM (dvch_camb_patch_check.py), de modo")
+print("que este delta chi2 mide solo el termino de perturbacion del CDM,")
+print("no la cerradura de fondo del paper.")

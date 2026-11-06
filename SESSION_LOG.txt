@@ -115,24 +115,42 @@ problemas que el paper ahora declara explícitamente:
    Δχ² = +0.96 es un límite de la cadena, no un best-fit, y el LRT/p
    ≈ 0.62 no era interpretable. `model_comparison.py` ahora lo dice.
 
+**HALLAZGO CRÍTICO (2026-11-06): el CAMB parcheado NO cambia la
+expansión de fondo.** El parche (`camb_patch/README_patch.md`) solo
+añade un término a la ecuación de perturbación del CDM. Verificado con
+`dvch_camb_patch_check.py` (corrido en WSL2 con el CAMB parcheado real):
+H(z) es **bit idéntico** a ΛCDM (desviación 0.0 en 0 ≤ z ≤ 3) para
+(n, β) = (0.42, 0.53), (0.52, 1.10) y (0.8, 1.5), y la edad tampoco
+cambia. Por lo tanto:
+- El análisis de Planck existente compara ΛCDM-fondo + fuente de
+  perturbación DVCH, no la cerradura de fondo del paper.
+- Cualquier "tensión CMB vs expansión" medida con ese CAMB es un efecto
+  del sector de perturbación, no del fondo.
+- Aún **no existe** ninguna confrontación CMB del cierre DVCH real.
+
 Además: la corrida se detuvo en R−1 = 0.03 (el paper pide < 0.01), las
 cadenas de producción no están en el repo (solo `chains/chain_summary.csv`
-reducido) y `dvch_planck_chain_diagnostics.csv` era de cadenas de prueba
-(borrado).
+reducido).
 
-**Tensión CMB vs expansión:** el número anterior (≈3.9σ forzando n=0.47)
-está **retirado**: el punto forzado venía del ajuste con datos erróneos,
-15.8/2 dof son 3.6σ (no 3.9) y debe medirse contra el mínimo de DVCH.
-`cmb_npoint_check.py` lee ahora el best-fit corregido (n≈0.42, β≈0.53);
-**falta correrlo** (necesita .clik + CAMB parcheado, fuera del repo).
+**Chequeo de punto fijo con el best-fit tardío corregido**
+(`cmb_npoint_check.py`, leído automáticamente del CSV; mismo pipeline:
+TTTEEE + lowl + lowE + lensing, nuisance en check_param, cosmología del
+minimizador ΛCDM):
+- χ²(ΛCDM) = 2772.82
+- χ²(DVCH n=0.518, β=1.104) = 2798.61 → **Δχ² = +25.79** (punto fijo,
+  sin re-optimizar).
+
+Este número se reporta en el paper como el coste del término de
+perturbación del CDM a los (n, β) preferidos por la expansión, **no**
+como una tensión del cierre de fondo.
 
 ### 3.4 Lo que NO está hecho
+- **Parchear el sector de background de CAMB** para integrar la
+  conservación CDM-vacío (trabajo Fortran en `dtauda`/DarkEnergy; el
+  parche actual no lo hace). Sin esto no hay análisis CMB del modelo.
 - Repetir el MCMC de Planck con nuisance oficial libre, R−1 < 0.01 y
   cadenas distribuidas; minimizador para DVCH.
-- Recalcular la tensión CMB–tardía con el n corregido.
-- Marginalizar/validar el parche de CAMB a nivel de fondo
-  (`camb_patch/README_patch.md` dice que toca la ecuación de
-  perturbaciones del CDM; revisar que cambie realmente la expansión).
+- Ajuste conjunto CMB + tardío.
 
 ---
 

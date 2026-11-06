@@ -2,6 +2,17 @@
 
 Este parche añade la física DVCH (interacción CDM-vacío con índice de tracking `n` y supresión de curvatura `beta`) al CAMB estándar. Consiste en **5 cambios** sobre un clon limpio de CAMB.
 
+> **ALCANCE (verificado 2026-11-06).** Este parche **solo modifica la
+> ecuación de perturbación del CDM**. El fondo (`dtauda`) no se toca: el
+> CAMB parcheado produce una expansión $H(z)$ **idéntica a ΛCDM** con
+> `DVCH_flag=True` para cualquier $(n,\beta)$ (verificado con
+> `dvch_camb_patch_check.py`; desviación 0.0 en $0\le z\le 3$ y la edad
+> del universo sin cambios). Por lo tanto un análisis de Planck hecho con
+> este CAMB compara ΛCDM-fondo + fuente de perturbación DVCH, **no** la
+> cerradura de fondo del paper (donde la materia evoluciona con la
+> ecuación de conservación CDM-vacío). Implementar el fondo DVCH
+> requiere un parche al sector de background de CAMB, aún no hecho.
+
 ## Archivos del parche
 
 - `DVCHModel.f90` — módulo Fortran **nuevo** (copiar a `fortran/`).

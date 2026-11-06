@@ -115,12 +115,12 @@ approaches a Minkowski end state, and
   $w_0w_a$CDM control. The DVCH tracking index is constrained to
   $n=0.52^{+0.10}_{-0.17}$ with $\beta=1.10^{+0.63}_{-0.72}$. A Cobaya
   pipeline with a DVCH-patched CAMB against the Planck 2018
-  TT/TE/EE likelihood was executed, but its published configuration (fixed
-  nuisance sector, low-$\ell$ and lensing blocks included, $\chi^2$ minimum
-  of the nested model not re-optimised) is not yet at the level of a
-  referee-grade CMB comparison; the CMB-side numbers of this article are
-  therefore provisional and the internal CMB/expansion tension must be
-  recomputed with the corrected late-time $n$. In this form, DVCH is
+  TT/TE/EE likelihood was executed, but we report it as provisional and
+  not yet a comparison of the DVCH closure itself: the CAMB patch leaves
+  the background identical to $\Lambda$CDM (verified numerically), so only
+  the CDM perturbation term carries the new physics, and the nuisance
+  sector, convergence and minimisation steps fall short of a
+  referee-grade analysis. In this form, DVCH is
   presented as an effective interacting-vacuum framework whose
   background-level phenomenology is \emph{consistent} with the expansion
   history but not favoured over $\Lambda$CDM at cosmological-precision
@@ -242,7 +242,7 @@ equation of state (Sec.~\ref{sec:quintessence_eff}).
 DVCH is the choice of a specific functional relation
 $\rho_\Lambda=\rho_\Lambda(\rho_m,H)$ motivated by tracking and curvature
 suppression; given this closure, $Q$ is fixed by \eqref{eq:cont_L}. This
-replaces ambiguous ad hoc $Q\propto H\rho_i$ ansÃ¤tze by an explicit $Q$
+replaces ambiguous ad hoc $Q\propto H\rho_i$ ans\"atze by an explicit $Q$
 computed from a stated $\rho_\Lambda(\rho_m,H)$.
 
 % ==============================================================
@@ -927,13 +927,17 @@ $\Delta\chi^2_{\rm fit}=-3.60$ vs $\Lambda$CDM with 2 extra parameters
 No significant preference for DVCH; equivalent to the $w_0w_a$CDM control. \\
 \textbf{Planck 2018 (real, provisional)} & \texttt{plik\_rd12\_HM\_v22b\_TTTEEE.clik} + DVCHCAMB in Cobaya &
 Provisional: nuisance parcialmente fijo, low-$\ell$/lensing incluidos,
-$\Delta\chi^2=+0.96$ (mÃ­nimo del modelo anidado sin re-optimizar) &
-Pendiente de repetir (Sec.~\ref{subsec:planck_results}); no comparable al
-anÃ¡lisis tardÃ­o en su forma actual. \\
+$\Delta\chi^2=+0.96$ (m\'inimo del modelo anidado sin re-optimizar), y el
+fondo del CAMB parcheado es id\'entico a $\Lambda$CDM
+(\texttt{dvch\_camb\_patch\_check.py}) &
+Provisional (Sec.~\ref{subsec:planck_results}); no comparable al
+an\'alisis tard\'io en su forma actual. \\
 \textbf{CMB--late-time tension} & Independent CMB and expansion fits &
-El valor anterior ($\simeq3.9\sigma$) usÃ³ $n=0.47$ de un ajuste tardÃ­o
-con datos errÃ³neos: \textbf{debe recalcularse} &
-Pendiente (Sec.~\ref{subsec:tension}). \\
+El valor anterior ($\simeq3.9\sigma$) us\'o $n=0.47$ de un ajuste tard\'io
+con datos err\'oneos: retirado. Recalculado en la mediana corregida:
+coste de punto fijo $\Delta\chi^2\simeq+25.8$ (solo sector de
+perturbaci\'on, sin re-optimizar) &
+No es una tensi\'on del cierre de fondo (Sec.~\ref{subsec:tension}). \\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -1662,8 +1666,20 @@ result, and we deliberately do not do it.
 The CMB side of the confrontation runs a Cobaya MCMC
 \cite{Torrado:2020dgo} with a CAMB build patched by the DVCH Fortran module
 (\texttt{camb\_patch/DVCHModel.f90}), which exposes
-\texttt{DVCH\_flag}, \texttt{DVCH\_n} and \texttt{DVCH\_beta} as
-parameters of the background solver. The likelihood objects are the
+\texttt{DVCH\_flag}, \texttt{DVCH\_n} and \texttt{DVCH\_beta} to Python.
+\textbf{The patch modifies only the CDM perturbation equation}, not the
+background: \texttt{dvch\_camb\_patch\_check.py} verifies numerically that
+$H(z)$ of the patched CAMB with \texttt{DVCH\_flag=True} is \emph{bit
+identical} to $\Lambda$CDM (deviation $0.0$ over $0\le z\le3$ for
+$(n,\beta)=(0.42,0.53)$, $(0.52,1.10)$ and $(0.8,1.5)$, and the age of the
+universe is unchanged). The background of the Planck run is therefore
+$\Lambda$CDM, and the interaction enters only as a source term in the CDM
+continuity equation evaluated with the \emph{CAMB} background fractions.
+This means that the CMB analysis of this section does \emph{not} confront
+the background closure of Sec.~\ref{sec:background} with Planck; what it
+measures is the CDM perturbation term at the sampled $(n,\beta)$. We keep
+the section because the run was executed and its diagnostics are real, but
+every number below inherits this caveat. The likelihood objects are the
 official Planck 2018 \texttt{clik} files \cite{Planck:2019nip}: the
 high-$\ell$ \texttt{plik\_rd12\_HM\_v22b\_TTTEEE} object together with the
 low-$\ell$ (commander), low-$\ell$ EE (simall) and lensing blocks, which
@@ -1748,21 +1764,42 @@ number is withdrawn here, for three reasons:
     against the minimum of $\Lambda$CDM, which requires the minimiser to
     be run for DVCH as well.
 \end{enumerate}
-The re-computation requires the \texttt{.clik} data and the patched CAMB
-build and is therefore left as the explicit next step
-(\texttt{cmb\_npoint\_check.py}, now wired to read the corrected
-late-time best fit automatically). The physical interpretation, once the
-number exists, remains as stated below: the DVCH interaction with
-$n\sim0.5$ is a \emph{late-time} phenomenology, and the same power that
-changes the Pantheon$+$/BAO/$H(z)$ residuals also alters the
-acoustic-scale physics that Planck constrains. Two further steps are
-implied, and neither is performed in this article: run a joint
-late-time$+$CMB posterior and let the models compete over the compromise
-region in $n$; and move the closure from a background relation to a
-perturbative one with the interaction rate consistently inserted in the
-photon--baryon hierarchy, because the CMB $\chi^2$ cost uses a
-background-patched CAMB path and should not be read as a perturbative
-verdict.
+The re-computation has been performed with the corrected late-time best
+fit (\texttt{cmb\_npoint\_check.py}, which now reads the median of
+Sec.~\ref{subsec:latetime_real} automatically): evaluating the full
+likelihood of the executed pipeline (high-$\ell$ plik $+$ low-$\ell$ $+$
+lowE $+$ lensing, nuisance at the official \texttt{check\_param} values) at
+the $\Lambda$CDM minimiser cosmology gives
+\begin{equation}
+\chi^2_{\Lambda\mathrm{CDM}} = 2772.82,\qquad
+\chi^2_{\mathrm{DVCH}}\big|_{n=0.518,\beta=1.104} = 2798.61,
+\end{equation}
+i.e.\ a fixed-point cost of $\Delta\chi^2\simeq+25.8$ with no
+re-optimisation of cosmology or nuisance. Three caveats decide how this
+number may be read:
+\begin{enumerate}
+    \item because the CAMB patch leaves the background identical to
+    $\Lambda$CDM (Sec.~\ref{subsec:planck_results}), the cost comes entirely
+    from the CDM perturbation term evaluated on a $\Lambda$CDM background;
+    it is \emph{not} a tension between the late-time closure and the CMB
+    background, and cannot be turned into a significance for the closure;
+    \item the forced point uses the \emph{median} $(n,\beta)$ of the
+    corrected late-time posterior, not its best fit, and suffers from the
+    same partially-fixed nuisance sector as the rest of the run;
+    \item the earlier $\simeq3.9\sigma$ claim used $n=0.47$ from the
+    erroneous fit, and in any case $15.8$ in $\chi^2$ with two constrained
+    parameters is $3.6\sigma$, not $3.9\sigma$. It is withdrawn.
+\end{enumerate}
+The physical reading consistent with everything above is: the DVCH
+interaction term in the CDM sector, at the values favoured by the
+late-time expansion, is strongly disfavoured by the Planck spectra as
+implemented. Whether the \emph{closure itself} (with its non-standard
+matter evolution and marginalised $r_d$) is compatible with the CMB cannot
+be decided until the background patch exists. Two further steps are
+implied, and neither is performed in this article: patch the CAMB
+\emph{background} sector to integrate the CDM--vacuum conservation
+equation, and then run a joint late-time$+$CMB posterior letting the
+models compete over the compromise region in $n$.
 
 \subsection{Parameter set and priors}
 \label{subsec:priors}
@@ -2040,7 +2077,10 @@ backend. A DVCH-patched CAMB build \texttt{camb\_patch/DVCHModel.f90} was
 compiled and executed in Cobaya against the official Planck 2018 high-$\ell$
 \texttt{clik} likelihood, giving the provisional background-level posterior
 reported in Sec.~\ref{subsec:planck_results}. That patch modifies the
-background solver only; it is not yet a DVCH-patched photon--baryon hierarchy.
+\emph{CDM perturbation} equation only and leaves the CAMB background
+identical to $\Lambda$CDM (verified by
+\texttt{dvch\_camb\_patch\_check.py}); it is not yet a DVCH background
+patch, and not yet a DVCH-patched photon--baryon hierarchy.
 Thus Fig.~\ref{fig:dvch_modified_boltzmann_solver} should be read as an executable
 matter-sector solver diagnostic, complementing (not replacing) the Planck
 high-$\ell$ posterior already obtained.
@@ -2172,8 +2212,9 @@ of Sec.~\ref{subsec:planck_results} uses the high-$\ell$ Plik block of that
 target together with the patched CAMB build and the low-$\ell$/lensing
 blocks that were defined in the environment; the joint late-time$+$CMB
 combination is an explicit open item of Sec.~\ref{subsec:tension}, and the
-tension number of earlier versions has been withdrawn pending
-recomputation.
+tension number of earlier versions has been withdrawn and replaced by the
+fixed-point cost $\Delta\chi^2\simeq+25.8$ measured at the corrected
+late-time median.
 
 % ==============================================================
 \section{Swampland diagnostics and physical discussion of the Minkowski future}
@@ -2231,11 +2272,18 @@ the vacuum vary, which violates total energy conservation. Those claims are
 withdrawn.
 
 \paragraph*{What remains open.}\quad The Planck-side analysis must be
-repeated with the official nuisance sector free, a consistent statement of
-which likelihood blocks are included, the $R-1<0.01$ convergence criterion
-actually met (and the chains distributed), and the minimiser run for the
-nested model; only then can the CMB--late-time tension in $n$ be
-recomputed at the corrected best fit $n\simeq0.42$, $\beta\simeq0.53$.
+redone from the ground up: the CAMB patch currently leaves the
+\emph{background} identical to $\Lambda$CDM (verified numerically by
+\texttt{dvch\_camb\_patch\_check.py}), so no CMB comparison of the DVCH
+background closure exists yet; implementing it requires patching the
+CAMB background sector to integrate the CDM--vacuum conservation
+equation. On top of that, the nuisance sector must be freed with its
+official priors, the $R-1<0.01$ convergence criterion must be met (and
+the chains distributed), and the minimiser must be run for the nested
+model. The fixed-point cost measured with the current pipeline,
+$\Delta\chi^2\simeq+25.8$ at the corrected late-time median, is a
+perturbation-sector number and cannot be read as a background-level
+tension.
 The perturbative treatment of the interaction in the photon--baryon
 hierarchy remains the main theoretical upgrade for a full Boltzmann-level
 CMB verdict, and the precision-cosmology roadmap in
@@ -2667,7 +2715,7 @@ $\sigma_8=0.80975$ at $H_0=67~\mathrm{km\,s^{-1}\,Mpc^{-1}}$ and a compiled
 DVCH spectrum smoke test. The automatically generated broad nuisance ranges are deliberately not used:
 they caused a zero-acceptance chain and are not official Planck priors.
 
-\textbf{Perspectiva futura:} Extender DVCH a escalas cuÃ¡nticas para derivar
+\textbf{Perspectiva futura:} Extender DVCH a escalas cu\'anticas para derivar
 formalmente el acoplamiento entre la modificaci\'on local de $\rho_\Lambda$
 predicha por la cerradura y la propagaci\'on de una part\'icula de laboratorio
 (el par\'ametro $\zeta$ de la Sec.~\ref{subsec:double_slit_test}), de modo que la

@@ -43,6 +43,7 @@ INCLUDE_FILES = [
     "chi2_w0wa.py",
     "model_comparison.py",
     "cmb_npoint_check.py",
+    "dvch_camb_patch_check.py",
     "make_result_figures.py",
     "check_tex.py",
     "realdata/desi_dr1.py",
