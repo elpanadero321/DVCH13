@@ -124,7 +124,7 @@ export LD_LIBRARY_PATH="/ruta/a/plc_3.0/lib:${LD_LIBRARY_PATH:-}"
 source env.sh
 cd /ruta/al/paquete
 
-# 1. Pruebas unitarias locales (17 tests)
+# 1. Pruebas unitarias locales (24 tests)
 python -m pytest tests/test_dvch.py -v
 
 # 2. Smoke test de clik (verifica que los likelihoods cargan)
@@ -196,7 +196,7 @@ DVCH13-1/
 ├── dvch_camb_background.py    # background CAMB
 ├── dvch_full_mcmc_pipeline.py # pipeline MCMC completo
 ├── dvch_mcmc_convergence.py   # convergencia MCMC
-├── tests/test_dvch.py         # 17 tests unitarios
+├── tests/test_dvch.py         # 24 tests unitarios
 └── DVCH.tex                   # reporte LaTeX
 ```
 

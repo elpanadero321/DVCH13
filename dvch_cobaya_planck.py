@@ -3,6 +3,11 @@
 The nuisance vector is initialized from Planck's official ``check_param``
 vector. Cosmological parameters are sampled; nuisance optimization is a
 separate required production step and is intentionally not claimed here.
+
+Si las variables de entorno ``DVCH_PLANCK_LOWL``, ``DVCH_PLANCK_LOWE`` o
+``DVCH_PLANCK_LENSING`` estan definidas, sus likelihoods se suman al chi2
+total.  Para un analisis estrictamente "solo high-ℓ" hay que dejarlas sin
+definir (ver run_dvch_cobaya_full_highl.py).
 """
 
 from __future__ import annotations

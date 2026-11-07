@@ -57,7 +57,7 @@ if not os.environ.get("LD_LIBRARY_PATH"):
 
 sys.path.insert(0, str(EGG))
 
-OFFICIAL_PRIORS = {
+OFFICIAL_PRIORS_NORM = {
     "gal545_A_100": (8.6, 2.0),
     "gal545_A_143": (10.6, 2.0),
     "gal545_A_143_217": (23.5, 8.5),
@@ -76,10 +76,27 @@ OFFICIAL_PRIORS = {
     "galf_TE_A_217": (1.938, 0.54),
     "calib_100T": (1.0002, 0.0007),
     "calib_217T": (0.99805, 0.00065),
+    "A_planck": (1.0, 0.0025),
 }
 
+# Priors uniformes oficiales (cobaya planck_2018_highl_plik/params_TT.yaml)
+OFFICIAL_PRIORS_UNIFORM = {
+    "A_cib_217": (0.0, 200.0, 67.0, 10.0),
+    "xi_sz_cib": (0.0, 1.0, 0.0, 0.1),
+    "A_sz": (0.0, 10.0, 7.0, 2.0),
+    "ksz_norm": (0.0, 10.0, 0.0, 3.0),
+    "ps_A_100_100": (0.0, 400.0, 257.0, 24.0),
+    "ps_A_143_143": (0.0, 400.0, 47.0, 10.0),
+    "ps_A_143_217": (0.0, 400.0, 40.0, 12.0),
+    "ps_A_217_217": (0.0, 400.0, 104.0, 13.0),
+}
+
+OFFICIAL_EXTRA_PRIOR_SZ = (
+    "lambda ksz_norm, A_sz: stats.norm.logpdf(ksz_norm+1.6*A_sz, "
+    "loc=9.5, scale=3.0)"
+)
+
 OFFICIAL_FIXED = {
-    "A_planck": 1.000442,
     "cib_index": -1.3,
     "galf_EE_index": -2.4,
     "galf_TE_index": -2.4,
@@ -153,20 +170,52 @@ def build_info() -> dict:
 
     for index, name in enumerate(names):
         value = float(check[7527 + index])
-        if name in OFFICIAL_PRIORS:
-            loc, scale = OFFICIAL_PRIORS[name]
+        if name in OFFICIAL_PRIORS_NORM:
+            loc, scale = OFFICIAL_PRIORS_NORM[name]
             info["params"][name] = {
                 "prior": {"dist": "norm", "loc": loc, "scale": scale},
                 "ref": {"dist": "norm", "loc": loc, "scale": scale},
+            }
+        elif name in OFFICIAL_PRIORS_UNIFORM:
+            lo, hi, ref_loc, ref_scale = OFFICIAL_PRIORS_UNIFORM[name]
+            info["params"][name] = {
+                "prior": {"dist": "uniform", "min": lo, "max": hi},
+                "ref": {"dist": "norm", "loc": ref_loc, "scale": ref_scale},
             }
         elif name in OFFICIAL_FIXED:
             info["params"][name] = {"value": OFFICIAL_FIXED[name]}
         else:
             info["params"][name] = {"value": value}
+    # Prior oficial SZ (ksz_norm + 1.6*A_sz)
+    if {"ksz_norm", "A_sz"}.issubset(set(names)):
+        info.setdefault("prior", {})["SZ"] = OFFICIAL_EXTRA_PRIOR_SZ
+
+    # Punto de arranque opcional desde un .minimum conocido.
+    ref_file = os.environ.get("DVCH_REF_MIN")
+    if ref_file and os.path.exists(ref_file):
+        refs = {}
+        for line in open(ref_file):
+            parts = line.split()
+            if len(parts) >= 3 and parts[0].isdigit():
+                try:
+                    refs[parts[2]] = float(parts[1])
+                except ValueError:
+                    continue
+        for name, value in refs.items():
+            if name in info["params"] and isinstance(
+                    info["params"].get(name), dict) and "prior" in info["params"][name]:
+                info["params"][name]["ref"] = {
+                    "dist": "norm", "loc": value,
+                    "scale": max(abs(value) * 0.02, 1e-4),
+                }
+        print(f"[ref] arrancando desde {ref_file}")
 
     mode = os.environ.get("DVCH_MODE", "minimize")
     if mode == "minimize":
-        info["sampler"] = {"minimize": {}}
+        info["sampler"] = {"minimize": {
+            "ignore_prior": os.environ.get(
+                "DVCH_IGNORE_PRIOR", "true").lower() == "true",
+        }}
     else:
         info["sampler"] = {"mcmc": {
             "max_samples": int(os.environ.get("DVCH_MAX_SAMPLES", "32")),

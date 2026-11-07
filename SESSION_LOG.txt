@@ -1,6 +1,7 @@
 # DVCH — BITÁCORA DE SESIÓN (versión definitiva)
-> Estado científico y técnico al 2026-10-30.
-> Esta es la versión consolidada; sustituye a los registros operativos previos.
+> Estado científico y técnico al 2026-11-05.
+> Esta es la única bitácora; sustituye a DVCH_CONTEXTO_SESION.md (borrada)
+> y a los registros operativos previos.
 
 ---
 
@@ -10,114 +11,201 @@ DVCH = modelo cosmológico de **interacción CDM–vacío** con cerradura de
 Friedmann implícita. Cerradura homogénea (núcleo físico):
 
 ```
-E2 = Omega_r0*(1+z)^4 + Om*(1+z)^3 + OL_z
-OL_z = OL * (Om_z/Om)^n * (1+beta) / (1 + beta*E2)     (punto fijo, ~200 iters)
+E2 = Omega_r0*(1+z)^4 + Om_z + OL_z
+OL_z = OL * (Om_z/Om)^n * (1+beta) / (1 + beta*E2)   (punto fijo)
 ```
 
 ΛCDM es el **caso anidado exacto**: con `n=0, beta=0` → `OL_z = OL`.
 
-Parámetros: `Om, H0, n, beta` (late-time) + 18 nuisance de Planck (high-l).
+La materia NO evoluciona como Om*(1+z)^3: se integra la ecuación de
+conservación CDM–vacío (Q != 0), igual que `dvch_camb_background.py`.
+(Esto es lo que integra el ajuste; ver sección 2.)
+
+Parámetros tardíos: `Om, H0, M, n, beta, rd` (r_d marginalizado).
 
 Política de integridad: **nunca se reportan números que no provengan de
-una corrida real y convergida.** Todo lo que sigue la cumple.
+una corrida real.** Todo lo que sigue la cumple.
 
 ---
 
-## 2. RESULTADOS CIENTÍFICOS (datos reales, definitivos)
+## 2. CORRECCIONES APLICADAS (2026-11-05) — auditoría de datos
 
-### 2.1 CMB — Planck 2018 TTTEEE (high-l)
-Corrida MCMC cobaya, 26 parámetros, **convergida**: `converged: true`,
-R-1 = 0.0294 < 0.03, 110.000 muestras en 5 cadenas. Prior de `n` ensanchado
-a [0.01, 0.99] (la versión anterior usaba [0.01, 0.25]).
+La versión anterior del análisis tardío contenía errores que cambiaban las
+conclusiones. Todos corregidos en la rama `genspark_ai_developer`:
 
-| Modelo | χ²_min | params |
-|---|---|---|
-| ΛCDM (n=0, β=0) | 2768.32 | 24 |
-| DVCH (n, β libres) | 2769.28 | 26 |
+| Problema | Corrección |
+|---|---|
+| DESI DR1: 6 D_M/r_d, uno de ellos mal copiado (0.706 → 16.17), y 2.33 como "stand-in" | Tabla 1 oficial de arXiv:2404.03002: D_M/r_d **y** D_H/r_d correlacionados (r entre −0.389 y −0.477) en 5 trazadores + D_V/r_d en BGS (0.295) y QSO (1.491). 12 observables |
+| Cronómetros: 68.6±8.0 en z=0.593; error 8.4 en 0.352; puntos 0.44 (WiggleZ) y 2.34 (BOSS Lyα) contaban BAO dos veces | 31 puntos: 0.593 → **103.8±12.5**, 0.352 → **83.0±14.0** (Moresco+2012, Tabla 4 BC03), quitados 0.44 y 2.34 |
+| Pantheon+: las 1701 SNe incluidas (77 calibradoras Cefeidas + z<0.01) | Corte estándar zHD>0.01 y sin calibradoras: **1580 SNe**; (1+z) con zHEL, no zHD |
+| r_d fijo a 147.09 Mpc de Planck en un análisis "independiente del CMB" | r_d libre, prior plano [130, 180] Mpc, marginalizado |
+| Fondo del ajuste: Om*(1+z)^3 con vacío variable → ∇_μT^μν ≠ 0 | Integración de la conservación (RK4 + raíz cuadrática exacta de la cerradura), verificada contra `dvch_camb_background.py` (diferencia < 3e-8) |
+| chi2_w0wa.py con χ² escritos a mano | Lee `dvch_late_time_fit_summary.csv` |
+| cmb_npoint_check.py con n=0.47, β=1.04 duros | Lee el best-fit tardío del CSV automáticamente |
+| Limpieza | Borrados: workflow Alibaba, `launch_widebeta.sh` (force=True), `env.sh` (rutas personales; ahora solo local), `DVCHNotes.bib` (vacío), `DVCH_CONTEXTO_SESION.md` (obsoleta), `camb_dvch_model.f90` (duplica `camb_patch/DVCHModel.f90`), `dvch_joint_realdata_fit.py` (etapa anterior con datos simulados), `dvch_planck_chain_diagnostics.csv` (cadenas de prueba presentadas como producción), archivos `.broken`/`.bak`/vacíos |
 
-Δχ² = +0.96 → p ≈ 0.62 → **el CMB no distingue los modelos**; ΛCDM
-levemente preferido por parsimonia (ΔAIC = +5.0). DVCH es **compatible**
-con el CMB (no rechazado).
+Tests: **24** (antes 21). Cubren además los datos corregidos (DESI, CC) y
+la equivalencia fondo-del-ajuste ↔ `dvch_camb_background.py`.
 
-Posterior del CMB (con prior ensanchado):
-- **n = 0.0615 [0.026, 0.13]** (68%); n > 0.45 en el **0.08%** de las muestras
-- **β = 1.01 [0.36, 1.65]** → la interacción CDM-vacío es **detectada** en
-  el CMB (~2σ), con n pequeño
-- H0 = 66.97 (best-fit), ombh2 = 0.02233, omch2 = 0.12085, ns = 0.9637,
-  tau = 0.0589
+---
 
-### 2.2 Expansión tardía — Pantheon+ + DESI DR1 BAO + CC (reales)
-Datos: Pantheon+ SH0ES 1701 SNe (covarianza STAT+SYS completa) en
-`realdata/`, DESI DR1 BAO (6 puntos DM/rd oficiales), CC Moresco+2016 (33).
+## 3. RESULTADOS CIENTÍFICOS (datos reales corregidos)
 
-MCMC emcee, 52.800 muestras por modelo; evidencia vía dynesty (nested):
+### 3.1 Expansión tardía — Pantheon+ (1580) + DESI DR1 (12) + CC (31)
+MCMC emcee (24 walkers × 3000 pasos, 52 800 muestras por modelo),
+χ²_min por Nelder-Mead multi-start. `dvch_vs_lcdm_real.py` →
+
+| Modelo | χ²_min | params | Mejor ajuste |
+|---|---|---|---|
+| ΛCDM | 1416.51 | 4 (Om,H0,M,rd) | Om=0.3108, H0=68.54, M=−19.40, rd=146.8 |
+| w0waCDM | 1413.16 | 6 | w0=−0.878, wa=−0.441, rd=147.1 |
+| DVCH | 1412.91 | 6 (Om,H0,M,n,beta,rd) | Om=0.3804, H0=68.02, n=0.423, beta=0.526, rd=147.0 |
+
+**Δχ² (DVCH − ΛCDM) = −3.60** con 2 params extra →
+**ΔAIC = +0.40, ΔBIC = +11.2** → *sin preferencia significativa por DVCH*.
+DVCH y w0waCDM empatan (diferencia 0.25).
+
+Posteriores DVCH (mediana, 68%):
+Om = 0.3804 (+0.025/−0.025), H0 = 68.08, M = −19.406,
+**n = 0.5175 (+0.103/−0.167)** (n=0 está en el borde del prior:
+**no** es una exclusión de ΛCDM),
+**beta = 1.104 (+0.63/−0.72)** (cubre casi todo el prior: **no** hay
+detección de β), rd = 146.9 (+3.6/−3.3).
+
+Evidencia (dynesty, 200 live points, rslice, pool de 10 procesos):
+`bayes_factor_real.py` → `dvch_evidence_summary.csv`:
 
 | Modelo | log Z |
 |---|---|
-| ΛCDM | −928.09 ± 0.27 |
-| w0waCDM (control) | −920.31 ± 0.31 |
-| **DVCH** | **−917.57 ± 0.29** |
+| ΛCDM | −722.32 ± 0.34 |
+| w0waCDM (control) | −725.47 ± 0.38 |
+| DVCH | −722.50 ± 0.35 |
 
-- **Δlog Z (DVCH − ΛCDM) = +10.53 ± 0.40** → evidencia **muy fuerte** a favor.
-- **Δlog Z (DVCH − w0waCDM) = +2.79 ± 0.42** → supera al modelo estándar
-  de energía oscura evolutiva.
+- **Δln Z (DVCH − ΛCDM) = −0.18 ± 0.49** → evidencia nula (ningún modelo
+  preferido).
+- Δln Z (DVCH − w0waCDM) = +2.97, de los cuales +2.32 son el término de
+  Occam (mayor volumen de prior de w0wa); la parte debida al ajuste es
+  +0.65, consistente con cero.
 
-Posteriores (expansión):
-- Om = 0.2582 ± 0.0212, H0 = 68.46 ± 0.67
-- **n = 0.4959 ± 0.092** (ΛCDM excluido a >5σ)
-- **β = 1.13 ± 0.63**
+**Conclusión:** el resultado central anterior (Δln Z = +10.53, "muy
+fuerte", n = 0.50 ± 0.09, "ΛCDM excluido a >5σ") **no se sostiene** y fue
+retirado del paper.
 
-### 2.3 Tensión CMB vs expansión (el resultado principal)
-Forzando n=0.47, β=1.04 en el CMB (reajustando cosmología+nuisance):
-χ² = 2784.11 → **Δχ² ≈ +15.8 (~3.9σ)** respecto a ΛCDM.
+### 3.2 Diagnósticos del mejor ajuste real (`dvch_realdata_diagnostics.py`)
 
-**Conclusión:** tensión **real y cuantificada** entre la expansión (quiere
-n ≈ 0.5) y el CMB (quiere n ≈ 0.06). Físicamente interpretable: una
-interacción que crece con el tiempo es débil a altos z (recombinación) y
-fuerte a bajos z (hoy) — la huella es máxima en la expansión reciente.
+Con Om=0.3804, n=0.5175, β=1.1036:
+- z_t (DVCH) = 0.70925, z_t (ΛCDM) = 0.48203, Δz_t = +0.227
+- **Q̃ cambia de signo** en 0 ≤ z ≤ 2: min −0.1185, max +0.5719
+  → las afirmaciones "Q̃ < 0 siempre" y "w_eff > −1" se derivaban del
+  régimen βE² ≪ 1; en el mejor ajuste β ≈ 1.1 → βE² > 1 hoy.
+  (Reportado honestamente en el paper, Tabla realdata_diagnostics.)
+
+### 3.3 Planck 2018 — PROVISIONAL, pendiente de repetir
+La corrida existente (Cobaya + CAMB parcheado, 26 params) tiene tres
+problemas que el paper ahora declara explícitamente:
+1. El sector nuisance **no** es el oficial: A_cib_217, A_sz, ps_A_*,
+   ksz_norm, xi_sz_cib y A_planck están FIJOS (valores de check_param),
+   no muestreados con priors oficiales. k_LCDM=24 / k_DVCH=26 reflejan
+   esa configuración.
+2. Los bloques low-ℓ (commander), low-ℓ EE (simall) y lensing **sí**
+   estaban incluidos (env.sh los define y `dvch_cobaya_planck.py` los
+   suma). El χ² ≈ 2768 corresponde a TTTEEE+lowl+lowE. La afirmación
+   "solo high-ℓ" era falsa y se corrigió.
+3. El mínimo del modelo anidado (DVCH) **nunca** se re-optimizó: el
+   Δχ² = +0.96 es un límite de la cadena, no un best-fit, y el LRT/p
+   ≈ 0.62 no era interpretable. `model_comparison.py` ahora lo dice.
+
+**HALLAZGO CRÍTICO (2026-11-06): el CAMB parcheado NO cambia la
+expansión de fondo.** El parche (`camb_patch/README_patch.md`) solo
+añade un término a la ecuación de perturbación del CDM. Verificado con
+`dvch_camb_patch_check.py` (corrido en WSL2 con el CAMB parcheado real):
+H(z) es **bit idéntico** a ΛCDM (desviación 0.0 en 0 ≤ z ≤ 3) para
+(n, β) = (0.42, 0.53), (0.52, 1.10) y (0.8, 1.5), y la edad tampoco
+cambia. Por lo tanto:
+- El análisis de Planck existente compara ΛCDM-fondo + fuente de
+  perturbación DVCH, no la cerradura de fondo del paper.
+- Cualquier "tensión CMB vs expansión" medida con ese CAMB es un efecto
+  del sector de perturbación, no del fondo.
+- Aún **no existe** ninguna confrontación CMB del cierre DVCH real.
+
+Además: la corrida se detuvo en R−1 = 0.03 (el paper pide < 0.01), las
+cadenas de producción no están en el repo (solo `chains/chain_summary.csv`
+reducido).
+
+**Tensión CMB vs expansión:** el número anterior (≈3.9σ forzando n=0.47)
+está **retirado**: el punto forzado venía del ajuste con datos erróneos,
+15.8/2 dof son 3.6σ (no 3.9) y debe medirse contra el mínimo de DVCH.
+`cmb_npoint_check.py` lee ahora el best-fit tardío del CSV.
+
+**MINIMIZADORES OFICIALES COMPLETADOS (2026-11-06/07).** Con el CAMB
+**parcheado de fondo** (conservacion CDM-vacio integrada) y el sector
+nuisance oficial libre (priors de cobaya planck_2018_highl_plik),
+cobaya BOBYQA, dos multi-starts cada uno (`launch_dvch_free_minimize.sh`,
+`launch_lcdm_minimize.sh`):
+
+| Modelo | chi2_min (likelihood) |
+|---|---|
+| LCDM (n=0, beta=0) | 2766.81 |
+| DVCH (n, beta libres) | 2780.85 (n=0.097, beta=0.101) |
+
+**dChi2 = +14.04 (2 dof) -> p ~ 9e-4: el CMB EXCLUYE la interaccion**
+(n=0, que recuperaria LCDM exactamente, esta fuera del prior
+[0.01, 0.99]). AIC +18.0, BIC +31.9.
+
+**Perfil de punto fijo chi2(n, beta)** (`cmb_npoint_profile.py` ->
+`dvch_cmb_npoint_profile.csv`): a la cosmologia del mejor ajuste LCDM el
+coste crece brutalmente con n y beta:
+- beta=0: n=0.01 -> +185, n=0.02 -> +761, n=0.05 -> +5.2e3, n=0.2 -> +1.3e5
+- con beta solo: n=0, beta=0.53 -> +4.1e4
+- mediana tardia (n=0.518, beta=1.104): **dChi2 ~ +5.9e4**
+
+Motivo fisico: la misma no-conservacion que permite mover la historia de
+expansion a nivel tardio cambia la distancia angular a la ultima
+dispersion, que Planck mide a 1e-3.
+
+### 3.4 Lo que NO esta hecho
+- MCMC de Planck con el CAMB parcheado de fondo + nuisance oficial libre
+  hasta R−1 < 0.01 y cadenas distribuidas (los minimizadores si estan
+  hechos; el runner ya esta corregido).
+- Tratamiento perturbativo completo de la interaccion (delta Q invariante
+  de gauge, velocidad del sonido del vacio) en la jerarquia
+  foton-barion: sigue siendo la clausura de sector material del paper.
+- Ajuste conjunto CMB + tardio.
 
 ---
 
-## 3. CÓMO SE LLEGA AQUÍ (pipelines, archivos esenciales)
+## 4. CÓMO SE LLEGA AQUÍ (pipelines)
 
 | Qué | Archivos |
 |---|---|
-| MCMC CMB (cobaya, DVCH) | `run_dvch_cobaya_full_highl.py`, `dvch_cobaya_planck.py`, `dvch_cobaya_short.yaml`, `dvch_cobaya_wideprior.yaml` |
-| ΛCDM fijo (control CMB) | `run_dvch_cobaya_lcdm.py` |
-| CMB: best-fit 2 modelos | `launch_lcdm_minimize.sh` (ΛCDM), `launch_n47_minimize.sh` (n=0.47) |
-| CMB: tensión | `cmb_npoint_check.py` |
-| MCMC expansión | `dvch_vs_lcdm_real.py` |
-| Evidencia Bayesiana | `bayes_factor_real.py`, `w0wa_control.py` |
-| χ² desde cadenas | `chi2_dvch.py` |
-| R-1 diagnóstico | `r1_analysis.py`, `r1_final.py`, `bootstrap_r1.py`, `posterior_wideprior.py` |
-| Datos reales | `realdata/` (Pantheon+ .dat + .cov, DESI DR1) |
-| Lanzadores | `launch_wideprior.sh`, `launch_widebeta_5chains.sh`, `launch_widebeta_resume*.sh` |
-| Watchdog (checkpoints 60 s) | `checkpoint_watchdog.sh` |
+| MCMC + χ²_min tardío | `dvch_vs_lcdm_real.py` → `dvch_late_time_fit_summary.csv` |
+| Evidencia Bayesiana | `bayes_factor_real.py` → `dvch_evidence_summary.csv` |
+| Control w0waCDM | `w0wa_control.py`, `chi2_w0wa.py` |
+| Diagnósticos best-fit | `dvch_realdata_diagnostics.py` → `dvch_realdata_diagnostics.csv` |
+| Figuras del paper | `make_result_figures.py` (lee los CSV, sin rutas absolutas) |
+| MCMC CMB (provisional) | `run_dvch_cobaya_full_highl.py`, `dvch_cobaya_planck.py` |
+| Tensión CMB (pendiente) | `cmb_npoint_check.py`, `launch_lcdm_minimize.sh`, `launch_n47_minimize.sh` |
+| Datos reales | `realdata/` (Pantheon+ .dat + .cov, `desi_dr1.py`) |
+| Tests | `tests/test_dvch.py` (24 tests) |
 
-Núcleo de física (lo usa todo): `dvch_camb_background.py`,
-`dvch_camb_crosscheck.py`, `dvch_perturbations.py`, `dvch_growth_diagnostic.py`.
+Núcleo de física: `dvch_camb_background.py` (referencia, solve_ivp),
+`dvch_vs_lcdm_real.py` (RK4 idéntico, para el ajuste),
+`dvch_perturbations.py`, `dvch_growth_diagnostic.py`.
 
-Manipulación de cadenas (fórmulas y algoritmos): `dvch_full_mcmc_pipeline.py`,
-`dvch_mcmc_convergence.py`, `dvch_mcmc_extended_convergence.py`.
+Paper: `DVCH.tex` + `refs.bib` (DVCHNotes.bib borrado, estaba vacío).
 
-Tests: `tests/test_dvch.py` (17 tests unittest).
+## 5. ENTORNO
 
-Paper: `DVCH.tex` + `DVCH.pdf` + `refs.bib` + `DVCHNotes.bib`.
+- Windows + WSL2 Ubuntu; repo en `D:\DVCH13-1`.
+- `env.sh` (no trackeado, en .gitignore) define CAMB parcheado, clik egg,
+  datos Planck, LD_LIBRARY_PATH. Plantilla: `env.sh.example`.
+- CAMB parcheado compilado en `DVCH-external/CAMB-master` (params
+  `DVCH_flag`, `DVCH_n`, `DVCH_beta`). Datos Planck `.clik` en
+  `DVCH-external/planck-data` (licencia).
+- Python: `.venv` con numpy/scipy/pandas/emcee/dynesty/cobaya/corner.
 
----
+## 6. GIT
 
-## 4. ENTORNO
-
-- Windows + WSL2 Ubuntu; repo en `D:\DVCH13-1` (`/mnt/d/DVCH13-1`).
-- `env.sh` define CAMB parcheado, clik egg, datos Planck, LD_LIBRARY_PATH.
-- CAMB parcheado compilado en `DVCH-external/CAMB-master` (params `DVCH_flag`,
-  `DVCH_n`, `DVCH_beta`).
-- Datos Planck `.clik` en `DVCH-external/planck-data` (licencia).
-- 12 cores, 8 GB RAM → **máximo 5 cadenas** (~790 MB / ~2 cores cada una).
-
-## 5. GIT
-
-- Remoto: `https://github.com/elpanadero321/DVCH13.git` (rama `main`).
-- Credencial guardada en `~/.git-credentials` (token classic, permiso 600).
-- `_archive/`, `ckpt_backup/`, `.ckpt_tmp.*/` ignorados para siempre.
-- **No usar** `launch_widebeta.sh`: borra cadenas con `force=True`.
+- Remoto: `https://github.com/elpanadero321/DVCH13.git`.
+- Rama de trabajo de esta corrección: `genspark_ai_developer`.
+- `launch_widebeta.sh` borrado (borraba cadenas con force=True).
