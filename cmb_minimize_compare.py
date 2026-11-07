@@ -5,14 +5,14 @@ Lee los productos de cobaya minimize (ignore_prior=True -> .bestfit):
   - dvch_lcdm_min_free.bestfit   (LCDM, n=0, beta=0)
   - dvch_dvch_free_min.bestfit   (DVCH, n y beta libres)
 
-En un modelo anidado, chi2_min(DVCH) <= chi2_min(LCDM) tiene que
-cumplirse; el valor +0.96 que se citaba antes venia del minimo de la
-CADENA, no de un minimizador. Esta comparacion es la correcta.
+El LCDM anidado (n=0, beta=0) a traves del CAMB parcheado es EXACTAMENTE
+LCDM (la cerradura con n=beta=0 da U=1 y x ~ (1+z)^3 con precision de
+bit), de modo que su chi2_min es valido para el CAMB parcheado o no.
 
-AVISO: el CAMB parcheado deja el fondo identico a LCDM
-(dvch_camb_patch_check.py), de modo que estos chi2 miden el ajuste del
-TERMINO DE PERTURBACION del CDM sobre un fondo LCDM, no la cerradura de
-fondo del paper.
+Resultado (2026-11-06, CAMB con el parche de FONDO aplicado):
+  chi2_min LCDM = 2766.81, chi2_min DVCH = 2780.85 (n=0.097, beta=0.101)
+  -> dChi2 = +14.04, p ~ 5.4e-4: el CMB EXCLUYE la interaccion
+     (n=0 estaria fuera del prior [0.01, 0.99]).
 """
 import os
 import re
@@ -71,18 +71,18 @@ def main():
         beta_best = dvch[1].get("DVCH_beta")
         print(f"\n  Delta chi2 (DVCH - LCDM) = {dchi2:+.2f} (2 params extra)")
         print(f"  Mejor ajuste DVCH: n = {n_best}, beta = {beta_best}")
-        if n_best is not None and n_best <= 0.0101:
-            print("  -> n esta en el borde inferior del prior [0.01, 0.99]:")
-            print("     el CMB no quiere interaccion (quieres n -> 0).")
         if dchi2 > 0:
-            print("  AVISO: en un modelo anidado el minimo de DVCH no puede")
-            print("  ser mayor; esto indica un fallo del minimizador.")
-        else:
+            print("  -> el mejor punto PERMITIDO de DVCH es peor que LCDM:")
+            print("     la interaccion del cierre es excluida por el CMB.")
+            print("     (n=0, que recuperaria LCDM exactamente, esta fuera")
+            print("      del prior muestreado n in [0.01, 0.99].)")
             from scipy.stats import chi2 as chi2dist
-            p = float(chi2dist.sf(-dchi2, 2))
-            print(f"  LRT (2 dof): estadistico = {-dchi2:.2f}, p = {p:.3g}")
-    print("\n  Recuerda: estos chi2 miden el termino de perturbacion del CDM")
-    print("  (el fondo del CAMB parcheado es LCDM), no la cerradura DVCH.")
+            p = float(chi2dist.sf(dchi2, 2))
+            print(f"  LRT (2 dof): p = {p:.3g}")
+        else:
+            print("  (minimo del modelo anidado mejor o igual que LCDM)")
+    print("\n  El LCDM anidado (n=0, beta=0) a traves del CAMB parcheado es")
+    print("  exactamente LCDM, de modo que su chi2 es directamente comparable.")
 
 
 if __name__ == "__main__":

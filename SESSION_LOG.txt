@@ -137,35 +137,40 @@ está **retirado**: el punto forzado venía del ajuste con datos erróneos,
 15.8/2 dof son 3.6σ (no 3.9) y debe medirse contra el mínimo de DVCH.
 `cmb_npoint_check.py` lee ahora el best-fit tardío del CSV.
 
-**MINIMIZADORES OFICIALES COMPLETADOS (2026-11-06).** Con el sector
-nuisance oficial libre (priors de cobaya planck_2018_highl_plik) y
-`ignore_prior=true`, cobaya BOBYQA, dos multi-starts cada uno
-(`launch_dvch_free_minimize.sh`, `launch_lcdm_minimize.sh` arrancando
-desde `dvch_lcdm_min.minimum`):
+**MINIMIZADORES OFICIALES COMPLETADOS (2026-11-06/07).** Con el CAMB
+**parcheado de fondo** (conservacion CDM-vacio integrada) y el sector
+nuisance oficial libre (priors de cobaya planck_2018_highl_plik),
+cobaya BOBYQA, dos multi-starts cada uno (`launch_dvch_free_minimize.sh`,
+`launch_lcdm_minimize.sh`):
 
 | Modelo | chi2_min (likelihood) |
 |---|---|
-| LCDM | 2766.81 |
-| DVCH (n, β libres) | 2766.10 (n=0.01 **en el borde del prior**, β=0.37) |
+| LCDM (n=0, beta=0) | 2766.81 |
+| DVCH (n, beta libres) | 2780.85 (n=0.097, beta=0.101) |
 
-**Δχ² = −0.71 (2 dof) → p ≈ 0.70**: el CMB no mejora con la
-interacción. Esto resuelve el problema de contabilidad (el +0.96
-anterior era un límite de la cadena, no un mínimo). Ver
-`cmb_minimize_compare.py` y `model_comparison.py`.
+**dChi2 = +14.04 (2 dof) -> p ~ 9e-4: el CMB EXCLUYE la interaccion**
+(n=0, que recuperaria LCDM exactamente, esta fuera del prior
+[0.01, 0.99]). AIC +18.0, BIC +31.9.
 
-**Perfil de punto fijo χ²(n, β)** (`cmb_npoint_profile.py` →
-`dvch_cmb_npoint_profile.csv`): a la cosmología+nuisance del mejor ajuste
-ΛCDM, el coste crece suavemente con n y casi no depende de β:
-n=0.1 → +3.8, n=0.2 → +8.5, n=0.5175 → +26, n=0.99 → +45.
+**Perfil de punto fijo chi2(n, beta)** (`cmb_npoint_profile.py` ->
+`dvch_cmb_npoint_profile.csv`): a la cosmologia del mejor ajuste LCDM el
+coste crece brutalmente con n y beta:
+- beta=0: n=0.01 -> +185, n=0.02 -> +761, n=0.05 -> +5.2e3, n=0.2 -> +1.3e5
+- con beta solo: n=0, beta=0.53 -> +4.1e4
+- mediana tardia (n=0.518, beta=1.104): **dChi2 ~ +5.9e4**
 
-### 3.4 Lo que NO está hecho
-- **Parchear el sector de background de CAMB** para integrar la
-  conservación CDM-vacío (trabajo Fortran en `dtauda`/DarkEnergy; el
-  parche actual no lo hace). Sin esto no hay análisis CMB del modelo.
-- MCMC de Planck con nuisance oficial libre hasta R−1 < 0.01 y cadenas
-  distribuidas (el runner ya está corregido; los minimizadores sí están
-  hechos).
-- Ajuste conjunto CMB + tardío.
+Motivo fisico: la misma no-conservacion que permite mover la historia de
+expansion a nivel tardio cambia la distancia angular a la ultima
+dispersion, que Planck mide a 1e-3.
+
+### 3.4 Lo que NO esta hecho
+- MCMC de Planck con el CAMB parcheado de fondo + nuisance oficial libre
+  hasta R−1 < 0.01 y cadenas distribuidas (los minimizadores si estan
+  hechos; el runner ya esta corregido).
+- Tratamiento perturbativo completo de la interaccion (delta Q invariante
+  de gauge, velocidad del sonido del vacio) en la jerarquia
+  foton-barion: sigue siendo la clausura de sector material del paper.
+- Ajuste conjunto CMB + tardio.
 
 ---
 
