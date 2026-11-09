@@ -19,10 +19,11 @@ class DVCHNumericalTests(unittest.TestCase):
         cls.preflight = importlib.import_module("dvch_planck_preflight")
         cls.robustness = importlib.import_module("dvch_robustness_scan")
         cls.growth = importlib.import_module("dvch_growth_diagnostic")
-        cls.joint_fit = importlib.import_module("dvch_joint_realdata_fit")
         cls.camb_background = importlib.import_module("dvch_camb_background")
         cls.perturbations = importlib.import_module("dvch_perturbations")
         cls.double_slit = importlib.import_module("dvch_double_slit")
+        cls.late_time = importlib.import_module("dvch_vs_lcdm_real")
+        cls.desi_dr1 = importlib.import_module("realdata.desi_dr1")
 
     def test_fiducial_background_is_normalized_at_zero_redshift(self):
         e2, matter, vacuum = self.colab.E2_dvch(0.0)
@@ -119,13 +120,14 @@ class DVCHNumericalTests(unittest.TestCase):
         required = {"z", "E", "Omega_m", "Omega_Lambda", "Qtilde"}
         self.assertTrue(required.issubset(df.columns))
 
-    def test_joint_fit_distance_modulus_is_finite(self):
-        mu = self.joint_fit.distance_modulus(
-            0.5, self.joint_fit.E2_lcdm, [0.30, 69.03]
-        )
-
-        self.assertTrue(np.isfinite(mu))
-        self.assertGreater(mu, 0.0)
+    def test_late_time_chi2_is_finite_at_lcdm_point(self):
+        # El modulo central de datos reales debe dar chi2 finito en un
+        # punto fisico de LCDM (verifica CC y BAO con las correcciones).
+        chi2_cc = self.late_time.chi2_cc(0.31, 68.5, "lcdm")
+        chi2_bao = self.late_time.chi2_bao(0.31, 68.5, 147.0, "lcdm")
+        for value in (chi2_cc, chi2_bao):
+            self.assertTrue(np.isfinite(value))
+            self.assertLess(value, 1e9)
 
     def test_planck_preflight_records_missing_external_components(self):
         self.preflight.RESULTS.clear()
@@ -176,7 +178,7 @@ class DVCHNumericalTests(unittest.TestCase):
         self.assertEqual(initial["delta_lambda"], 0.0)
 
     def test_camb_fortran_module_contains_compiled_closure(self):
-        source = (ROOT / "camb_dvch_model.f90").read_text(encoding="utf-8")
+        source = (ROOT / "camb_patch" / "DVCHModel.f90").read_text(encoding="utf-8")
         for marker in (
             "module DVCHModel",
             "subroutine DVCHInteraction",
@@ -184,6 +186,62 @@ class DVCHNumericalTests(unittest.TestCase):
             "c_lambda*0._dl",
         ):
             self.assertIn(marker, source)
+
+    # --------------------------------------------------------------
+    # Tests nuevos (2026-11-05) — dataset y fisica corregidos:
+    #   1. CC: 31 puntos, errors corregidos, sin puntos BAO
+    #   2. DESI DR1: Tabla 1 oficial con D_M/D_H correlacionados y QSO
+    #   3. El fondo DVCH del ajuste coincide con dvch_camb_background
+    # --------------------------------------------------------------
+
+    def test_cosmic_chronometers_are_the_31_point_compilation(self):
+        z = self.late_time.cc_data[:, 0]
+        self.assertEqual(len(self.late_time.cc_data), 31)
+        # z=0.593 (Moresco+2012): 103.8 +/- 12.5, no 68.6 +/- 8.0
+        row = self.late_time.cc_data[np.isclose(z, 0.593)][0]
+        self.assertAlmostEqual(row[1], 103.8, places=1)
+        self.assertAlmostEqual(row[2], 12.5, places=1)
+        # z=0.352: sigma 14.0 (no 8.4)
+        row = self.late_time.cc_data[np.isclose(z, 0.352)][0]
+        self.assertAlmostEqual(row[2], 14.0, places=1)
+        # los puntos BAO z=0.44 (WiggleZ) y z=2.34 (BOSS LyA) no son CC
+        self.assertFalse(np.any(np.isclose(z, 0.44)))
+        self.assertFalse(np.any(np.isclose(z, 2.34)))
+
+    def test_desi_dr1_matches_official_table(self):
+        entries = self.desi_dr1.DESI_DR1
+        self.assertEqual(len(entries), 7)
+        self.assertEqual(self.desi_dr1.N_OBS, 12)
+        by_tracer = {t: (zz, obs, r) for t, zz, obs, r in entries}
+        # BGS y QSO: solo D_V/r_d (isotropico)
+        self.assertEqual(by_tracer["BGS"][1][0][0], "DV_rd")
+        self.assertAlmostEqual(by_tracer["BGS"][1][0][1], 7.93, places=2)
+        self.assertEqual(by_tracer["QSO"][1][0][0], "DV_rd")
+        self.assertAlmostEqual(by_tracer["QSO"][1][0][1], 26.07, places=2)
+        # LRG2: D_M/r_d y D_H/r_d correlacionados (no 16.17/-21 anteriores)
+        obs = {kind: (v, s) for kind, v, s in by_tracer["LRG2"][1]}
+        self.assertAlmostEqual(obs["DM_rd"][0], 16.85, places=2)
+        self.assertAlmostEqual(obs["DH_rd"][0], 20.08, places=2)
+        self.assertAlmostEqual(by_tracer["LRG2"][2], -0.420, places=3)
+        # LyA: 39.71 +/- 0.94, D_H/r_d = 8.52 +/- 0.17, r = -0.477
+        obs = {kind: (v, s) for kind, v, s in by_tracer["LyaQSO"][1]}
+        self.assertAlmostEqual(obs["DM_rd"][0], 39.71, places=2)
+        self.assertAlmostEqual(obs["DH_rd"][0], 8.52, places=2)
+        self.assertAlmostEqual(by_tracer["LyaQSO"][2], -0.477, places=3)
+
+    def test_dvch_fit_background_matches_camb_provider(self):
+        # El ajuste usa la conservacion CDM-vacio, igual que
+        # dvch_camb_background.py (modulo de referencia, solve_ivp).
+        z = np.linspace(0.0, 2.0, 21)
+        params = self.camb_background.DVCHParameters(
+            omega_m0=0.30, n=0.2, beta=1.0e-4, H0=69.03)
+        reference = self.camb_background.background(z, params)
+        fitted = self.late_time.E2_dvch(z, 0.30, 0.2, 1.0e-4)
+        self.assertTrue(np.allclose(fitted, reference[:, 1], atol=1e-5))
+        # normalizacion E(0) = 1 tambien con beta grande
+        self.assertAlmostEqual(
+            float(self.late_time.E2_dvch(0.0, 0.26, 0.5, 1.1)), 1.0,
+            places=6)
 
     # --------------------------------------------------------------
     # Tests nuevos (2026-10-04) — cubren puntos ciegos detectados:

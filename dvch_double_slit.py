@@ -78,7 +78,7 @@ H0_KMS = 67.27           # km/s/Mpc
 OMEGA_M = 0.3151
 OMEGA_L = 1.0 - OMEGA_M
 N_CMB = 0.063            # DVCH_n, CMB-preliminary median
-N_LATE = 0.4959            # DVCH_n, late-time CC+BAO median
+N_LATE = 0.5175            # DVCH_n, late-time median (datos corregidos)
 BETA_CMB = 5.0e-4        # DVCH_beta, CMB-preliminary median
 
 H0 = H0_KMS * 1.0e3 / MPC                # s^-1
