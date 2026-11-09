@@ -25,7 +25,20 @@ def closure(x, z, om_m0, om_l0, om_r0, n, beta):
     B = rad + om_m0 * x
     bq = 1.0 - beta * B
     e2 = (-bq + np.sqrt(bq * bq + 4.0 * beta * (A + B))) / (2.0 * beta)
-    return e2, A / (1.0 + beta * e2)
+    vac = A / (1.0 + beta * e2)
+    # Variante de desacoplamiento temprano (env: DVCH_ZC, DVCH_P):
+    # vac = 1 + S*(vac-1), cerradura cuadratica exacta.
+    zc = float(os.environ.get("DVCH_ZC", "1e6"))
+    psw = float(os.environ.get("DVCH_P", "10"))
+    z = float(z)
+    S = 1.0 / (1.0 + ((1.0 + z) / (1.0 + zc)) ** psw)
+    if S < 1.0 - 1e-14:
+        C = rad + om_m0 * x + om_l0 * (1.0 - S)
+        K = S * A
+        bq = 1.0 - beta * C
+        e2 = (-bq + np.sqrt(max(bq * bq + 4.0 * beta * (C + K), 0.0))) / (2.0 * beta)
+        vac = om_l0 + S * (A / (1.0 + beta * e2) - om_l0)
+    return e2, vac
 
 
 def reference_e2(zs, om_m0, om_l0, om_r0, n, beta):
@@ -34,6 +47,12 @@ def reference_e2(zs, om_m0, om_l0, om_r0, n, beta):
         e2, vac = closure(x, z, om_m0, om_l0, om_r0, n, beta)
         dvac_dm = vac * n / m
         dvac_de2 = -om_l0 * x ** n * (1.0 + beta) * beta / (1.0 + beta * e2) ** 2
+        # switch: la desviacion del vacio (y sus derivadas) escala por S
+        zc = float(os.environ.get("DVCH_ZC", "1e6"))
+        psw = float(os.environ.get("DVCH_P", "10"))
+        Sv = 1.0 / (1.0 + ((1.0 + z) / (1.0 + zc)) ** psw)
+        dvac_dm = Sv * dvac_dm
+        dvac_de2 = Sv * dvac_de2
         denom = 1.0 - dvac_de2
         coeff = (1.0 + dvac_dm) * (1.0 + dvac_de2 / denom)
         explicit = 4.0 * om_r0 * (1.0 + z) ** 3

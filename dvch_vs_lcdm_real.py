@@ -132,21 +132,41 @@ def _cumulative_integral(e2_grid):
 #     OL_z = OL * (Om_z/Om)^n * (1+b) / (1 + b*E2),   E2 = rad + Om_z + OL_z
 # se resuelve de forma exacta como raiz positiva de una cuadratica
 # (equivalente a la iteracion de punto fijo de dvch_camb_background.py).
+def _switch_S(z):
+    """Factor de desacoplamiento temprano (env DVCH_ZC/DVCH_P).
+    S=1 por defecto (zc enorme): cerradura original sin cambios."""
+    zc = float(os.environ.get("DVCH_ZC", "1e6"))
+    p = float(os.environ.get("DVCH_P", "10"))
+    return 1.0 / (1.0 + ((1.0 + z) / (1.0 + zc)) ** p)
+
+
 def _dvch_closure(matter, z, Om, n, beta, OL):
     """Dado matter, devuelve (E2, OL_z) autoconsistentes."""
     rad = Omega_r0 * (1.0 + z) ** 4
     base = OL * (matter / Om) ** n
     if beta <= 0.0:
         vacuum = base
-        return rad + matter + vacuum, vacuum
-    A = base * (1.0 + beta)
-    B = rad + matter
-    b = 1.0 - beta * B
-    disc = b * b + 4.0 * beta * (A + B)
-    if disc < 0.0:
-        return np.nan, np.nan
-    e2 = (-b + math.sqrt(disc)) / (2.0 * beta)
-    vacuum = A / (1.0 + beta * e2)
+        e2 = rad + matter + vacuum
+    else:
+        A = base * (1.0 + beta)
+        B = rad + matter
+        b = 1.0 - beta * B
+        disc = b * b + 4.0 * beta * (A + B)
+        if disc < 0.0:
+            return np.nan, np.nan
+        e2 = (-b + math.sqrt(disc)) / (2.0 * beta)
+        vacuum = A / (1.0 + beta * e2)
+    S = _switch_S(z)
+    if S < 1.0 - 1e-14:
+        # Variante de desacoplamiento: vac = OL + S*(vac_raw - OL),
+        # cerradura cuadratica exacta (C = rad+matter+OL(1-S), K = S*A).
+        A = base * (1.0 + beta)
+        C = rad + matter + OL * (1.0 - S)
+        K = S * A
+        b = 1.0 - beta * C
+        disc = b * b + 4.0 * beta * (C + K)
+        e2 = C + K if disc < 0.0 else (-b + math.sqrt(disc)) / (2.0 * beta)
+        vacuum = OL + S * (A / (1.0 + beta * e2) - OL)
     return e2, vacuum
 
 
@@ -160,6 +180,9 @@ def _dmatter_dz(z, matter, Om, n, beta, OL):
         -OL * (matter / Om) ** n * (1.0 + beta) * beta
         / (1.0 + beta * e2) ** 2
     )
+    S = _switch_S(z)
+    dvac_dm = S * dvac_dm
+    dvac_de2 = S * dvac_de2
     denom = 1.0 - dvac_de2
     coefficient = (1.0 + dvac_dm) * (1.0 + dvac_de2 / denom)
     explicit = 4.0 * Omega_r0 * (1.0 + z) ** 3

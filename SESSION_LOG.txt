@@ -209,3 +209,122 @@ Paper: `DVCH.tex` + `refs.bib` (DVCHNotes.bib borrado, estaba vacío).
 - Remoto: `https://github.com/elpanadero321/DVCH13.git`.
 - Rama de trabajo de esta corrección: `genspark_ai_developer`.
 - `launch_widebeta.sh` borrado (borraba cadenas con force=True).
+
+## 7. DIAGNOSTICO ESTRUCTURAL FINAL (2026-11-07)
+
+Pregunta: ¿el fracaso del modelo es reparable (formula/hipotesis) o es una
+exclusion estructural? Ensayada la variante switch S(z)=1/(1+((1+z)/(1+z_c))^p)
+que desacopla el vacio del LCDM a z>z_c (en dvch_vs_lcdm_real.py y en el
+CAMB externo via env DVCH_ZC/DVCH_P; cerradura cuadratica exacta).
+
+Resultado trade-off (dvch_switch_tradeoff.csv, _cmb_tradeoff.sh):
+- z_c=1:  dchi2_late=-3.92 (n=0.324, beta=0.289, Om=0.379), dchi2_CMB=+5.4e4
+- z_c=1.5,2,5,inf: dchi2_late ~ -3.55..-3.60, dchi2_CMB +6.1e4..+6.8e4
+Ningun z_c rescata el CMB.
+
+Mecanismo (verificado: CAMB Fortran == referencia Python == integracion RK4
+propia hasta z=1100): la conservacion exacta CDM-vacio transfiere energia
+vacio->materia a tiempos tardios, de modo que rho_m a^3 NO es constante:
+x/(1+z)^3 se satura en un valor <1 para siempre (no se recupera):
+  Om=0.30 n=0.52 b=1.10 -> 0.707 (deficit -29%), H(z) -12..-15%, theta* -4.7%
+  Om=0.38 n=0.42 b=0.53 -> 0.832 (-17%)  [best-fit tardio]
+  Om=0.30 n=0.097 b=0.10 -> 0.987 (-1.3%) [best-fit del CMB]
+  Om=0.315 n=0.01 b=0.01 -> ~1.0
+El deficit escala con n y Om conjuntamente. El ajuste tardio (dchi2=-3.6)
+requiere el regimen con deficit 15-30%, que el CMB destruye (theta*, r_drag,
+era de materia: chi2 +1e4..1e5). Para conservar a^-3 hace falta n<0.1, que es
+exactamente donde la mejora tardia desaparece.
+
+Conclusion: la hipotesis (cerradura del vacio x^n con conservacion exacta)
+es estructuralmente incompatibile con el CMB; no es un bug ni un error de
+datos, y ninguna variante de desacoplamiento z_c>=1 lo resuelve. El undo
+unico donde el modelo sobrevive (n->0) es indistinguible de LCDM.
+
+Script de diagnostico: _diag_ode_wide.py (ODE hasta z=1100), _diag_cmb.py
+(espectros/parametros derivados CAMB), _diag_pathology.py (mapa de deficit).
+NOTA: _ZGRID en dvch_vs_lcdm_real.py solo llega a z=2.61 (alcance de los
+datos); usar _diag_ode_wide.py para z mayores.
+
+## 8. HIPOTESIS ALPHA (propuesta externa, 2026-11-08)
+
+Otra IA propuso una cerradura alternativa que evita el deficits fosilizado:
+
+  E2(a) = Or0*a^-4 + Om0*a^-3 + OL0 + alpha*(1-a)^2
+  rho_c(a) = Oc0*a^-3 + (2*alpha/3)*a*(1-a)     (CDM; bariones a^-3)
+  rho_L(a) = OL0 + (alpha/3)*(1-a)*(3-5*a)
+  Q = (2*alpha/3)*H*rho_crit0*a*(4-5a)   (cambia de signo en a=0.8, z=0.25)
+
+Archivos externos: D:\verificar_cierre_vacio.py + .json (CodeRabbit).
+
+Verificacion propia (alpha_model_fit.py, derivadas analiticas a mano):
+- Friedmann: |identidad-1| < 1e-14. OK
+- Conservacion exacta (rho_m,rho_L). OK
+- ratio CDM/(Oc*a^-3) -> 1 en a->0 y a->1: deficiencia NULA (desviacion
+  ~ a^4*(1-a), no fosilizada). dH/H(z=1100) ~ 8e-10. EL PROBLEMA
+  ESTRUCTURAL DE LA SECCION 7 ESTA REALMENTE ARREGLADO.
+
+Ajuste tardio (Pantheon+1580 + DESI DR1 12 obs + 31 CC, rd marginalizado,
+mismas likelihoods que el pipeline):
+  LCDM 1416.51 | alpha 1415.10 (alpha=0.597, Om=0.296, H0=68.2, rd=146.8)
+  DVCH 1412.91 | w0wa 1413.16
+  Delta chi2 = -1.41 (1 param extra); Delta AIC = +0.59; MCMC:
+  alpha = 0.607 +0.504 -0.505 (~1.2 sigma, marginal). NO supera a w0waCDM.
+
+Riesgos pendientes: perturbaciones (cierre delta_Q) y CMB. En el mejor
+ajuste: dH/H = +2.4% en z=1, densidad de CDM +13.0% en z=0.25
+(transferencia vacuum->materia sobre el crecimiento).
+
+Correccion (2026-11-08, verificada con CAMB ppf, _diag_alpha_cmb.py): la
+escala acustica NO esta a salvo. r_drag = int_{z_d}^inf c_s dz/H solo
+involucra z > z_drag ~ 1060 (donde el modelo es identico a LCDM); solo se
+mueve D_A* -> theta* sube +0.78% (alpha=0.597) a H0 fijado ~= 26 sigma
+para Planck (0.03%). El CMB obliga a compensar bajando H0 / subiendo Om.
+El fondo del modelo alpha equivale exactamente a DE desacoplada con
+w_eff(a) = -1 + 2*alpha*a(1-a)/(3(OL+alpha(1-a)^2)), w0 = -1 exacto, por
+lo que no puede llegar a w0wa (wa_eff ~ +0.57).
+
+Paso 0 (fondo, CAMB estandar ppf): lanzado - launch_alpha_lcdm_min.sh
+(control, alpha=0) y launch_alpha_free_min.sh (alpha libre), likelihood
+alpha_cobaya_planck.py. Smoke test: alpha=0 -> chi2=2772.92 (= LCDCM
+control), alpha=0.597 -> 3776 (Delta +1003 a cosmologia fija).
+Si Delta chi2 > +5 en el minimo conjunto, el modelo cae sin perturbaciones.
+
+Instrucciones completas para continuacion: INSTRUCCIONES_PARA_IA.md.
+
+Archivos: alpha_model_fit.py, dvch_alpha_fit.csv, dvch_alpha_chain.npy,
+dvch_w0wa_fit.csv (w0wa: 1413.16, w0=-0.878, wa=-0.441).
+
+## 9. PASO 0 COMPLETO (2026-11-08) — ajuste conjunto, CAMB estandar ppf
+
+Paso 0 de INSTRUCCIONES_PARA_IA.md: el fondo del modelo alpha es exactamente
+una DE desacoplada (rho_DE = OL + alpha*(1-a)^2), de modo que el ajuste se
+hace con CAMB ESTANDAR (sin el parche DVCH) en modo PPF (likelihoods
+alpha_cobaya_planck.py, run_alpha_cobaya.py, run_alpha_joint.py; nuisance
+oficial de plik LIBRE, minimize ignore_prior; 4 likelihoods: plik TTTEEE +
+commander TT + simall EE + smica lensing).
+
+Resultados (chi2_min, .bestfit.txt):
+  solo CMB     : LCDM 2761.50 | alpha 2759.90 (alpha=0.148, H0=66.7)
+  conjunto     : LCDM 4178.59 | alpha 4180.71 (alpha=-0.070, H0=68.09)
+    (conjunto = Planck + DESI DR1 BAO + Pantheon+ 1580 + 31 CC, misma pila)
+  solo tardio  : LCDM 1416.51 | alpha 1415.10 (alpha=0.597)
+
+Veredicto de fondo:
+  - El modelo alpha NO es excluido por el CMB (frente al +5.9e4 del DVCH
+    (n,beta), esto es un mundo nuevo: la compensacion H0/Om absorbe theta*).
+  - Pero no gana: en el conjunto el mejor alpha es ~0 (dchi2 = +2.13 con 1
+    param extra, dAIC = +4.1). Los datos tardios tiran a alpha~0.6, el CMB a
+    alpha~0.15, y la tension se resuelve en alpha ~ 0.
+  - ConOldmbda es estructuralmente sano pero no soportado por los datos.
+
+No merece la pena el Paso 1 (CAMB + perturbaciones geodesicas) salvo por
+exhaustividad: no hay regimen donde el modelo sea a la vez no-trivial y
+mejor que LCDM.
+
+Algunos bugs encontrados por el camino:
+  - _diag_alpha_cmb.py: la bisectriz
+
+(no es monotona); los dchi2 a H0 fijado si lo son.
+  - run_alpha_joint.py (modo lcdm): el signature mal puesto quitaba Msn
+    en vez de alpha -> cobaya 'Requirement alpha not provided'. Corregido.
+  - D_H en la likelihood joint tenia un factor c de mas (1.1e9 Mpc).

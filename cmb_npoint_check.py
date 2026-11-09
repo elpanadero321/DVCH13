@@ -28,7 +28,15 @@ os.chdir(_HERE)
 
 
 def load_late_time_bestfit():
-    """Lee (n, beta) del best-fit tardio del CSV de resultados."""
+    """Lee (n, beta) del best-fit tardio del CSV de resultados.
+
+    Se puede sobreescribir con las variables de entorno DVCH_N / DVCH_BETA
+    (por ejemplo para probar variantes con switch de desacoplamiento).
+    """
+    n_env = os.environ.get("DVCH_N")
+    beta_env = os.environ.get("DVCH_BETA")
+    if n_env is not None and beta_env is not None:
+        return float(n_env), float(beta_env)
     path = os.path.join(_HERE, "dvch_late_time_fit_summary.csv")
     if not os.path.exists(path):
         raise FileNotFoundError(
@@ -97,7 +105,11 @@ pd.DataFrame([{
 }]).to_csv("dvch_cmb_npoint_check.csv", index=False)
 print("\nWrote dvch_cmb_npoint_check.csv")
 
-print("\nNota: este es un chequeo de punto fijo. Ademas, el CAMB parcheado")
-print("deja el fondo identico a LCDM (dvch_camb_patch_check.py), de modo")
-print("que este delta chi2 mide solo el termino de perturbacion del CDM,")
-print("no la cerradura de fondo del paper.")
+print("\nNota: este es un chequeo de punto fijo. El CAMB parcheado modifica")
+print("el fondo (H(z), materia, vacio) con la cerradura del paper, y anade")
+print("la fuente de interaccion en la perturbacion del CDM. El delta chi2")
+print("mide el coste CMB total del modelo en ese punto del parametros.")
+print("Con n, beta del best-fit tardio el fondo da H(z) -10..-15% y")
+print("theta* -4.7% (deficit del 30% de materia en la era material),")
+print("por lo que el delta chi2 es del orden de 1e4-1e5.")
+print("n/beta se pueden sobreescribir con DVCH_N/DVCH_BETA (variantes).")
