@@ -514,3 +514,24 @@ Tabla final por bancadas (no-transferir vs LCDM):
   fsigma8    8.6 vs    6.0  -> acepta
   conjunto 4176.23 vs 4178.59 -> -2.36 (2 params, dAIC +1.6: NO significativo)
 Todas las bancadas consistentes; en ninguna hay descubrimiento.
+
+## 15. COTA MEDIDA de la parte perturbativa (2026-11-15)
+
+Pregunta cientifica (no se contesta con afirmaciones): ?cuanto del veredicto
+CMB de la version interactuante viene de la fuente de interaccion
+(perturbaciones) y cuanto del fondo? Si el fondo domina, ningun cierre
+perturbativo (dQ != 0) puede rescatar al modelo.
+
+Medida (cmb_npoint_check.py, punto fijo en el mejor ajuste del CMB
+n=0.097, beta=0.101, cosmologia COSMO_LCDM, nuisance oficiales):
+  LCDM (n=0, beta=0)        chi2 = 2772.82
+  DVCH fuente ACTIVADA      chi2 = 3871.05
+  DVCH fuente DESACTIVADA   chi2 = 3867.96
+  -> contribucion de la fuente: +3.08 (0.28% del exceso total)
+El minimizador libre (con la fuente activada) da +14.04. Por tanto la
+exclusion es >99% de FONDO; cualquier cierre perturbativo solo puede mover
+el veredicto unas pocas unidades de chi2. Cota medida, no aseverada.
+(El CAMB externo quedo restaurado con la fuente activada; valor 3871.05
+reproducido.)
+
+Documento: NOTAS_CIERRE_CIENTIFICO.md (estado de los cuatro puntos "no derivados", cada uno con su numero o su principio).
