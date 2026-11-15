@@ -17,6 +17,16 @@ que mejora el ajuste tardío (Delta chi2 = -3.6) exige un déficit de materia
 del 15-30%, que el CMB destruye (`chi2` de +1e4 a +1e5). El régimen donde el
 déficit desaparece (`n < 0.1`) es indistinguible de LCDM.
 
+**Actualización (2026-11-13, ver sección 12 del SESSION_LOG):** la exclusión
+anterior aplica a la interpretación de **interacción** (vacío acoplado a la
+materia). La fórmula del paper **sin la ecuación de transferencia** (materia
+`a^-3` intacta, vacío `OL x^n (1+beta)/(1+beta E2)`) es consistente:
+`chi2` tardío 1412.88, CMB-era intacto (dH/H < 1e-3 a z>100) y
+`chi2_fsigma8 = 8.6`. Su contenido físico es **energía oscura evolutiva**
+(`w0 ~ -0.83, wa ~ -0.84` en CPL), equivalente al `w0waCDM` estándar: dos
+parametros, mismo `dAIC ~ +0.4`, ningún descubrimiento. Es decir: la fórmula
+sobrevive como fenomenología de DE evolutiva; la interacción no sobrevive.
+
 ---
 
 ## 2. La hipótesis y las fórmulas

@@ -328,3 +328,189 @@ Algunos bugs encontrados por el camino:
   - run_alpha_joint.py (modo lcdm): el signature mal puesto quitaba Msn
     en vez de alpha -> cobaya 'Requirement alpha not provided'. Corregido.
   - D_H en la likelihood joint tenia un factor c de mas (1.1e9 Mpc).
+
+## 10. GENERALIZACION a1/a2 + CRECIMIENTO (2026-11-13)
+
+Script: alpha_general_fit.py (de gpt-5.5, arreglado y validado aqui).
+Delta(a) = a1(1-a) + a2(1-a)^2 con la regla general
+delta_rho_c = -(a/3)dDelta/da, Q/(H rho_crit0) = a[(4/3)a1 + (2/3)a2(4-5a)],
+w0 = -1 + a1/(3 OL).
+
+Bugs arreglados:
+1. Las funciones de densidad hacian cast a float -> la derivada por paso
+   complejo daba 0 y el test de conservacion 'pasaba' sin probar nada.
+2. El assert de equivalencia con DE desacoplada usaba tolerancia ABSOLUTA
+   (valores ~1e16 en a=1e-4). Ahora relativa.
+3. EL GROSERO: el sistema de crecimiento tenia 4 variables (dc, db, hp, hpp)
+   con d(hp)/dN = hp (en vez de hpp) - crecimiento exponencial espurio.
+   La ecuacion de Einstein en gauge sincrono es una RESTRICCION entre las
+   variables, no una ecuacion de evolucion: integrar su derivada genera un
+   modo espurio. Sistema cerrado correcto: 3-D (dc, db, hp):
+     d dc/dN = -hp/2 - q dc ; d db/dN = -hp/2
+     d hp/dN = -(2+dlnH/dN) hp - 3(rc dc + rb db)/E2
+   + ICs en modo creciente: hp = -2 delta.
+   TEST FUERTE: a1=a2=0 reproduce la ec. de crecimiento estandar de LCDM a
+   1.3e-11 (antes: -160% / +28%). Verificado en _test_growth_ic.py.
+
+Ajuste tardio (Pantheon+1580 + DESI DR1 + 31 CC, r_d marginalizado):
+  lcdm  1416.51 | alpha(1) 1413.47 dchi2=-3.04 dAIC=-1.04
+  alpha2(2) 1413.27 dchi2=-3.24 dAIC=+0.76 | w0wa 1413.16 dAIC=+0.65
+NOTA: alpha (1 solo parametro extra) supera a w0waCDM por parametro
+(dAIC -1.04 vs +0.65). Nivel de FONDO es la mejor version del modelo.
+
+Crecimiento (solver exacto, CDM geodesico / drho_L=0):
+  supresion de D(z=0) vs LCDM(mismo Om): alpha -19%, alpha2 -25%.
+  f se vuelve NEGATIVO a z<0.15 (D decrece hacia hoy).
+  Tension f-sigma8 (6 puntos RSD del repo, sigma8,0=0.81 CMB-normalizado):
+    LCDM chi2=6.0 | alpha chi2=233 | alpha2 chi2=780
+  -> la interaccion amortigua la formacion de estructura y es EXCLUIDA por
+  los datos de crecimiento (con el cierre perturbativo asumido: Q^mu = Q
+  u_c^mu, CDM geodesico, drho_L = 0).
+
+CONCLUSION DEL PROYECTO (nivel justificable): la familia de vacios
+interactuantes (alpha, alpha2, DVCH-n-beta) puede igualar el ajuste de
+fondo de w0waCDM con menos parametros, pero el termino de interaccion Q es
+incompatible con el crecimiento observado en cualquier regimen donde el
+fondo gana. No hay version que pase todo a la vez.
+
+CORRECCION IMPORTANTE (mismo dia): el 'alpha (1 param) dchi2=-3.04' de la
+tabla anterior era FALSO. El script de gpt-5.5 mapeaba el parametro unico
+del modelo alpha como a1 (coeficiente de (1-a), LINEAL) en vez de a2
+((1-a)^2). Δ = a1(1-a) es un w0-CDM (w0 = -1 + a1/(3OL) != -1): la
+'mejora' era la fisica conocida de DESI, no el vacio interactuante.
+Corregido e2_grid/e2_point: el parametro es a2. Recapitulacion FINAL
+(numero consistente entre los dos scripts):
+
+  lcdm        1416.51  dAIC  0.00
+  alpha (a2)  1415.10  dchi2 -1.41  dAIC +0.59   [el modelo de la otra IA]
+  alpha2      1413.27  dchi2 -3.24  dAIC +0.76   [conducido por a1 lineal]
+  w0wa        1413.16  dchi2 -3.35  dAIC +0.65
+
+Crecimiento (solver 3-D exacto, consistencia 1.3e-11 con LCDM) y f-sigma8
+(6 pts RSD, sigma8,0 = 0.81):
+  LCDM                D/D_LCDM(z=0) =   +0%    chi2_fsigma8 =  6.0
+  alpha tuyo (a2=.597): -5%(z=1) -9%(z=.5) -10%(z=.25) +2%(z=0)
+                        f se DISPARA a z<0.25 (f=1.8 en z=.02) por el
+                        cambio de signo de Q en a=0.8: chi2_fsigma8 =  510
+  alpha2 (0.28,-0.41): -25% hoy, f<0 a z<0.15:      chi2_fsigma8 =  780
+  solo-lineal (0.6,0):  -41% hoy:                   chi2_fsigma8 =  814
+EXCLUIDOS todos por crecimiento. La unica escapatoria es un cierre
+perturbativo distinto al asumido (CDM geodesico, drho_L = 0).
+
+## 11. EXPLORACION EXHAUSTIVA (2026-11-13): no hay ventana
+
+Curva de trade-off del modelo alpha (a1=0, a2=alpha), cada punto reajustando
+(Om, H0, M, rd) con alpha fijado; chi2_fsigma8 con los 6 puntos RSD del repo,
+con sigma8,0 fijo al CMB (0.81) y con sigma8,0 LIBRE (para separar 'forma' de
+'amplitud'):
+
+  alpha   dchi2_late  chi2_s8fix  chi2_s8free  s8free
+   0.00      +0.00        6.0         1.9      0.748
+   0.10      -0.43       16.4         6.1      0.715
+   0.20      -0.79       55.4        28.1      0.664
+   0.30      -1.06      122.5        60.8      0.604
+   0.60      -1.41      486.0       170.6      0.433
+   1.00      -0.77     1326.0       279.8      0.285
+  -0.10      +0.51        -          21.5      0.752
+  -0.20      +1.11        -          65.9      0.721
+  -0.40      +2.53        -         203.1      0.580
+  -0.60      +4.26        -         341.9      0.408
+
+CONCLUSION DEFINITIVA: no existe valor de alpha (ni signo) que mejore el
+ajuste de fondo de forma significativa Y pase fσ8. El unico alpha aceptable
+para estructura es alpha <= 0.1, donde la mejora tardia es -0.43 (nula).
+La exclusion no es solo de amplitud: chi2 crece aunque sigma8,0 absorba el
+tamanio (la FORMA de f*sigma8(z) esta mal).
+
+Robustez al cierre perturbativo: para CUALQUIER interaccion covariante con
+Q > 0 (energia hacia el CDM), la materia creada lleva momento nulo en algun
+marco (CDM o vacio) -> la perturbacion siempre se amortigua (el termino
+deltaQ ~ Q*delta_c siempre tiene el mismo signo). Por eso todos los modelos
+de vacio que decae amortiguan el crecimiento (uso estandar para la tension
+sigma8). Un cierre 'amplificador' requeriria deltaQ anti-correlacionado con
+delta_c, que no tiene construction covariante. El ultimo grado de libertad
+teoricamente abierto es un vacio CON PERTURBACIONES PROPIAS (delta rho_L !=
+0, vacio 'agrupado'), que esta fuera de la hipotesis original (vacio
+homogeneo en su marco de reposo).
+
+## 12. RESOLUCION: la formula sin transferencia SI funciona (2026-11-13)
+
+El usuario insistio (correctamente) en probar la formula del paper SIN la
+ecuacion de transferencia: materia intacta (Om a^-3), vacio
+rho_L = OL x^n (1+beta)/(1+beta E2), x = (1+z)^3, cuadratica exacta
+beta E2^2 + (1-beta B) E2 - (A+B) = 0, A = OL x^n (1+beta).
+
+Ajuste tardio (6 params libres: Om, H0, M, n, beta, rd; Nelder-Mead,
+4 starts):
+  chi2 = 1412.88  (LCDM 1416.51; version CON transferir 1412.91)
+  Om=0.319 H0=68.0 M=-19.41 n=0.249 beta=0.665 rd=147.0
+  -> Om CMB-compatible (0.319 vs Planck 0.315), a diferencia de la version
+     con transferir (Om=0.38).
+CMB-era: dH/H(z>=100) vs LCDM(misma Om) = -0.00% (el vacio es
+  despreciable a alto z -> no hay catastrofe de theta*).
+Estructura: chi2_fsigma8 = 8.6 (LCDM 6.0, con transferir 486) -> pasa.
+w_efectivo: -0.90 (hoy), -1.26 (z=1), -1.71 (z~5); CPL equivalente
+  w0=-0.83, wa=-0.84 (misma familia que prefiere DESI: w0~ -0.88).
+
+QUE SIGUE EN PIE del resto del proyecto:
+- Correcciones de datos (DESI, CC, Pantheon+, r_d): validas.
+- Los claims del paper (Delta ln Z ~ +10, >5 sigma) eran華 WRONG por
+  errores de likelihood, independientes de la pregunta transferir/no:
+  el ajuste real (con o sin transferir) da Delta chi2 ~ -3.6 con 2 params
+  (dAIC ~ +0.4) y evidencia nula: sigue sin ser un descubrimiento.
+- La EXCLUSION (CMB +5.9e4, fsigma8 486) aplica a la version CON
+  transferir, i.e. a la INTERPRETACION de vacio acoplado a la materia.
+QUE CAMBIA:
+- La formula base del paper, re-leida como DE evolutiva (sin
+  transferencia), es consistente y NO esta excluida; equivale al w0wa
+  estandar (2 params, misma vuelta, mismo dAIC).
+- El veredicto final se afila:
+
+  transferencia), es consistente y NO esta excluida; equivale al w0wa
+  estandar (2 params, misma vuelta, mismo dAIC).
+- El veredicto final se afila: la interaccion esta excluida; la formula
+  sin interaccion es una DE evolutiva que no aporta nada nuevo sobre
+  w0waCDM.
+
+Faltaria para cerrar al 100%: test conjunto CMB (CAMB ppf con el w(a)
+  del no-transferir) + BAO + SNe; lo probado hoy es solo tardio+
+  estructura. Scripts de referencia: /tmp/notrans3.py, /tmp/wof.py.
+
+## 13. CIERRE FINAL: no-transferir en el test conjunto (2026-11-14)
+
+Runner: run_notrans_joint.py (yaml notrans_joint.yaml): el vacio del paper
+sin transferir, convertido a w(a) exacto y pasado a CAMB estandar (ppf),
+misma pila de likelihoods que el Paso 0 (Planck TTTEEE+commander+simall+
+smica lensing, nuisance oficial libre, DESI DR1, Pantheon+ 1580, 31 CC,
+Msn muestreado, rd del CAMB).
+
+Resultado (notrans_free_min.bestfit.txt):
+  chi2 = 4176.23  (LCDM control, misma pila: 4178.59)  -> dchi2 = -2.36
+  H0=67.56 ombh2=0.0224 omch2=0.1194 tau=0.054 ln10As=3.042 ns=0.967
+  n=0.124 beta=0.106 M=-19.42
+  -> cosmologia de Planck limpia (Om=0.309); el CMB no se rompe.
+  dchi2 = -2.36 con 2 parametros extra (dAIC = +1.64): NO significativo.
+
+VEREDICTO DEFINITIVO DEL PROYECTO (todo probado, todo cuadrado):
+1. La INTERACCION (vacio acoplado a la materia, con conservacion de
+   energia) esta EXCLUIDA: deficit fosilizado, CMB +5.9e4, fsigma8 486.
+2. La FORMULA sin transferir es consistente: pasa tardio+estructura+CMB
+   conjunto, mejora -2.36 (no significativo) y equivale exactamente a una
+   energia oscura evolutiva (w0~ -0.83, wa~ -0.84 CPL), la misma familia
+   que w0waCDM y la preferencia leve de DESI. Ninguna fisica nueva.
+3. Los claims del paper original (Delta ln Z~+10, >5 sigma) eran arte de
+   likelihoods mal escritas; el resultado real es marginal en cualquiera
+   de las dos lecturas.
+
+## 14. BANCADAS SEPARADAS DEL NO-TRANSFERIR (2026-11-15)
+
+CMB solo (NOTRANS_CMB_ONLY=true, mismo ppf y nuisance): chi2 = 2758.39
+(LCDM control ppf 2761.50) -> dchi2 = -3.11; n=0.356, beta=0.246,
+H0=67.43, ombh2=0.0223, omch2=0.1197 (cosmologia de Planck limpida).
+
+Tabla final por bancadas (no-transferir vs LCDM):
+  tardio 1412.88 vs 1416.51 -> -3.63
+  CMB    2758.39 vs 2761.50 -> -3.11
+  fsigma8    8.6 vs    6.0  -> acepta
+  conjunto 4176.23 vs 4178.59 -> -2.36 (2 params, dAIC +1.6: NO significativo)
+Todas las bancadas consistentes; en ninguna hay descubrimiento.
