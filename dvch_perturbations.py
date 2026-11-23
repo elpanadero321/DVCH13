@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
-"""DVCH linear perturbation closure from the report's Sec. VII equations.
+"""UV-HDE + Planck Limit linear perturbation closure.
 
-The closure couples CDM to the vacuum through ``Q^mu = Q u_m^mu``.  Radiation
-and baryons remain uncoupled, the CDM Euler equation has no interaction force,
-and the vacuum perturbation is set to zero in its rest frame.
+The Generalized Cuscuton field does not propagate scalar modes on sub-horizon
+scales (c_s^2 -> infinity, delta_rho_DE -> 0), so G_eff/G = 1.
+The linear growth equation uses standard gravity:
+
+    delta_m'' + (2 + dlnE/dln a) delta_m' - (3/2) Omega_m(a) delta_m = 0
+
+No dark interaction (Q = 0), standard matter and radiation conservation.
 """
-
 from __future__ import annotations
 
 from dataclasses import dataclass
-
-from dvch_camb_background import DVCHParameters
+import numpy as np
 
 
 @dataclass(frozen=True)
@@ -22,92 +24,112 @@ class PerturbationState:
     h_n: float
 
 
-def interaction_coefficients(
-    e: float,
+def growth_ode_rhs(
+    z: float,
+    state: PerturbationState,
+    e2: float,
+    de2_dz: float,
     omega_m: float,
-    omega_lambda: float,
-    omega_r: float,
-    parameters: DVCHParameters,
-) -> tuple[float, float, float]:
-    """Return the analytic ``(c_m, c_lambda, c_E)`` coefficients."""
-    p = parameters
-    p.validate()
-    if min(e, omega_m, omega_lambda) <= 0.0:
-        raise ValueError("background densities and E must be positive")
-    denominator = 1.0 + p.n * omega_lambda / omega_m
-    bracket = p.n - p.beta * (4.0 * omega_r + 3.0 * omega_m) / (
-        3.0 * (1.0 + p.beta * e * e)
-    )
-    c_m = (
-        e * omega_lambda * p.beta / ((1.0 + p.beta * e * e) * denominator)
-        - p.n * e * omega_lambda**2 * bracket
-        / (omega_m**2 * denominator**2)
-    )
-    c_lambda = -e * bracket / denominator**2
-    c_e = -omega_lambda / denominator * (
-        bracket
-        + 2.0 * p.beta**2 * e * e * (4.0 * omega_r + 3.0 * omega_m)
-        / (3.0 * (1.0 + p.beta * e * e) ** 2)
-    )
-    return c_m, c_lambda, c_e
+) -> tuple[float, float]:
+    """Return (delta_m', theta_m') for standard gravity (mu=1, Q=0).
 
+    Independent variable is redshift z.
+    """
+    if e2 <= 0.0 or omega_m <= 0.0:
+        raise ValueError("background expansion and matter density must be positive")
 
-def delta_q_tilde(
-    e: float,
-    omega_m: float,
-    omega_lambda: float,
-    omega_r: float,
-    delta_m: float,
-    delta_e: float = 0.0,
-    parameters: DVCHParameters = DVCHParameters(),
-) -> float:
-    """Return ``delta Q/(3 H0 rho_crit,0)`` using the report's Taylor closure."""
-    c_m, c_lambda, c_e = interaction_coefficients(
-        e, omega_m, omega_lambda, omega_r, parameters
-    )
-    delta_omega_m = omega_m * delta_m
-    return c_m * delta_omega_m + c_lambda * 0.0 + c_e * delta_e
+    zp1 = 1.0 + z
+    # dlnE/dln a = -(1+z)/E * dE/dz = -(1+z)/(2*E^2) * dE^2/dz
+    dlnE_dN = -0.5 * zp1 / e2 * de2_dz
+
+    # Standard growth equation: delta'' + (2 + dlnE/dN) delta' - 1.5 * Om * delta = 0
+    delta_n = state.theta_m / e2**0.5  # derivative wrt N = ln a
+    delta_pp = -(2.0 + dlnE_dN) * delta_n + 1.5 * omega_m * state.delta_m
+
+    # theta_m' = -theta_m (no interaction force, standard Euler eq)
+    theta_n = -state.theta_m
+
+    return delta_pp, theta_n
 
 
 def synchronous_cdm_rhs(
-    e: float,
-    omega_m: float,
-    omega_lambda: float,
-    omega_r: float,
+    z: float,
     state: PerturbationState,
-    delta_e: float = 0.0,
-    parameters: DVCHParameters = DVCHParameters(),
+    e2: float,
+    de2_dz: float,
+    omega_m: float,
 ) -> tuple[float, float]:
-    """Return ``(delta_m,N, theta_m,N)`` for ``Q^mu = Q u_m^mu``.
+    """Return (delta_m', theta_m') in synchronous gauge for standard gravity.
 
-    ``theta_m`` is the usual conformal-time velocity divergence and therefore
-    enters as ``theta_m / (a H)`` when the independent variable is ``N``.
+    Independent variable is conformal time (or N = ln a).
     """
-    p = parameters
-    p.validate()
-    if e <= 0.0 or omega_m <= 0.0:
+    if e2 <= 0.0 or omega_m <= 0.0:
         raise ValueError("background expansion and matter density must be positive")
-    q_tilde = -e * omega_lambda / (1.0 + p.n * omega_lambda / omega_m) * (
-        p.n - p.beta * (4.0 * omega_r + 3.0 * omega_m)
-        / (3.0 * (1.0 + p.beta * e * e))
-    )
-    delta_q = delta_q_tilde(
-        e, omega_m, omega_lambda, omega_r, state.delta_m, delta_e, p
-    )
-    interaction = 3.0 * q_tilde / (e * omega_m)
-    delta_interaction = 3.0 * delta_q / (e * omega_m)
-    delta_n = -state.theta_m / e - 0.5 * state.h_n + (
-        interaction * state.delta_m - delta_interaction
-    )
+
+    zp1 = 1.0 + z
+    dlnE_dN = -0.5 * zp1 / e2 * de2_dz
+
+    # Standard growth in synchronous gauge
+    # delta_m' = -theta_m / (aH) - 0.5 h'  (but we return d/dN)
+    delta_n = -state.theta_m - 0.5 * state.h_n
     theta_n = -state.theta_m
+
     return delta_n, theta_n
 
 
 def adiabatic_initial_conditions(delta_gamma: float) -> dict[str, float]:
-    """Return the documented early-time adiabatic CDM/vacuum conditions."""
+    """Return the standard early-time adiabatic CDM/DE initial conditions."""
     return {
         "delta_m": 0.75 * float(delta_gamma),
         "theta_m": 0.0,
-        "delta_lambda": 0.0,
-        "theta_lambda": 0.0,
+        "delta_de": 0.0,  # No DE perturbations (c_s^2 -> inf)
+        "theta_de": 0.0,
     }
+
+
+def growth_factor_integral(
+    z_eval: float | np.ndarray,
+    cosmo,
+    sigma8_0: float = 0.8190,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Compute growth factor D(z) and f*sigma8(z) using standard gravity.
+
+    Solves: d^2D/dN^2 + (2 + dlnE/dN) dD/dN - 1.5 * Omega_m(a) * D = 0
+    from z=1000 to z=0.
+    """
+    from scipy.integrate import solve_ivp
+
+    N_ini = np.log(1.0 / 1001.0)
+
+    def ode(N, y):
+        z = np.exp(-N) - 1.0
+        zp1 = 1.0 + z
+        e2 = float(cosmo.E2_classical(z))
+        de2 = float(cosmo.dE2_dz(z))
+        dlnE_dN = -0.5 * (zp1 / e2) * de2
+        Om_a = cosmo.Omega_m0 * (zp1**3) / e2
+        return [y[1], -(2.0 + dlnE_dN) * y[1] + 1.5 * Om_a * y[0]]
+
+    sol = solve_ivp(
+        ode,
+        [N_ini, 0.0],
+        [np.exp(N_ini), np.exp(N_ini)],
+        dense_output=True,
+        rtol=1e-11,
+        atol=1e-13,
+    )
+    D_0 = sol.sol(0.0)[0]
+    N_eval = -np.log(1.0 + np.asarray(z_eval, dtype=np.float64))
+    D_val, dD_dN = sol.sol(N_eval)
+    f_val = dD_dN / D_val
+    fs8 = f_val * sigma8_0 * (D_val / D_0)
+    return D_val / D_0, fs8
+
+
+def mu_sigma(z: float, cosmo) -> tuple[float, float]:
+    """Return (mu, Sigma) for UV-HDE + Planck Limit.
+
+    On sub-horizon scales, Generalized Cuscuton does not propagate:
+    c_s^2 -> inf, delta_rho_DE -> 0 => G_eff/G = 1, lensing = 1.
+    """
+    return 1.0, 1.0

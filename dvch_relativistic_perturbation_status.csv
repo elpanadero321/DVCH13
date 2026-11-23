@@ -1,9 +1,0 @@
-item,status,requirement,available
-Patched CLASS/CAMB backend,Protocol target,consumes DVCH sources,False
-Photon-baryon hierarchy,Protocol target,full Boltzmann hierarchy,False
-Einstein-Boltzmann metric sources,Protocol target,metric and line-of-sight evolution,False
-CMB $C_\ell$ spectra,Protocol target,TT/TE/EE from DVCH perturbations,False
-CMB lensing spectra,Protocol target,lensing potential/reconstruction,False
-Planck likelihood stack,Protocol target,Cobaya/clik/native Planck data,False
-DVCH source-table interface,Local interface,local interface module present,True
-Planck YAML configuration target,Configuration target,local YAML target present; not executed,True

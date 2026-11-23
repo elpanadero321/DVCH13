@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 # Extrae el minimo chi2 (best fit) de la cadena de DVCH ya convergida.
-import glob, numpy as np
+import glob
+import os
 
-files = sorted(glob.glob('/mnt/d/DVCH13-1/dvch_prod_widebeta5.[0-9]*.txt'))
+import numpy as np
+
+_HERE = os.path.dirname(os.path.abspath(__file__))
+files = sorted(glob.glob(os.path.join(_HERE, "dvch_prod_widebeta5.[0-9]*.txt")))
 rows_all, names = [], None
 for f in files:
     with open(f) as fh:

@@ -58,6 +58,8 @@ package-lock.json
 .clinic/
 .vscode/
 .devcontainer/
+# ---- Configuracion local del entorno (rutas personales) ----
+env.sh
 # ---- Watchdog / snapshot temporales ----
 # ---- Artifacts de cadenas anteriores (checkpoints, covmats muertos) ----
 dvch_prod_p1.covmat

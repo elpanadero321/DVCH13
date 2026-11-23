@@ -1,7 +1,0 @@
-name,available,type
-Cobaya sampler,True,local
-CAMB Python package (unpatched),True,local
-Planck clik likelihood,False,external
-DVCH source-table interface,True,local
-Planck YAML configuration target,True,local
-Pantheon+/DESI/CC diagnostic blocks,True,local

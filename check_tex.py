@@ -1,5 +1,8 @@
+import os
 import re
-s = open('/mnt/d/DVCH13-1/DVCH.tex').read()
+
+_HERE = os.path.dirname(os.path.abspath(__file__))
+s = open(os.path.join(_HERE, 'DVCH.tex')).read()
 # check braces balance
 print("brace balance:", s.count('{') - s.count('}'))
 # check env balance
@@ -21,7 +24,16 @@ cites = set(re.findall(r'\\cite\{([^}]+)\}', s))
 cited = set()
 for c in cites:
     cited |= set(x.strip() for x in c.split(','))
-bib = open('/mnt/d/DVCH13-1/refs.bib').read() + open('/mnt/d/DVCH13-1/DVCHNotes.bib').read()
+bib_parts = [open(os.path.join(_HERE, 'refs.bib')).read()]
+notes = os.path.join(_HERE, 'DVCHNotes.bib')
+if os.path.exists(notes):
+    bib_parts.append(open(notes).read())
+bib = '\n'.join(bib_parts)
 keys = set(re.findall(r'@\w+\{([^,]+),', bib))
 missing_cites = cited - keys
 print("citations missing from bibs:", missing_cites if missing_cites else "none")
+# check figures exist
+figs = set(re.findall(r'\\includegraphics(?:\[[^\]]*\])?\{([^}]+)\}', s))
+missing_figs = [f for f in figs
+                if not os.path.exists(os.path.join(_HERE, f))]
+print("missing figures:", missing_figs if missing_figs else "none")

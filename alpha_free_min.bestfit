@@ -1,0 +1,60 @@
+ -log(Like) = 1421.67322352658
+  chi-sq    = 2843.34644705316
+
+    1  6.668350325e+01   H0                        H0
+    2  2.231424912e-02   ombh2                     ombh2
+    3  1.197823529e-01   omch2                     omch2
+    4  5.352999329e-02   tau                       tau
+    5  3.050568820e+00   ln10As                    ln10As
+    6  9.652835892e-01   ns                        ns
+    7  1.481027120e-01   alpha                     alpha
+    8  4.437228820e+01   A_cib_217                 A\ cib\ 217
+   10  8.840126369e-01   xi_sz_cib                 xi\ sz\ cib
+   11  8.793170876e+00   A_sz                      A\ sz
+   12  2.180000033e+02   ps_A_100_100              ps\ A\ 100\ 100
+   13  4.080777428e+01   ps_A_143_143              ps\ A\ 143\ 143
+   14  5.069176858e+01   ps_A_143_217              ps\ A\ 143\ 217
+   15  1.156664905e+02   ps_A_217_217              ps\ A\ 217\ 217
+   16  4.527913736e+00   ksz_norm                  ksz\ norm
+   17  1.041980566e+01   gal545_A_100              gal545\ A\ 100
+   18  1.668627712e+01   gal545_A_143              gal545\ A\ 143
+   19  2.800174024e+01   gal545_A_143_217          gal545\ A\ 143\ 217
+   20  1.076607941e+02   gal545_A_217              gal545\ A\ 217
+   21  5.986308005e-02   galf_EE_A_100             galf\ EE\ A\ 100
+   22  5.199535938e-02   galf_EE_A_100_143         galf\ EE\ A\ 100\ 143
+   23  3.802772601e-02   galf_EE_A_100_217         galf\ EE\ A\ 100\ 217
+   24  9.001923823e-02   galf_EE_A_143             galf\ EE\ A\ 143
+   25  -4.611311859e-02  galf_EE_A_143_217         galf\ EE\ A\ 143\ 217
+   26  4.968261100e-01   galf_EE_A_217             galf\ EE\ A\ 217
+   28  9.395739529e-02   galf_TE_A_100             galf\ TE\ A\ 100
+   29  1.780865847e-01   galf_TE_A_100_143         galf\ TE\ A\ 100\ 143
+   30  8.225530902e-01   galf_TE_A_100_217         galf\ TE\ A\ 100\ 217
+   31  3.039912655e-01   galf_TE_A_143             galf\ TE\ A\ 143
+   32  8.580385578e-01   galf_TE_A_143_217         galf\ TE\ A\ 143\ 217
+   33  2.601805373e+00   galf_TE_A_217             galf\ TE\ A\ 217
+   48  9.983469759e-01   calib_100T                calib\ 100T
+   49  9.988236588e-01   calib_217T                calib\ 217T
+   54  1.005864760e+00   A_planck                  A\ planck
+
+    9  -1.3              cib_index                 cib\ index
+   27  -2.4              galf_EE_index             galf\ EE\ index
+   34  -2.4              galf_TE_index             galf\ TE\ index
+   35  1.0               A_cnoise_e2e_100_100_EE   A\ cnoise\ e2e\ 100\ 100\ EE
+   36  1.0               A_cnoise_e2e_143_143_EE   A\ cnoise\ e2e\ 143\ 143\ EE
+   37  1.0               A_cnoise_e2e_217_217_EE   A\ cnoise\ e2e\ 217\ 217\ EE
+   38  1.0               A_sbpx_100_100_TT         A\ sbpx\ 100\ 100\ TT
+   39  1.0               A_sbpx_143_143_TT         A\ sbpx\ 143\ 143\ TT
+   40  1.0               A_sbpx_143_217_TT         A\ sbpx\ 143\ 217\ TT
+   41  1.0               A_sbpx_217_217_TT         A\ sbpx\ 217\ 217\ TT
+   42  1.0               A_sbpx_100_100_EE         A\ sbpx\ 100\ 100\ EE
+   43  1.0               A_sbpx_100_143_EE         A\ sbpx\ 100\ 143\ EE
+   44  1.0               A_sbpx_100_217_EE         A\ sbpx\ 100\ 217\ EE
+   45  1.0               A_sbpx_143_143_EE         A\ sbpx\ 143\ 143\ EE
+   46  1.0               A_sbpx_143_217_EE         A\ sbpx\ 143\ 217\ EE
+   47  1.0               A_sbpx_217_217_EE         A\ sbpx\ 217\ 217\ EE
+   50  1.021             calib_100P                calib\ 100P
+   51  0.966             calib_143P                calib\ 143P
+   52  1.04              calib_217P                calib\ 217P
+   53  1.0               A_pol                     A\ pol
+
+   55  2.759897181e+03   chi2__alpha_plik          \chi^2_{\rm alpha\ plik}

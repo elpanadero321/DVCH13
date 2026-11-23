@@ -110,7 +110,7 @@ double-slit congruence). On Windows the orchestrator is `run_full_battery.ps1`; 
 python -m pytest tests/ -q                 # unit tests
 python dvch_camb_crosscheck.py             # background cross-check vs CAMB
 python dvch_growth_diagnostic.py           # growth / sigma8, S8
-python dvch_joint_realdata_fit.py          # joint CC + BAO fit (chi2/AIC/BIC)
+python dvch_vs_lcdm_real.py             # late-time fit: Pantheon+1580 + DESI DR1 + CC (chi2/AIC/BIC/MCMC)
 python dvch_double_slit.py                 # double-slit congruence check
 python dvch_verify_doc_numbers.py          # verify the numbers quoted in the paper match the CSV outputs
 ```
@@ -123,7 +123,7 @@ Use the production launcher, which already **separates the input covmat from the
 delete the covmat it is reading:
 
 ```bash
-./launch_prod.sh
+./launch_wideprior.sh
 #   DVCH_COVMAT=dvch_prod_wide.covmat     (input; distinct prefix)
 #   DVCH_CHAIN_OUTPUT=dvch_prod           (output prefix)
 # Tunables: DVCH_CHAIN_SEED, DVCH_MAX_SAMPLES, DVCH_BURN_IN,

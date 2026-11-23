@@ -7,7 +7,8 @@ source ./env.sh >/dev/null 2>&1
 
 export DVCH_SHORT_YAML=dvch_cobaya_short.yaml
 export DVCH_MODE=minimize
-export DVCH_CHAIN_OUTPUT=dvch_lcdm_min
+export DVCH_IGNORE_PRIOR=true
+export DVCH_CHAIN_OUTPUT=dvch_lcdm_min_free
 export DVCH_RESUME=false
 
 exec mpirun -np 1 python3 run_dvch_cobaya_lcdm.py

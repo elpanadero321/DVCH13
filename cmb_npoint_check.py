@@ -1,37 +1,72 @@
 #!/usr/bin/env python3
 """
-El CMB excluye n=0.47, beta=1.04 (lo que prefiere la expansion)?
+El CMB excluye el (n, beta) que prefiere la expansion?
 
 Estrategia (comparacion justa):
   1) evaluar chi2_CMB en el best-fit de LCDM (n=0, beta=0) ya encontrado;
-  2) evaluar chi2_CMB en (n=0.47, beta=1.04) con la MISMA cosmologia
-     -> chequeo rapido (2 minutos);
-  3) reajustar la cosmologia + nuisance localmente con n, beta fijos en
-     0.47, 1.04 -> chi2 minimo "justo" para DVCH en el CMB.
+  2) evaluar chi2_CMB en el (n, beta) del best-fit de la expansion (leido
+     de dvch_late_time_fit_summary.csv, para que siempre este sincronizado
+     con el analisis tardio) con la MISMA cosmologia -> chequeo rapido;
+  3) reajustar la cosmologia + nuisance localmente con n, beta fijos ->
+     chi2 minimo "justo" para DVCH en el CMB (launch_n47_minimize.sh).
 
 Si la diferencia es pequena, el CMB no excluye el punto; si es grande
 (mas de ~6 en chi2), hay tension real.
+
+Necesita los datos .clik de Planck y el CAMB parcheado (env.sh); si no
+estan disponibles, este script no puede correr (el analisis tardio si).
 """
+import glob
 import os
 import sys
+
 import numpy as np
+import pandas as pd
 
-sys.path.insert(0, "/mnt/d/DVCH13-1")
-os.chdir("/mnt/d/DVCH13-1")
+_HERE = os.path.dirname(os.path.abspath(__file__))
+os.chdir(_HERE)
 
-# environment
-from pathlib import Path
-for line in open("env.sh"):
+
+def load_late_time_bestfit():
+    """Lee (n, beta) del best-fit tardio del CSV de resultados.
+
+    Se puede sobreescribir con las variables de entorno DVCH_N / DVCH_BETA
+    (por ejemplo para probar variantes con switch de desacoplamiento).
+    """
+    n_env = os.environ.get("DVCH_N")
+    beta_env = os.environ.get("DVCH_BETA")
+    if n_env is not None and beta_env is not None:
+        return float(n_env), float(beta_env)
+    path = os.path.join(_HERE, "dvch_late_time_fit_summary.csv")
+    if not os.path.exists(path):
+        raise FileNotFoundError(
+            f"Falta {path}. Corre dvch_vs_lcdm_real.py primero.")
+    frame = pd.read_csv(path)
+    out = {}
+    for key in ("n", "beta"):
+        col = f"{key}_median"
+        series = frame[[col]].dropna()
+        if series.empty:
+            raise KeyError(f"Falta {col} en {path}")
+        out[key] = float(series.iloc[0, 0])
+    return out["n"], out["beta"]
+
+
+# environment (env.sh no esta en el repo: rutas personales)
+_env = os.path.join(_HERE, "env.sh")
+if not os.path.exists(_env):
+    sys.exit("Falta env.sh (copia env.sh.example y rellena las rutas).")
+for line in open(_env):
     if line.strip().startswith("export"):
         parts = line.strip()[7:].split("=", 1)
         if len(parts) == 2:
             os.environ[parts[0]] = parts[1].strip().strip('"')
 
 sys.path.insert(0, os.environ["DVCH_CLIK_EGG"])
-import clik
-import clik.hpy as hpy
+import clik  # noqa: E402
+import clik.hpy as hpy  # noqa: E402
 
-from dvch_cobaya_planck import planck_loglike
+from dvch_cobaya_planck import planck_loglike  # noqa: E402
 
 LIKELIHOOD = os.environ["DVCH_PLANCK_LIKELIHOOD"]
 likelihood = clik.clik(LIKELIHOOD)
@@ -41,6 +76,7 @@ nuisance = {n: float(check[7527 + i]) for i, n in enumerate(names)}
 print(f"nuisance cargados: {len(nuisance)}")
 
 # cosmologia del best-fit LCDM encontrado por el minimizador
+# (launch_lcdm_minimize.sh / dvch_lcdm_min.minimum)
 COSMO_LCDM = dict(H0=67.550217, ombh2=0.022426771, omch2=0.11952577,
                   tau=0.052422959, ln10As=3.0396044, ns=0.9672816)
 
@@ -52,9 +88,28 @@ def chi2_cmb(cosmo, n, beta):
     return -2.0 * lp
 
 
+n_fix, beta_fix = load_late_time_bestfit()
+print(f"\nBest-fit tardio: n = {n_fix:.4f}, beta = {beta_fix:.4f}")
+
 print("\n=== Chequeo rapido (misma cosmologia, solo cambio n y beta) ===")
 c0 = chi2_cmb(COSMO_LCDM, 0.0, 0.0)
-print(f"  LCDM (n=0,    beta=0)    : chi2 = {c0:.2f}")
-c1 = chi2_cmb(COSMO_LCDM, 0.47, 1.04)
-print(f"  DVCH (n=0.47, beta=1.04): chi2 = {c1:.2f}")
+print(f"  LCDM (n=0,     beta=0)    : chi2 = {c0:.2f}")
+c1 = chi2_cmb(COSMO_LCDM, n_fix, beta_fix)
+print(f"  DVCH (n={n_fix:.3f}, beta={beta_fix:.3f}): chi2 = {c1:.2f}")
 print(f"  delta chi2 = {c1 - c0:+.2f}")
+
+import pandas as pd  # noqa: E402
+pd.DataFrame([{
+    "n": n_fix, "beta": beta_fix, "chi2_lcdm": c0, "chi2_dvch_fixed_point": c1,
+    "delta_chi2": c1 - c0,
+}]).to_csv("dvch_cmb_npoint_check.csv", index=False)
+print("\nWrote dvch_cmb_npoint_check.csv")
+
+print("\nNota: este es un chequeo de punto fijo. El CAMB parcheado modifica")
+print("el fondo (H(z), materia, vacio) con la cerradura del paper, y anade")
+print("la fuente de interaccion en la perturbacion del CDM. El delta chi2")
+print("mide el coste CMB total del modelo en ese punto del parametros.")
+print("Con n, beta del best-fit tardio el fondo da H(z) -10..-15% y")
+print("theta* -4.7% (deficit del 30% de materia en la era material),")
+print("por lo que el delta chi2 es del orden de 1e4-1e5.")
+print("n/beta se pueden sobreescribir con DVCH_N/DVCH_BETA (variantes).")

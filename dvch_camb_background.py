@@ -1,33 +1,39 @@
 #!/usr/bin/env python3
-"""Numerical DVCH background provider for a CAMB/CLASS integration.
+"""Numerical UV-HDE + Planck Limit background provider for a CAMB/CLASS integration.
 
-This module implements the part of DVCH that is unambiguously defined by the
-repository: the homogeneous Friedmann closure and its interaction source.
-It is deliberately separate from the compiled CAMB hierarchy because a
-relativistic prescription for ``delta Q`` and momentum transfer is not defined
-in the current model.
+This module implements the homogeneous Friedmann closure for UV-HDE with
+exact algebraic solution for E^2(z). No dark interaction (Q=0), standard
+matter and radiation conservation.
+
+Model: UV-HDE + Límite de Planck (versión definitiva, Δk = 0).
+- Sin interacción oscura (Q = 0).
+- Cero parámetros libres extra frente a ΛCDM (n = 1/3, β = 1 fijados).
+- Solución algebraica exacta y cerrada para E^2(z).
 """
-
 from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Iterable
 
 import numpy as np
+from uvhde_cosmology import UVHDEPlanckCosmology
 
 
 @dataclass(frozen=True)
-class DVCHParameters:
-    """Parameters required by the homogeneous DVCH closure."""
+class UVHDEParameters:
+    """Parameters required by the homogeneous UV-HDE closure.
 
-    omega_m0: float = 0.30
-    omega_r0: float = 9.0e-5
-    n: float = 0.20
-    beta: float = 1.0e-4
-    H0: float = 69.03
+    Only Omega_m0 and H0 are free (same as LCDM).
+    Omega_r0 is fixed to Planck 2018 value.
+    n=1/3, beta=1 are fixed internally (not free parameters).
+    """
+
+    omega_m0: float = 0.3153
+    omega_r0: float = 9.18e-5
+    H0: float = 67.36
 
     @property
-    def omega_l0(self) -> float:
+    def omega_de0(self) -> float:
         return 1.0 - self.omega_m0 - self.omega_r0
 
     def validate(self) -> None:
@@ -35,50 +41,24 @@ class DVCHParameters:
             raise ValueError("omega_m0 must be between zero and one")
         if not 0.0 < self.omega_r0 < 1.0:
             raise ValueError("omega_r0 must be between zero and one")
-        if self.omega_l0 <= 0.0:
-            raise ValueError("omega_l0 must be positive")
-        if not 0.0 < self.n < 1.0:
-            raise ValueError("n must be between zero and one")
-        if self.beta < 0.0:
-            raise ValueError("beta must be non-negative")
+        if self.omega_de0 <= 0.0:
+            raise ValueError("omega_de0 must be positive")
         if self.H0 <= 0.0:
             raise ValueError("H0 must be positive")
 
 
-def vacuum_density(z: float | np.ndarray, omega_m: float | np.ndarray,
-                   parameters: DVCHParameters) -> np.ndarray:
-    """Return dimensionless vacuum density for a fixed matter density."""
-    p = parameters
-    p.validate()
-    z_arr = np.asarray(z, dtype=float)
-    matter = np.asarray(omega_m, dtype=float)
-    radiation = p.omega_r0 * (1.0 + z_arr) ** 4
-    e2 = radiation + matter + p.omega_l0
-    vacuum = p.omega_l0 * (matter / p.omega_m0) ** p.n
-    for _ in range(200):
-        vacuum = (
-            p.omega_l0 * (matter / p.omega_m0) ** p.n
-            * (1.0 + p.beta) / (1.0 + p.beta * e2)
-        )
-        new_e2 = radiation + matter + vacuum
-        if np.all(np.abs(new_e2 - e2) < 1.0e-12):
-            break
-        e2 = new_e2
-    return vacuum
-
-
 def background(z_values: Iterable[float],
-               parameters: DVCHParameters = DVCHParameters()) -> np.ndarray:
-    """Build ``z, E2, E, H, Omega_m, Omega_Lambda, Qtilde`` rows.
+               parameters: UVHDEParameters = UVHDEParameters()) -> np.ndarray:
+    """Build z, E2, E, H, Omega_m, Omega_DE, Omega_r rows.
 
-    The matter density is evolved from ``z=0`` using the conservation
-    equation implied by the DVCH closure.  This is the homogeneous background
-    that a compiled Boltzmann solver can consume.
+    Uses the exact algebraic solution for E^2(z).
+    Matter density follows standard conservation: Omega_m(z) = Omega_m0 * (1+z)^3 / E^2(z)
     """
-    from scipy.integrate import solve_ivp
-
     p = parameters
     p.validate()
+
+    cosmo = UVHDEPlanckCosmology(H0=p.H0, Omega_m0=p.omega_m0, Omega_r0=p.omega_r0)
+
     z = np.asarray(tuple(z_values), dtype=float)
     if z.ndim != 1 or z.size == 0 or np.any(~np.isfinite(z)) or np.any(z < 0):
         raise ValueError("z_values must be a non-empty finite one-dimensional grid")
@@ -87,74 +67,61 @@ def background(z_values: Iterable[float],
     if z[0] != 0.0:
         raise ValueError("z_values must start at z=0")
 
-    def closure(redshift: float, matter: float) -> tuple[float, float]:
-        radiation = p.omega_r0 * (1.0 + redshift) ** 4
-        e2 = radiation + matter + p.omega_l0
-        vacuum = p.omega_l0 * (matter / p.omega_m0) ** p.n
-        for _ in range(200):
-            vacuum = (
-                p.omega_l0 * (matter / p.omega_m0) ** p.n
-                * (1.0 + p.beta) / (1.0 + p.beta * e2)
-            )
-            new_e2 = radiation + matter + vacuum
-            if abs(new_e2 - e2) < 1.0e-12:
-                e2 = new_e2
-                break
-            e2 = new_e2
-        return e2, vacuum
+    E2 = cosmo.E2_classical(z)
+    E = np.sqrt(E2)
+    H = p.H0 * E
 
-    def rhs(redshift: float, state: np.ndarray) -> list[float]:
-        matter = float(state[0])
-        e2, vacuum = closure(redshift, matter)
-        d_vacuum_d_matter = vacuum * p.n / matter
-        d_vacuum_d_e2 = (
-            -p.omega_l0 * (matter / p.omega_m0) ** p.n
-            * (1.0 + p.beta) * p.beta / (1.0 + p.beta * e2) ** 2
-        )
-        denominator = 1.0 - d_vacuum_d_e2
-        coefficient = (1.0 + d_vacuum_d_matter) * (
-            1.0 + d_vacuum_d_e2 / denominator
-        )
-        explicit = 4.0 * p.omega_r0 * (1.0 + redshift) ** 3
-        derivative = (
-            3.0 * matter / (1.0 + redshift)
-            - (d_vacuum_d_e2 / denominator) * explicit
-        ) / coefficient
-        return [derivative]
+    opz = 1.0 + z
+    Om = p.omega_m0 * opz**3 / E2
+    OL = cosmo.Omega_DE0 * opz * 2.0 / (1.0 + E2) / E2
+    Or = p.omega_r0 * opz**4 / E2
 
-    solution = solve_ivp(
-        rhs, (0.0, float(z[-1])), [p.omega_m0], t_eval=z,
-        rtol=1.0e-10, atol=1.0e-12, method="RK45",
-    )
-    if not solution.success:
-        raise RuntimeError(f"DVCH background integration failed: {solution.message}")
-
-    matter = solution.y[0]
-    e2 = np.empty_like(z)
-    vacuum = np.empty_like(z)
-    radiation = p.omega_r0 * (1.0 + z) ** 4
-    for index, redshift in enumerate(z):
-        e2[index], vacuum[index] = closure(float(redshift), float(matter[index]))
-    if np.any(~np.isfinite(e2)) or np.any(e2 <= 0):
-        raise RuntimeError("DVCH background produced a non-positive expansion rate")
-
-    e = np.sqrt(e2)
-    qtilde = -e * vacuum / (1.0 + p.n * vacuum / matter) * (
-        p.n - p.beta * (4.0 * radiation + 3.0 * matter)
-        / (3.0 * (1.0 + p.beta * e2))
-    )
-    return np.column_stack((z, e2, e, p.H0 * e, matter, vacuum, qtilde))
+    return np.column_stack((z, E2, E, H, Om, OL, Or))
 
 
 def write_background_table(path: str,
                            z_values: Iterable[float],
-                           parameters: DVCHParameters = DVCHParameters()) -> None:
+                           parameters: UVHDEParameters = UVHDEParameters()) -> None:
     """Write a CSV table suitable for a compiled-backend adapter."""
     table = background(z_values, parameters)
     np.savetxt(
         path,
         table,
         delimiter=",",
-        header="z,E2,E,H,Omega_m,Omega_Lambda,Qtilde",
+        header="z,E2,E,H,Omega_m,Omega_DE,Omega_r",
         comments="",
     )
+
+
+def E2_uvhde(z: float | np.ndarray, parameters: UVHDEParameters = UVHDEParameters()) -> np.ndarray:
+    """Return E^2(z) for UV-HDE model."""
+    cosmo = UVHDEPlanckCosmology(H0=parameters.H0, Omega_m0=parameters.omega_m0, Omega_r0=parameters.omega_r0)
+    return cosmo.E2_classical(z)
+
+
+def w_eff_uvhde(z: float | np.ndarray, parameters: UVHDEParameters = UVHDEParameters()) -> np.ndarray:
+    """Return w_eff(z) for UV-HDE model."""
+    cosmo = UVHDEPlanckCosmology(H0=parameters.H0, Omega_m0=parameters.omega_m0, Omega_r0=parameters.omega_r0)
+    return cosmo.w_eff(z)
+
+
+def q_uvhde(z: float | np.ndarray, parameters: UVHDEParameters = UVHDEParameters()) -> np.ndarray:
+    """Return q(z) for UV-HDE model."""
+    cosmo = UVHDEPlanckCosmology(H0=parameters.H0, Omega_m0=parameters.omega_m0, Omega_r0=parameters.omega_r0)
+    return cosmo.q(z)
+
+
+def Om_diagnostic_uvhde(z: float | np.ndarray, parameters: UVHDEParameters = UVHDEParameters()) -> np.ndarray:
+    """Return Om_diagnostic(z) for UV-HDE model."""
+    cosmo = UVHDEPlanckCosmology(H0=parameters.H0, Omega_m0=parameters.omega_m0, Omega_r0=parameters.omega_r0)
+    return cosmo.Om_diagnostic(z)
+
+
+if __name__ == "__main__":
+    # Quick test
+    params = UVHDEParameters()
+    z = np.linspace(0, 5, 11)
+    table = background(z, params)
+    print("z, E2, E, H, Omega_m, Omega_DE, Omega_r")
+    for row in table:
+        print(", ".join(f"{v:.6f}" for v in row))

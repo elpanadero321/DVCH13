@@ -1,0 +1,4 @@
+19: 'El modelo tiene CERO parametros libres extra frente a LCDM (Δk = 0):'
+227: '        Om, H0, M, rd = params  # UV-HDE has same params as LCDM (Δk=0)'
+241: '    "uvhde": ["Om", "H0", "M", "rd"],  # Δk = 0'
+379: '    print(f"  Delta chi2 (UV-HDE - LCDM) = {dchi2:+.2f}  ({dk} params extra, Δk=0)")'
