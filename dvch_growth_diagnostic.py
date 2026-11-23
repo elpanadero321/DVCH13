@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-DVCH growth diagnostic: sub-horizon growth equation, sigma_8/S_8 estimates,
-and the global comparison dashboard figure.
+UV-HDE + Planck Limit growth diagnostic: sub-horizon growth equation,
+sigma_8/S_8 estimates, and the global comparison dashboard figure.
 
-Uses the full ODE-integrated DVCH background (not leading-order approximation).
+Uses the exact algebraic UV-HDE background and standard gravity (mu=1, Q=0).
 """
 import numpy as np
 import pandas as pd
@@ -12,137 +12,95 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 from scipy.integrate import solve_ivp
-from scipy.interpolate import interp1d
 import os
+
+from uvhde_cosmology import UVHDEPlanckCosmology
 
 FIGDIR = "figures"
 os.makedirs(FIGDIR, exist_ok=True)
 
-Omega_m0 = 0.30
-Omega_r0 = 9.0e-5
-Omega_L0 = 1.0 - Omega_m0 - Omega_r0
-n_fid = 0.2
-beta_fid = 1.0e-4
-H0_fid = 69.03
+# Fiducial parameters (Planck 2018)
+H0_fid = 67.36
+Omega_m0 = 0.3153
+Omega_r0 = 9.18e-5
 sigma8_lcdm_ref = 0.811
+rd = 147.09
 
 
-def solve_dvch_background_full(z_array, n=n_fid, beta=beta_fid):
-    """Full ODE integration of DVCH background."""
-    def rhs(z, y):
-        Om_z = y[0]
-        opz = 1.0 + z
-        rad = Omega_r0 * opz**4
-        E2 = rad + Om_z + Omega_L0
-        for _ in range(50):
-            OL_z = Omega_L0 * (Om_z / Omega_m0)**n * (1.0 + beta) / (1.0 + beta * E2)
-            E2_new = rad + Om_z + OL_z
-            if abs(E2_new - E2) < 1e-10:
-                break
-            E2 = E2_new
-        OL_z = Omega_L0 * (Om_z / Omega_m0)**n * (1.0 + beta) / (1.0 + beta * E2)
-        dOL_dOm = OL_z * n / Om_z if Om_z > 0 else 0.0
-        dOL_dE2 = -Omega_L0 * (Om_z / Omega_m0)**n * (1.0 + beta) * beta / (1.0 + beta * E2)**2
-        denom = 1.0 - dOL_dE2
-        if abs(denom) < 1e-15:
-            denom = 1e-15
-        A = 1.0 + dOL_dOm
-        B = dOL_dE2 / denom
-        C = 4.0 * Omega_r0 * opz**3
-        coeff = A * (1.0 + B)
-        if abs(coeff) < 1e-15:
-            coeff = 1e-15
-        dOm_dz = (3.0 * Om_z / opz - B * C) / coeff
-        return [dOm_dz]
-
-    sol = solve_ivp(rhs, (z_array[0], z_array[-1]), [Omega_m0],
-                   t_eval=z_array, rtol=1e-10, atol=1e-12, method="RK45")
-    Om_arr = sol.y[0]
-
-    E2_arr = np.zeros_like(z_array)
-    OL_arr = np.zeros_like(z_array)
-    Or_arr = Omega_r0 * (1.0 + z_array)**4
-
-    for i in range(len(z_array)):
-        opz = 1.0 + z_array[i]
-        rad = Omega_r0 * opz**4
-        E2 = rad + Om_arr[i] + Omega_L0
-        for _ in range(50):
-            OL_z = Omega_L0 * (Om_arr[i] / Omega_m0)**n * (1.0 + beta) / (1.0 + beta * E2)
-            E2_new = rad + Om_arr[i] + OL_z
-            if abs(E2_new - E2) < 1e-10:
-                break
-            E2 = E2_new
-        E2_arr[i] = E2
-        OL_arr[i] = OL_z
-
-    E = np.sqrt(E2_arr)
-    ratio = np.where(Om_arr > 0, OL_arr / Om_arr, 0.0)
-    denom_q = 1.0 + n * ratio
-    bracket = n - beta * (4.0 * Omega_r0 * (1.0 + z_array)**4 + 3.0 * Om_arr) / (3.0 * (1.0 + beta * E2_arr))
-    Qtilde = -E * OL_arr / np.where(denom_q > 0, denom_q, 1e-15) * bracket
-
-    return z_array, Om_arr, OL_arr, E2_arr, E, Qtilde
+def solve_uvhde_background(z_array):
+    """Exact algebraic UV-HDE background (no ODE integration needed)."""
+    cosmo = UVHDEPlanckCosmology(H0=H0_fid, Omega_m0=Omega_m0, Omega_r0=Omega_r0, rd=rd)
+    E2 = cosmo.E2_classical(z_array)
+    E = np.sqrt(E2)
+    H = cosmo.H(z_array)
+    Om = Omega_m0 * (1.0 + z_array)**3 / E2
+    OL = cosmo.Omega_DE0 * (1.0 + z_array) * 2.0 / (1.0 + E2) / E2
+    Or = Omega_r0 * (1.0 + z_array)**4 / E2
+    de2_dz = cosmo.dE2_dz(z_array)
+    q = cosmo.q(z_array)
+    return z_array, Om, OL, Or, E2, E, H, de2_dz, cosmo
 
 
-def compute_growth(n=n_fid, beta=beta_fid):
-    """Compute growth for DVCH and LCDM using full backgrounds."""
+def compute_growth():
+    """Compute growth for UV-HDE and LCDM using standard gravity."""
     z_bg = np.linspace(0, 100, 5000)
-    z_bg, Om_dvch, OL_dvch, E2_dvch, E_dvch, Qt_dvch = solve_dvch_background_full(
-        z_bg, n=n, beta=beta)
+    z_bg, Om_uvhde, OL_uvhde, Or_uvhde, E2_uvhde, E_uvhde, H_uvhde, de2_dz_uvhde, cosmo = solve_uvhde_background(z_bg)
+
+    # LCDM background
+    E2_lcdm = Omega_r0 * (1.0 + z_bg)**4 + Omega_m0 * (1.0 + z_bg)**3 + cosmo.Omega_DE0
+    E_lcdm = np.sqrt(E2_lcdm)
+    Om_lcdm = Omega_m0 * (1.0 + z_bg)**3 / E2_lcdm
 
     # Interpolation functions
-    E_dvch_f = interp1d(z_bg, E_dvch, kind='cubic', fill_value='extrapolate')
-    Om_dvch_f = interp1d(z_bg, Om_dvch, kind='cubic', fill_value='extrapolate')
-    Qt_dvch_f = interp1d(z_bg, Qt_dvch, kind='cubic', fill_value='extrapolate')
+    from scipy.interpolate import interp1d
+    E_uvhde_f = interp1d(z_bg, E_uvhde, kind='cubic', fill_value='extrapolate')
+    Om_uvhde_f = interp1d(z_bg, Om_uvhde, kind='cubic', fill_value='extrapolate')
+    de2_dz_uvhde_f = interp1d(z_bg, de2_dz_uvhde, kind='cubic', fill_value='extrapolate')
+
+    E_lcdm_f = interp1d(z_bg, E_lcdm, kind='cubic', fill_value='extrapolate')
+    Om_lcdm_f = interp1d(z_bg, Om_lcdm, kind='cubic', fill_value='extrapolate')
 
     z_start = 100.0
     z_end = 0.0
     N_start = -np.log(1.0 + z_start)
     N_end = 0.0
 
-    def rhs_dvch(N, y):
+    def rhs_uvhde(N, y):
         delta, delta_p = y
         z = np.exp(-N) - 1.0
         z = max(z, 0.0)
-        E = float(E_dvch_f(z))
-        Om = float(Om_dvch_f(z))
-        Qt = float(Qt_dvch_f(z))
+        E = float(E_uvhde_f(z))
+        Om = float(Om_uvhde_f(z))
+        de2_dz = float(de2_dz_uvhde_f(z))
         if Om <= 0 or E <= 0:
             return [0.0, 0.0]
-        dz = 0.01
-        E_p = float(E_dvch_f(min(z + dz, z_bg[-1])))
-        E_m = float(E_dvch_f(max(z - dz, 0.0)))
-        dEdz = (E_p - E_m) / (2 * dz)
-        dEdN = -dEdz * (1.0 + z)
-        Hprime_over_H = dEdN / E
-        Gamma = 3.0 * Qt / (E * Om)
+        dlnE_dN = -0.5 * (1.0 + z) / E**2 * de2_dz
         Om_H = Om / E**2
-        delta_pp = -(2.0 + Hprime_over_H + Gamma) * delta_p + 1.5 * Om_H * delta
+        delta_pp = -(2.0 + dlnE_dN) * delta_p + 1.5 * Om_H * delta
         return [delta_p, delta_pp]
 
     def rhs_lcdm(N, y):
         delta, delta_p = y
         z = np.exp(-N) - 1.0
         z = max(z, 0.0)
-        E2 = Omega_r0 * (1 + z)**4 + Omega_m0 * (1 + z)**3 + Omega_L0
-        E = np.sqrt(E2)
-        Om_H = Omega_m0 * (1 + z)**3 / E2
-        dz = 0.01
-        E2_p = Omega_r0 * (1 + z + dz)**4 + Omega_m0 * (1 + z + dz)**3 + Omega_L0
-        E2_m = Omega_r0 * max(1 + z - dz, 0.01)**4 + Omega_m0 * max(1 + z - dz, 0.01)**3 + Omega_L0
-        dE2dz = (E2_p - E2_m) / (2 * dz)
-        dE2dN = -dE2dz * (1.0 + z)
-        Hprime_over_H = 0.5 * dE2dN / E2
-        delta_pp = -(2.0 + Hprime_over_H) * delta_p + 1.5 * Om_H * delta
+        E = float(E_lcdm_f(z))
+        Om = float(Om_lcdm_f(z))
+        if Om <= 0 or E <= 0:
+            return [0.0, 0.0]
+        # Analytic dlnE/dN for LCDM
+        E2 = E**2
+        de2_dz = 4.0 * Omega_r0 * (1.0 + z)**3 + 3.0 * Omega_m0 * (1.0 + z)**2
+        dlnE_dN = -0.5 * (1.0 + z) / E2 * de2_dz
+        Om_H = Om / E2
+        delta_pp = -(2.0 + dlnE_dN) * delta_p + 1.5 * Om_H * delta
         return [delta_p, delta_pp]
 
     delta0 = 1.0 / (1.0 + z_start)
     delta_p0 = delta0
 
-    sol_dvch = solve_ivp(rhs_dvch, [N_start, N_end], [delta0, delta_p0],
-                        rtol=1e-8, atol=1e-10, method="RK45", dense_output=True,
-                        max_step=0.005)
+    sol_uvhde = solve_ivp(rhs_uvhde, [N_start, N_end], [delta0, delta_p0],
+                         rtol=1e-8, atol=1e-10, method="RK45", dense_output=True,
+                         max_step=0.005)
     sol_lcdm = solve_ivp(rhs_lcdm, [N_start, N_end], [delta0, delta_p0],
                         rtol=1e-8, atol=1e-10, method="RK45", dense_output=True,
                         max_step=0.005)
@@ -150,86 +108,93 @@ def compute_growth(n=n_fid, beta=beta_fid):
     N_eval = np.linspace(N_start, N_end, 500)
     z_eval = np.exp(-N_eval) - 1.0
 
-    delta_dvch = sol_dvch.sol(N_eval)[0]
+    delta_uvhde = sol_uvhde.sol(N_eval)[0]
     delta_lcdm = sol_lcdm.sol(N_eval)[0]
-    delta_p_dvch = sol_dvch.sol(N_eval)[1]
+    delta_p_uvhde = sol_uvhde.sol(N_eval)[1]
     delta_p_lcdm = sol_lcdm.sol(N_eval)[1]
 
-    f_dvch = delta_p_dvch / delta_dvch
+    f_uvhde = delta_p_uvhde / delta_uvhde
     f_lcdm = delta_p_lcdm / delta_lcdm
 
-    delta_dvch_norm = delta_dvch / delta_dvch[-1]
+    delta_uvhde_norm = delta_uvhde / delta_uvhde[-1]
     delta_lcdm_norm = delta_lcdm / delta_lcdm[-1]
 
     # sigma_8 ratio: absolute growth ratio with same IC
-    abs_ratio = delta_dvch[-1] / delta_lcdm[-1]
-    sigma8_dvch = sigma8_lcdm_ref * abs_ratio
-    S8_dvch = sigma8_dvch * np.sqrt(Omega_m0 / 0.3)
+    abs_ratio = delta_uvhde[-1] / delta_lcdm[-1]
+    sigma8_uvhde = sigma8_lcdm_ref * abs_ratio
+    S8_uvhde = sigma8_uvhde * np.sqrt(Omega_m0 / 0.3)
 
     return {
         "z": z_eval,
-        "delta_dvch": delta_dvch_norm,
+        "delta_uvhde": delta_uvhde_norm,
         "delta_lcdm": delta_lcdm_norm,
-        "f_dvch": f_dvch,
+        "f_uvhde": f_uvhde,
         "f_lcdm": f_lcdm,
-        "sigma8_dvch": sigma8_dvch,
-        "S8_dvch": S8_dvch,
+        "sigma8_uvhde": sigma8_uvhde,
+        "S8_uvhde": S8_uvhde,
         "sigma8_lcdm": sigma8_lcdm_ref,
         "S8_lcdm": sigma8_lcdm_ref * np.sqrt(Omega_m0 / 0.3),
         "growth_ratio": abs_ratio,
+        "cosmo": cosmo,
     }
 
 
 def main():
     print("=" * 60)
-    print("DVCH Growth Diagnostic")
+    print("UV-HDE + Planck Limit Growth Diagnostic")
     print("=" * 60)
 
     res = compute_growth()
+    cosmo = res["cosmo"]
 
-    print(f"sigma_8_DVCH = {res['sigma8_dvch']:.6f}")
-    print(f"S_8_DVCH = {res['S8_dvch']:.6f}")
+    print(f"sigma_8_UVHDE = {res['sigma8_uvhde']:.6f}")
+    print(f"S_8_UVHDE = {res['S8_uvhde']:.6f}")
     print(f"sigma_8_LCDM (ref) = {res['sigma8_lcdm']:.3f}")
     print(f"S_8_LCDM (ref) = {res['S8_lcdm']:.3f}")
     print(f"Growth ratio = {res['growth_ratio']:.6f}")
 
+    # f*sigma8 at key redshifts for comparison
+    z_key = [0.38, 1.48]
+    for zk in z_key:
+        idx = np.argmin(np.abs(res["z"] - zk))
+        fs8_uvhde = res["f_uvhde"][idx] * res["sigma8_uvhde"] * res["delta_uvhde"][idx]
+        fs8_lcdm = res["f_lcdm"][idx] * res["sigma8_lcdm"] * res["delta_lcdm"][idx]
+        diff_pct = (fs8_uvhde - fs8_lcdm) / fs8_lcdm * 100
+        print(f"f*sigma8(z={zk:.2f}): UVHDE={fs8_uvhde:.4f}, LCDM={fs8_lcdm:.4f}, diff={diff_pct:+.2f}%")
+
     df_g = pd.DataFrame({
         "z": res["z"],
-        "delta_dvch": res["delta_dvch"],
+        "delta_uvhde": res["delta_uvhde"],
         "delta_lcdm": res["delta_lcdm"],
-        "f_dvch": res["f_dvch"],
+        "f_uvhde": res["f_uvhde"],
         "f_lcdm": res["f_lcdm"],
-        "fsigma8_dvch": res["f_dvch"] * res["sigma8_dvch"] * res["delta_dvch"],
+        "fsigma8_uvhde": res["f_uvhde"] * res["sigma8_uvhde"] * res["delta_uvhde"],
         "fsigma8_lcdm": res["f_lcdm"] * res["sigma8_lcdm"] * res["delta_lcdm"],
     })
-    df_g.to_csv("dvch_growth_sigma8_table.csv", index=False)
-    print("Wrote dvch_growth_sigma8_table.csv")
+    df_g.to_csv("uvhde_growth_sigma8_table.csv", index=False)
+    print("Wrote uvhde_growth_sigma8_table.csv")
 
     summary = pd.DataFrame({
-        "quantity": ["sigma8_DVCH", "S8_DVCH", "sigma8_LCDM_ref", "S8_LCDM_ref",
-                      "growth_ratio", "f_sigma8_DVCH_z0", "f_sigma8_LCDM_z0"],
-        "value": [res["sigma8_dvch"], res["S8_dvch"], res["sigma8_lcdm"],
+        "quantity": ["sigma8_UVHDE", "S8_UVHDE", "sigma8_LCDM_ref", "S8_LCDM_ref",
+                      "growth_ratio", "f_sigma8_UVHDE_z0", "f_sigma8_LCDM_z0"],
+        "value": [res["sigma8_uvhde"], res["S8_uvhde"], res["sigma8_lcdm"],
                   res["S8_lcdm"], res["growth_ratio"],
-                  res["f_dvch"][-1] * res["sigma8_dvch"],
+                  res["f_uvhde"][-1] * res["sigma8_uvhde"],
                   res["f_lcdm"][-1] * res["sigma8_lcdm"]],
     })
-    summary.to_csv("dvch_sigma8_s8_summary.csv", index=False)
-    print("Wrote dvch_sigma8_s8_summary.csv")
+    summary.to_csv("uvhde_sigma8_s8_summary.csv", index=False)
+    print("Wrote uvhde_sigma8_s8_summary.csv")
 
-    delta_chi2 = -3.2015
-    delta_aic = -1.2015
-    delta_bic = +4.2179
-
-    make_figure(res, delta_chi2, delta_aic, delta_bic)
-    print(f"Figure saved: {FIGDIR}/dvch_sigma8_global_comparison.png")
+    make_figure(res)
+    print(f"Figure saved: {FIGDIR}/uvhde_sigma8_global_comparison.png")
 
 
-def make_figure(res, dchi2, daic, dbic):
+def make_figure(res):
     fig = plt.figure(figsize=(16, 12))
     gs = GridSpec(2, 3, figure=fig, hspace=0.3, wspace=0.35)
 
     ax1 = fig.add_subplot(gs[0, 0])
-    ax1.plot(res["z"], res["delta_dvch"], 'b-', lw=2, label='DVCH')
+    ax1.plot(res["z"], res["delta_uvhde"], 'b-', lw=2, label='UV-HDE + Planck')
     ax1.plot(res["z"], res["delta_lcdm"], 'r--', lw=1.5, label=r'$\Lambda$CDM')
     ax1.set_xlabel('z')
     ax1.set_ylabel(r'$D(z)$')
@@ -238,7 +203,7 @@ def make_figure(res, dchi2, daic, dbic):
     ax1.grid(True, alpha=0.3)
 
     ax2 = fig.add_subplot(gs[0, 1])
-    ax2.plot(res["z"], res["f_dvch"], 'b-', lw=2, label='DVCH')
+    ax2.plot(res["z"], res["f_uvhde"], 'b-', lw=2, label='UV-HDE + Planck')
     ax2.plot(res["z"], res["f_lcdm"], 'r--', lw=1.5, label=r'$\Lambda$CDM')
     ax2.set_xlabel('z')
     ax2.set_ylabel(r'$f(z)$')
@@ -247,8 +212,8 @@ def make_figure(res, dchi2, daic, dbic):
     ax2.grid(True, alpha=0.3)
 
     ax3 = fig.add_subplot(gs[0, 2])
-    ax3.plot(res["z"], res["f_dvch"] * res["sigma8_dvch"] * res["delta_dvch"],
-             'b-', lw=2, label='DVCH')
+    ax3.plot(res["z"], res["f_uvhde"] * res["sigma8_uvhde"] * res["delta_uvhde"],
+             'b-', lw=2, label='UV-HDE + Planck')
     ax3.plot(res["z"], res["f_lcdm"] * res["sigma8_lcdm"] * res["delta_lcdm"],
              'r--', lw=1.5, label=r'$\Lambda$CDM')
     rsd_z = np.array([0.02, 0.15, 0.32, 0.57, 0.77, 1.23])
@@ -262,10 +227,10 @@ def make_figure(res, dchi2, daic, dbic):
     ax3.grid(True, alpha=0.3)
 
     ax4 = fig.add_subplot(gs[1, 0])
-    labels = [r'$\sigma_{8,\rm DVCH}$', r'$\sigma_{8,\Lambda\rm CDM}$',
-              r'$S_{8,\rm DVCH}$', r'$S_{8,\Lambda\rm CDM}$']
-    values = [res["sigma8_dvch"], res["sigma8_lcdm"],
-              res["S8_dvch"], res["S8_lcdm"]]
+    labels = [r'$\sigma_{8,\rm UVHDE}$', r'$\sigma_{8,\Lambda\rm CDM}$',
+              r'$S_{8,\rm UVHDE}$', r'$S_{8,\Lambda\rm CDM}$']
+    values = [res["sigma8_uvhde"], res["sigma8_lcdm"],
+              res["S8_uvhde"], res["S8_lcdm"]]
     colors = ['#4472C4', '#ED7D31', '#4472C4', '#ED7D31']
     bars = ax4.bar(labels, values, color=colors, alpha=0.8, edgecolor='black', lw=0.5)
     ax4.set_ylabel('Value')
@@ -278,45 +243,97 @@ def make_figure(res, dchi2, daic, dbic):
     ax4.grid(True, alpha=0.3, axis='y')
 
     ax5 = fig.add_subplot(gs[1, 1])
-    ic_labels = [r'$\Delta\chi^2$', r'$\Delta$AIC', r'$\Delta$BIC']
-    ic_values = [dchi2, daic, dbic]
-    ic_colors = ['#70AD47', '#70AD47', '#FFC000']
-    bars5 = ax5.bar(ic_labels, ic_values, color=ic_colors, alpha=0.8, edgecolor='black', lw=0.5)
-    ax5.axhline(0, color='k', lw=0.5)
-    for bar, val in zip(bars5, ic_values):
-        y = bar.get_height()
-        offset = 0.3 if y > 0 else -0.5
-        ax5.text(bar.get_x() + bar.get_width()/2, y + offset,
-                f'{val:+.4f}', ha='center', va='bottom' if y > 0 else 'top', fontsize=9)
-    ax5.set_ylabel(r'$\Delta$ (DVCH $-$ $\Lambda$CDM)')
-    ax5.set_title('Information Criteria')
-    ax5.grid(True, alpha=0.3, axis='y')
-
-    ax6 = fig.add_subplot(gs[1, 2])
-    ax6.axis('off')
+    ax5.axis('off')
     table_data = [
-        ["Block", "Status", "Result"],
-        ["Background H(z)", "Computed", "E^2>0, finite"],
-        ["Interaction Q", "Computed", r"$\widetilde Q<0$"],
-        [r"$\sigma_8/S_8$", "Diagnostic", f"{res['sigma8_dvch']:.3f}"],
-        ["Pantheon+ SNe", "Exploratory", r"$\Delta\chi^2$ fit"],
-        ["DESI BAO", "Compressed", "Included"],
-        ["Chronometers", "Included", "CC block"],
-        ["Planck CMB", "Protocol", "Benchmark"],
-        ["Info criteria", "Computed", "BIC no pref."],
+        ["Model", r"$\sigma_8$", r"$S_8$", "Growth ratio", "Status"],
+        ["UV-HDE + Planck", f"{res['sigma8_uvhde']:.4f}", f"{res['S8_uvhde']:.4f}",
+         f"{res['growth_ratio']:.4f}", "Standard gravity (mu=1)"],
+        [r"$\Lambda$CDM (ref)", f"{res['sigma8_lcdm']:.3f}", f"{res['S8_lcdm']:.3f}",
+         "1.0000", "Standard gravity"],
     ]
-    table = ax6.table(cellText=table_data, loc='center', cellLoc='center')
+    table = ax5.table(cellText=table_data, loc='center', cellLoc='center')
     table.auto_set_font_size(False)
-    table.set_fontsize(8)
-    table.scale(1.0, 1.3)
-    for i in range(3):
+    table.set_fontsize(9)
+    table.scale(1.0, 1.5)
+    for i in range(5):
         table[0, i].set_facecolor('#4472C4')
         table[0, i].set_text_props(color='white', fontweight='bold')
 
-    fig.suptitle('DVCH Growth, $S_8$, and Global Comparison Dashboard',
+    ax6 = fig.add_subplot(gs[1, 2])
+    ax6.axis('off')
+    table_data2 = [
+        ["Quantity", "UV-HDE + Planck", r"$\Lambda$CDM", "Difference"],
+        [r"$w_{\rm eff}(0)$", f"{res['cosmo'].w_eff(0.0):.6f}", "-1.000000", f"{res['cosmo'].w_eff(0.0) + 1.0:+.6f}"],
+        [r"$w_{\rm eff}(0.4014)$", f"{res['cosmo'].w_eff(0.4014):.6f}", "-1.000000", f"{res['cosmo'].w_eff(0.4014) + 1.0:+.6f}"],
+        [r"$q(0.7532)$", f"{res['cosmo'].q(0.7532):.6f}", f"{-1.0 + 0.7532/2 * (4*9.18e-5*1.7532**3 + 3*0.3153*1.7532**2)/(9.18e-5*1.7532**4 + 0.3153*1.7532**3 + (1-0.3153-9.18e-5)):.6f}", "~0"],
+        [r"$\mathcal{O}_m(0.1)$", f"{res['cosmo'].Om_diagnostic(0.1):.6f}", "0.3153", "~0.07"],
+        [r"$\mathcal{O}_m(0.5)$", f"{res['cosmo'].Om_diagnostic(0.5):.6f}", "0.3153", "~0.02"],
+        [r"$\epsilon_{\rm Pl}$", f"{res['cosmo'].eps_Pl:.4e}", "0", "~1.65e-123"],
+        [r"$a_{\min}$", f"{res['cosmo'].a_min:.4e}", "0", "~1.97e-32"],
+    ]
+    table2 = ax6.table(cellText=table_data2, loc='center', cellLoc='center')
+    table2.auto_set_font_size(False)
+    table2.set_fontsize(8)
+    table2.scale(1.0, 1.3)
+    for i in range(4):
+        table2[0, i].set_facecolor('#4472C4')
+        table2[0, i].set_text_props(color='white', fontweight='bold')
+
+    fig.suptitle('UV-HDE + Planck Limit: Growth, $S_8$, and Diagnostics',
                  fontsize=14, fontweight='bold', y=0.98)
-    fig.savefig(f"{FIGDIR}/dvch_sigma8_global_comparison.png", dpi=150, bbox_inches='tight')
+    fig.savefig(f"{FIGDIR}/uvhde_sigma8_global_comparison.png", dpi=150, bbox_inches='tight')
     plt.close(fig)
+
+
+def compute_growth_lcdm_reference(z_eval):
+    """Compute LCDM growth reference for comparison."""
+    z_bg = np.linspace(0, 100, 5000)
+    E2_lcdm = Omega_r0 * (1.0 + z_bg)**4 + Omega_m0 * (1.0 + z_bg)**3 + (1.0 - Omega_m0 - Omega_r0)
+    E_lcdm = np.sqrt(E2_lcdm)
+    Om_lcdm = Omega_m0 * (1.0 + z_bg)**3 / E2_lcdm
+
+    from scipy.interpolate import interp1d
+    E_lcdm_f = interp1d(z_bg, E_lcdm, kind='cubic', fill_value='extrapolate')
+    Om_lcdm_f = interp1d(z_bg, Om_lcdm, kind='cubic', fill_value='extrapolate')
+
+    z_start = 100.0
+    N_start = -np.log(1.0 + z_start)
+    N_end = 0.0
+
+    def rhs_lcdm(N, y):
+        delta, delta_p = y
+        z = np.exp(-N) - 1.0
+        z = max(z, 0.0)
+        E = float(E_lcdm_f(z))
+        Om = float(Om_lcdm_f(z))
+        if Om <= 0 or E <= 0:
+            return [0.0, 0.0]
+        E2 = E**2
+        de2_dz = 4.0 * Omega_r0 * (1.0 + z)**3 + 3.0 * Omega_m0 * (1.0 + z)**2
+        dlnE_dN = -0.5 * (1.0 + z) / E2 * de2_dz
+        # Growth equation: D'' + (2 + dlnH/dln a) D' - 1.5 * Omega_m(a) * D = 0
+        delta_pp = -(2.0 + dlnE_dN) * delta_p + 1.5 * Om * delta
+        return [delta_p, delta_pp]
+
+    delta0 = 1.0 / (1.0 + z_start)
+    delta_p0 = delta0
+
+    sol_lcdm = solve_ivp(rhs_lcdm, [N_start, N_end], [delta0, delta_p0],
+                        rtol=1e-8, atol=1e-10, method="RK45", dense_output=True,
+                        max_step=0.005)
+
+    # Evaluate at z=0 to get normalization
+    D_0 = sol_lcdm.sol(0.0)[0]
+
+    N_eval = -np.log(1.0 + np.asarray(z_eval, dtype=np.float64))
+    delta_lcdm = sol_lcdm.sol(N_eval)[0]
+    delta_p_lcdm = sol_lcdm.sol(N_eval)[1]
+
+    f_lcdm = delta_p_lcdm / delta_lcdm
+    delta_lcdm_norm = delta_lcdm / D_0
+
+    fs8 = f_lcdm * sigma8_lcdm_ref * delta_lcdm_norm
+    return delta_lcdm_norm, fs8
 
 
 if __name__ == "__main__":
